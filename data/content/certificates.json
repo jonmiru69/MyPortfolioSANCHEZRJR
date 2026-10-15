@@ -2,56 +2,6 @@
   "summary": "Professional development programs, curriculum training, pedagogical seminars, and accredited training hours.",
   "items": [
     {
-      "id": "cert-1",
-      "title": "National Training of Teachers on the Implementation of the MATATAG Curriculum",
-      "subtitle": "Junior High School Science Specialization (54 Training Hours)",
-      "organization": "Department of Education - Bureau of Curriculum Development",
-      "date_start": "2024-07",
-      "date_end": "2024-07",
-      "year": 2024,
-      "hours": 54,
-      "type": "Curriculum",
-      "skills": ["MATATAG Curriculum", "Lesson Exemplars", "Formative Probes", "Instructional Alignment"],
-      "description": "Completed intensive capacity building on unpacking decongested learning competencies, implementing 21st-century formative assessment strategies, and utilizing MATATAG instructional guides.",
-      "tags": ["MATATAG", "DepEd", "Curriculum"],
-      "evidence": [
-        {
-          "label": "Certificate of Participation & Completion (54 Hours)",
-          "file": "assets/docs/sample-certificate.svg",
-          "type": "image",
-          "context": "Issued by DepEd Regional Office with verified QMS tracking serial."
-        }
-      ],
-      "visibility": "public",
-      "featured": true,
-      "order": 1
-    },
-    {
-      "id": "cert-2",
-      "title": "DOST-SEI Science Teachers Academy for the Regions (STAR)",
-      "subtitle": "Advanced Inquiry-Based Pedagogies and Micro-Scale Chemistry (40 Training Hours)",
-      "organization": "Department of Science and Technology - Science Education Institute (DOST-SEI)",
-      "date_start": "2023-11",
-      "date_end": "2023-11",
-      "year": 2023,
-      "hours": 40,
-      "type": "Pedagogy",
-      "skills": ["Micro-scale Chemistry", "Laboratory Safety", "Inquiry-Based Learning"],
-      "description": "Hands-on training in low-cost, waste-minimizing laboratory apparatus, micro-scale chemical reaction techniques, and student-driven investigative inquiry.",
-      "tags": ["DOST-SEI", "STE Program", "Laboratory"],
-      "evidence": [
-        {
-          "label": "DOST STAR Training Certificate",
-          "file": "assets/docs/sample-certificate.svg",
-          "type": "image",
-          "context": "Certificate of training completion from DOST-SEI project director."
-        }
-      ],
-      "visibility": "public",
-      "featured": true,
-      "order": 2
-    },
-    {
       "id": "cert-3",
       "title": "Division Research Congress & Ethics in Student Investigatory Projects",
       "subtitle": "Scientific Ethics, Statistical Modeling, and Fair Defense Guidelines (32 Training Hours)",
@@ -61,9 +11,17 @@
       "year": 2023,
       "hours": 32,
       "type": "Research",
-      "skills": ["Research Ethics", "Statistical Analysis", "Intellectual Property"],
+      "skills": [
+        "Research Ethics",
+        "Statistical Analysis",
+        "Intellectual Property"
+      ],
       "description": "Certified research adviser training on ISEF rules, biosafety protocols, institutional review board (IRB) compliance, and experimental error analysis.",
-      "tags": ["Research", "SDRC", "Ethics"],
+      "tags": [
+        "Research",
+        "SDRC",
+        "Ethics"
+      ],
       "evidence": [
         {
           "label": "Division Research Adviser Certification",
@@ -86,9 +44,17 @@
       "year": 2022,
       "hours": 24,
       "type": "Technology",
-      "skills": ["OER", "Interactive Simulation", "Instructional Design"],
+      "skills": [
+        "OER",
+        "Interactive Simulation",
+        "Instructional Design"
+      ],
       "description": "Practical training in developing Creative Commons-licensed learning packages, integrating PhET interactive simulations, and building accessible digital lesson sheets.",
-      "tags": ["ICTS", "OER", "EdTech"],
+      "tags": [
+        "ICTS",
+        "OER",
+        "EdTech"
+      ],
       "evidence": [
         {
           "label": "ICTS Digital Courseware Certification",

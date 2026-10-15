@@ -52,17 +52,10 @@
       "date_end": "Present",
       "description": "",
       "tags": [],
-      "evidence": [
-        {
-          "label": "Profile Photo",
-          "file": "assets/images/file_00000000d764821193b918aacef58425.webp",
-          "type": "image",
-          "context": "Profile Photo"
-        }
-      ],
+      "evidence": [],
       "links": [],
       "visibility": "public",
-      "featured": true,
+      "featured": false,
       "order": 99
     }
   ]
