@@ -15,13 +15,11 @@
     "label_template": "Portfolio for {name}"
   },
   "theme": {
-    "default_mode": "dark",
-    "bg_canvas": "#0a0b0d",
-    "bg_binder": "#121417",
-    "bg_surface": "#181b20",
+    "default_mode": "light",
     "color_accent": "#3b8296",
+    "bg_canvas": "#0a0b0d",
     "tracking_display": "0.35em",
-    "transition_speed": "280ms"
+    "transition_speed": "400ms"
   },
   "presets": [
     {
