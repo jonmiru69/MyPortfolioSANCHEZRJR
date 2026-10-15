@@ -1,0 +1,57 @@
+{
+  "summary": "Academic qualifications, graduate studies, Latin honors, scholarship grants, and verified transcripts.",
+  "items": [
+    {
+      "id": "edu-1",
+      "title": "Master of Arts in Education (MAEd)",
+      "subtitle": "Major in Science Education",
+      "organization": "Philippine Normal University / State University Graduate School",
+      "date_start": "2023",
+      "date_end": "Present",
+      "description": "Completed all academic course units with high distinction. Currently conducting thesis research on 'Inquiry-Based Modular Interventions in Junior High School Life Sciences under the MATATAG Framework'.",
+      "tags": ["Graduate Studies", "Science Pedagogy", "Curriculum Design", "Action Research"],
+      "evidence": [
+        {
+          "label": "Certificate of Course Completion (Academic Units)",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Official certification of completed MAEd course credits with a GWA of 1.18."
+        }
+      ],
+      "links": [
+        { "label": "View Graduate School Portal", "url": "#" }
+      ],
+      "visibility": "public",
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "edu-2",
+      "title": "Bachelor of Secondary Education (BSEd)",
+      "subtitle": "Major in Biological Science · Cum Laude",
+      "organization": "State University - College of Education",
+      "date_start": "2015",
+      "date_end": "2019",
+      "description": "Graduated Cum Laude with a General Weighted Average (GWA) of 1.42. Recipient of the Academic Excellence Award and Tertiary Education Subsidy (TES) Scholarship grant.",
+      "tags": ["Undergraduate", "Biological Science", "Cum Laude", "Academic Scholar"],
+      "evidence": [
+        {
+          "label": "Diploma Scan (Certified True Copy)",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "image",
+          "context": "Conferred BSEd Biological Science degree with Latin honors (Cum Laude)."
+        },
+        {
+          "label": "Official Transcript of Records (TOR)",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Full transcript verifying GWA and Dean's List citations across eight consecutive semesters."
+        }
+      ],
+      "links": [],
+      "visibility": "public",
+      "featured": true,
+      "order": 2
+    }
+  ]
+}

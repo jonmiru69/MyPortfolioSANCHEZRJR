@@ -1,0 +1,79 @@
+{
+  "summary": "Authored Daily Lesson Logs (DLL), lesson exemplars, learner activity sheets (LAS), laboratory protocols, and Table of Specifications (TOS).",
+  "items": [
+    {
+      "id": "mat-1",
+      "title": "MATATAG Lesson Exemplar: Energy Flow & Cellular Respiration",
+      "subtitle": "5E Model Inquiry Lesson Plan · Grade 7 Science",
+      "subject": "Science 7",
+      "grade": "Grade 7",
+      "quarter": "Quarter 2",
+      "competency_code": "MATATAG-SCI7-Q2-C04",
+      "type": "Lesson Exemplar (DLL)",
+      "description": "Constructivist 5E lesson plan demonstrating energy conversions in biological systems. Incorporates guided discovery questions, micro-scale yeast fermentation lab stations, and formative Exit Ticket rubrics.",
+      "tags": ["MATATAG", "5E Model", "Grade 7", "Cellular Respiration"],
+      "evidence": [
+        {
+          "label": "Complete Lesson Exemplar Document (PDF)",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Evaluated and approved by Science Department Head with rating of 98%."
+        }
+      ],
+      "links": [
+        { "label": "Download Lesson Plan (PDF)", "url": "#" }
+      ],
+      "visibility": "public",
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "mat-2",
+      "title": "Learner's Activity Sheet (LAS): Osmotic Dynamics in Plant Cells",
+      "subtitle": "Hands-on Laboratory Guide Using Low-Cost Local Tubers",
+      "subject": "Advanced Biology (STE Elective)",
+      "grade": "Grade 8",
+      "quarter": "Quarter 3",
+      "competency_code": "STE-BIO8-Q3-LAB02",
+      "type": "Laboratory Activity Sheet",
+      "description": "Contextualized laboratory guide utilizing potato and sweet potato cylinders in varying saline solutions to quantify water potential and cellular turgor without requiring expensive apparatus.",
+      "tags": ["Laboratory Guide", "STE Program", "Osmosis", "Localized Science"],
+      "evidence": [
+        {
+          "label": "Activity Sheet & Answer Key",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Demonstrated across 3 STE class sections with high student achievement."
+        }
+      ],
+      "links": [],
+      "visibility": "public",
+      "featured": true,
+      "order": 2
+    },
+    {
+      "id": "mat-3",
+      "title": "Standardized Table of Specifications (TOS) & Diagnostic Summative Assessment",
+      "subtitle": "Bloom's Revised Taxonomy Matrix & 50-Item Evaluative Tool",
+      "subject": "Research I (Scientific Inquiry)",
+      "grade": "Grade 7 (STE)",
+      "quarter": "Quarter 1",
+      "competency_code": "STE-RES7-Q1-TOS",
+      "type": "Table of Specifications (TOS)",
+      "description": "Comprehensive TOS mapping Remembering, Understanding, Applying, Analyzing, Evaluating, and Creating across 50 multiple-choice and design-based test items.",
+      "tags": ["TOS", "Assessment", "Psychometrics", "HOTS"],
+      "evidence": [
+        {
+          "label": "Item Analysis & Signed TOS Sheet",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Validated with Cronbach's alpha reliability index of 0.84."
+        }
+      ],
+      "links": [],
+      "visibility": "public",
+      "featured": false,
+      "order": 3
+    }
+  ]
+}

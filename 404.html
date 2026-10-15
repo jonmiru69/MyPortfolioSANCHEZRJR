@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Redirecting to Portfolio Binder...</title>
+  <script>
+    // GitHub Pages SPA Hash Redirect Handler
+    // Redirects deep path requests into index.html hash routing
+    (function() {
+      var path = window.location.pathname;
+      var repoSegments = path.split('/').filter(Boolean);
+      // If deployed on project subpath (e.g. /portfolio-binder/cover), redirect to /portfolio-binder/#/cover
+      var hash = '';
+      if (repoSegments.length > 1) {
+        var tabSlug = repoSegments[repoSegments.length - 1];
+        hash = '#/' + tabSlug;
+      }
+      var target = window.location.origin + '/' + (repoSegments[0] ? repoSegments[0] + '/' : '') + 'index.html' + hash;
+      window.location.replace(target);
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting to <a href="index.html">Portfolio Binder</a>...</p>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "summary": "Academic research, action research in educational practice, and student investigatory research mentorship.",
+  "items": [
+    {
+      "id": "res-1",
+      "title": "Effectiveness of Contextualized 5E Inquiry Modules in Enhancing Scientific Literacy and Conceptual Mastery among STE Learners",
+      "role": "Principal Investigator / MAEd Candidate",
+      "adviser": "Dr. E. M. Santos, Ph.D. (Faculty of Education)",
+      "year": 2024,
+      "status": "Manuscript Completed / Defended",
+      "abstract": "This study evaluated the pedagogical impact of localized 5E (Engage, Explore, Explain, Elaborate, Evaluate) inquiry-based learning modules on Grade 7 STE students. Utilizing a quasi-experimental pretest-posttest control group design (N=96), the research demonstrated statistically significant gains in higher-order thinking skills (HOTS) and conceptual retention compared to traditional lecture-demonstration methods (p < 0.01). Qualitative thematic analysis further indicated increased learner self-efficacy in formulating testable scientific questions.",
+      "keywords": ["5E Learning Cycle", "Contextualized Inquiry", "STE Program", "Scientific Literacy", "MATATAG Alignment"],
+      "methods": "Quasi-experimental design, normalized Hake gain scores, ANCOVA, Likert-scale self-efficacy surveys, classroom observation protocols.",
+      "key_findings": "Normalized learning gain (g = 0.68, medium-to-high effect size) in experimental sections; 38% increase in student engagement during investigative laboratory sessions.",
+      "presentations": [
+        "Regional Educational Research Conference (RERC) - Oral Presenter, 2024",
+        "Division Research Colloquium - Best Action Research Paper Nominee"
+      ],
+      "awards": ["Best Oral Presentation in Science Pedagogy - Division Research Forum"],
+      "evidence": [
+        {
+          "label": "Research Abstract & Panel Approval Sheet",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Official thesis defense panel signed approval document."
+        }
+      ],
+      "links": [
+        { "label": "Download Full Research Paper (PDF)", "url": "assets/docs/sample-paper.pdf" }
+      ],
+      "visibility": "public",
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "res-2",
+      "title": "Bio-coagulant Potential of Indigenous Moringa oleifera Seed Extracts in Turbid River Water Clarification",
+      "role": "Research Adviser & Laboratory Mentor",
+      "adviser": "Ramelito Jr. C. Sanchez, LPT (Coaching Adviser)",
+      "year": 2023,
+      "status": "Published / Competition Winner",
+      "abstract": "Mentored a student research trio investigating sustainable water treatment alternatives for flood-prone riverine communities. Using standardized jar tests and turbidity nephelometry, the team quantified the coagulation efficiency of powdered Moringa seed extracts against synthetic alum.",
+      "keywords": ["Bio-coagulation", "Water Treatment", "Moringa oleifera", "Green Chemistry", "Student Investigatory Project"],
+      "methods": "Standard jar testing, turbidity measurements (NTU), pH stabilization testing, microbial culture assays.",
+      "key_findings": "Moringa seed coagulant achieved up to 92.4% turbidity reduction without destabilizing ambient water pH, offering a viable, non-toxic alternative to chemical coagulants.",
+      "presentations": [
+        "Regional Science & Technology Fair (RSTF) - Official Life Science Delegate, 2023"
+      ],
+      "awards": ["1st Place, Division Science & Technology Fair (Life Science Team Category)"],
+      "evidence": [
+        {
+          "label": "RSTF Finalist Certification & Team Award",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Regional Science Fair official endorsement certificate."
+        }
+      ],
+      "links": [],
+      "visibility": "public",
+      "featured": true,
+      "order": 2
+    }
+  ]
+}
