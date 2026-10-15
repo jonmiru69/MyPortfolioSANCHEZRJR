@@ -3,11 +3,26 @@
   "statement": "As a licensed professional teacher dedicated to the Special Science Program (STE) and the Philippine MATATAG curriculum, my mission is to nurture critical thinkers who view scientific inquiry not as a set of textbook facts, but as an indispensable tool for community problem-solving and nation-building.",
   "bio": "Ramelito Jr. C. Sanchez, LPT (widely known as Jonmiru) is a secondary science teacher and STEM research adviser in the Division of City Schools. With expertise in biological sciences, curriculum localization, and open scientific tooling, he coaches learners in investigative projects spanning environmental science, biotechnology, and robotics. He actively participates in DepEd learning action cells (LAC), instructional material development, and digital literacy advocacy.",
   "key_facts": [
-    { "label": "Designation", "value": "Special Science Teacher (STE Program)" },
-    { "label": "Eligibilities", "value": "Licensed Professional Teacher (PRC), Civil Service Eligible" },
-    { "label": "Curriculum", "value": "MATATAG Secondary Science & STE Specialized Electives" },
-    { "label": "Research Advisory", "value": "Regional Science & Technology Fair (RSTF) Finalist Coach" },
-    { "label": "Instructional Focus", "value": "Inquiry-Based Learning (5E Model), Micro-Scale Chemistry, Open EdTech" }
+    {
+      "label": "Designation",
+      "value": "Special Science Teacher (STE Program)"
+    },
+    {
+      "label": "Eligibilities",
+      "value": "Licensed Professional Teacher (PRC), Civil Service Eligible"
+    },
+    {
+      "label": "Curriculum",
+      "value": "MATATAG Secondary Science & STE Specialized Electives"
+    },
+    {
+      "label": "Research Advisory",
+      "value": "Regional Science & Technology Fair (RSTF) Finalist Coach"
+    },
+    {
+      "label": "Instructional Focus",
+      "value": "Inquiry-Based Learning (5E Model), Micro-Scale Chemistry, Open EdTech"
+    }
   ],
   "highlights": [
     {
@@ -25,6 +40,30 @@
       "description": "Authored localized activity sheets and formative probes aligned with the decongested MATATAG curriculum framework for Junior High School Science.",
       "featured": true,
       "order": 2
+    }
+  ],
+  "items": [
+    {
+      "id": "profile-1792048979331",
+      "title": "",
+      "subtitle": "",
+      "organization": "",
+      "date_start": "2026",
+      "date_end": "Present",
+      "description": "",
+      "tags": [],
+      "evidence": [
+        {
+          "label": "Profile Photo",
+          "file": "assets/images/file_00000000d764821193b918aacef58425.webp",
+          "type": "image",
+          "context": "Profile Photo"
+        }
+      ],
+      "links": [],
+      "visibility": "public",
+      "featured": true,
+      "order": 99
     }
   ]
 }
