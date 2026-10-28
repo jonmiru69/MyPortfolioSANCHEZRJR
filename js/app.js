@@ -88,13 +88,22 @@ class App {
     const menu = document.getElementById('section-menu-toggle');
     if (menu && this.tabsContainer) {
       document.documentElement.classList.add('js-nav');
+      document.querySelector('.top-bar-controls')?.prepend(menu);
+      const desktop = () => window.matchMedia('(min-width: 769px)').matches;
+      menu.setAttribute('aria-expanded', String(desktop()));
+      window.matchMedia('(min-width: 769px)').addEventListener('change', e => {
+        menu.setAttribute('aria-expanded', String(e.matches));
+        document.body.classList.remove('nav-collapsed');
+        this.tabsContainer.classList.remove('menu-open');
+      });
       menu.addEventListener('click', () => {
         const open = menu.getAttribute('aria-expanded') !== 'true';
         menu.setAttribute('aria-expanded', String(open));
         this.tabsContainer.classList.toggle('menu-open', open);
+        document.body.classList.toggle('nav-collapsed', !open && desktop());
       });
       this.tabsContainer.addEventListener('click', event => {
-        if (event.target.closest('a')) {
+        if (event.target.closest('a') && !desktop()) {
           menu.setAttribute('aria-expanded', 'false');
           this.tabsContainer.classList.remove('menu-open');
         }

@@ -235,7 +235,10 @@ export function renderAdmin(container) {
   }
 
   // Subscribe to changes
-  store.subscribe('unsaved-changed', () => renderView());
+  store.subscribe('unsaved-changed', ({ count }) => {
+    const publish = container.querySelector('[data-subtab="publish"]');
+    if (publish) publish.textContent = `6. Publish${count ? ` (${count})` : ''}`;
+  });
 
   renderView();
 }

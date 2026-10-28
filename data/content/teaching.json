@@ -15,6 +15,26 @@
       "evidence": [],
       "visibility": "public",
       "order": 1
+    },
+    {
+      "id": "preservice",
+      "title": "Pre-service Science Teacher",
+      "organization": "Julio Ledesma National High School, San Carlos City",
+      "date_start": "2025-02",
+      "date_end": "2025-04",
+      "curriculum": "",
+      "grade_levels": "",
+      "subjects": [
+        "Science"
+      ],
+      "responsibilities": [
+        "Designed and delivered daily lessons under supervision.",
+        "Completed 360 hours of pre-service teaching."
+      ],
+      "description": "Pre-service teaching experience, February to April 2025.",
+      "evidence": [],
+      "visibility": "public",
+      "order": 2
     }
   ]
 }

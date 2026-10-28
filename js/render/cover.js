@@ -5,6 +5,8 @@ export async function renderCover(container, siteData) {
   const identity = siteData.identity || {};
   const overview = siteData.overview || {};
   const certificates = await store.getTabContent('certificates');
+  const portraitDraft = identity.avatar ? await store.loadDraft(identity.avatar) : null;
+  const portrait = portraitDraft instanceof Blob ? URL.createObjectURL(portraitDraft) : identity.avatar;
   if (!location.hash.includes('cover') && location.hash !== '' && location.hash !== '#/') return;
   const tabs = store.getVisibleTabs();
   const relevant = tabs.filter(t => !['cover','contents'].includes(t.id));
@@ -12,11 +14,13 @@ export async function renderCover(container, siteData) {
   container.innerHTML = `
     <div class="page-view cover-page overview">
       <div class="overview-intro">
+        ${portrait ? `<img class="overview-portrait" src="${escape(portrait)}" alt="Portrait of ${escape(identity.name)}">` : ''}
         <p class="overview-institution">${escape(identity.institution || '')}</p>
         <h1 class="cover-name">${escape(identity.name || 'Portfolio')}</h1>
         <p class="overview-title">${escape(identity.title)}${identity.credentials ? ` · ${escape(identity.credentials)}` : ''}</p>
         <p class="cover-statement">${escape(identity.positioning_sentence)}</p>
         ${identity.licensure_rating ? `<p class="overview-rating">Licensure GWA rating: ${escape(identity.licensure_rating)}</p>` : ''}
+        <p>${escape(overview.biography || '')}</p>
         <a class="btn btn-primary cover-action" href="#/profile">${escape(overview.action_label || 'Read my profile')} <span aria-hidden="true">↗</span></a>
       </div>
       <section class="overview-content">

@@ -7,7 +7,7 @@
     "title": "High School Science and Research Teacher",
     "positioning_sentence": "Licensed Professional Teacher under Republic Act No. 7836",
     "date_range": "2026 - Present",
-    "avatar": "assets/images/profile-portrait.svg",
+    "avatar": "assets/images/owner-portrait.png",
     "cover_image": "",
     "email": "rsanchez.faculty@cstr.edu.ph",
     "location": "Philippines",
@@ -130,7 +130,7 @@
       "slug": "resume",
       "label": "Résumé / CV",
       "summary": "Résumé information.",
-      "enabled": true,
+      "enabled": false,
       "order": 4
     },
     {
@@ -178,7 +178,7 @@
       "slug": "teaching",
       "label": "Teaching",
       "summary": "Teaching experience, subjects, and classroom practice.",
-      "enabled": false,
+      "enabled": true,
       "order": 9
     },
     {
@@ -266,6 +266,7 @@
     "heading": "Explore the portfolio",
     "description": "Discover my background, teaching experience and professional learning.",
     "action_label": "Read my profile",
-    "learning_heading": "Professional learning"
+    "learning_heading": "Professional learning",
+    "biography": "A 2025 Bachelor of Secondary Education, major in Science graduate of Central Philippines State University – San Carlos Campus. Completed 360 hours as a pre-service science teacher at Julio Ledesma National High School, and served as a student assistant and student government officer at the university."
   }
 }

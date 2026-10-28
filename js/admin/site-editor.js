@@ -3,6 +3,7 @@
  */
 
 import { store } from '../store.js';
+import { processImageUpload } from '../media.js';
 
 export async function renderSiteEditor(container) {
   const site = store.site || {};
@@ -18,6 +19,9 @@ export async function renderSiteEditor(container) {
       <div class="admin-card-header">
         <h3 style="font-size: 1.15rem; color: var(--text-primary);">Site Identity &amp; Positioning</h3>
       </div>
+      <label class="portrait-upload" for="portrait-file" tabindex="0" role="button"><img id="portrait-preview" src="${safe(identity.avatar)}" alt="Current profile photo"><span>Change profile photo</span></label>
+      <input id="portrait-file" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+      <p>Photo changes are saved as a local draft; publish to make them public.</p>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
         <div class="form-group">
@@ -58,6 +62,7 @@ export async function renderSiteEditor(container) {
       <div class="form-group"><label for="overview-description" class="form-label">Introduction to sections</label><textarea id="overview-description" class="form-textarea">${safe(overview.description)}</textarea></div>
       <div class="form-group"><label for="overview-action" class="form-label">Profile link label</label><input id="overview-action" class="form-input" value="${safe(overview.action_label)}" /></div>
       <div class="form-group"><label for="overview-learning" class="form-label">Learning heading</label><input id="overview-learning" class="form-input" value="${safe(overview.learning_heading)}" /></div>
+      <div class="form-group"><label for="overview-biography" class="form-label">Overview biography</label><textarea id="overview-biography" class="form-textarea">${safe(overview.biography)}</textarea></div>
     </div>
 
     <div class="admin-card">
@@ -134,6 +139,7 @@ export async function renderSiteEditor(container) {
       description: container.querySelector('#overview-description').value.trim(),
       action_label: container.querySelector('#overview-action').value.trim(),
       learning_heading: container.querySelector('#overview-learning').value.trim()
+      ,biography: container.querySelector('#overview-biography').value.trim()
     };
     store.site.seo = {
       ...store.site.seo,
@@ -158,6 +164,22 @@ export async function renderSiteEditor(container) {
   };
 
   container.querySelectorAll('input, textarea').forEach(el => {
+    if (el.id === 'portrait-file') return;
     el.addEventListener('change', saveIdentity);
+  });
+  const portraitFile = container.querySelector('#portrait-file');
+  container.querySelector('.portrait-upload')?.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); portraitFile.click(); } });
+  const existingPortrait = await store.loadDraft(identity.avatar);
+  if (existingPortrait instanceof Blob && container.querySelector('#portrait-preview')) container.querySelector('#portrait-preview').src = URL.createObjectURL(existingPortrait);
+  portraitFile?.addEventListener('change', async () => {
+    const file = portraitFile.files[0]; if (!file) return;
+    try {
+      const processed = await processImageUpload(file);
+      const path = `assets/images/profile-${Date.now()}.webp`;
+      await store.saveDraft(path, processed.blob);
+      container.querySelector('#id-avatar').value = path;
+      container.querySelector('#portrait-preview').src = processed.dataUrl;
+      await saveIdentity();
+    } catch (err) { alert('Could not save the photo: ' + err.message); }
   });
 }
