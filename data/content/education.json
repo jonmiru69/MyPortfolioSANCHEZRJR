@@ -1,6 +1,23 @@
 {
-  "summary": "Academic qualifications, graduate studies, Latin honors, scholarship grants, and verified transcripts.",
+  "summary": "Academic qualifications and professional learning.",
   "items": [
+    {
+      "id": "edu-bsed-science",
+      "title": "Bachelor of Secondary Education",
+      "subtitle": "Major in Science",
+      "organization": "Central Philippines State University – San Carlos Campus",
+      "date_start": "2021",
+      "date_end": "2025-06-24",
+      "description": "Graduated June 24, 2025. The official transcript remains private.",
+      "tags": [
+        "Science education"
+      ],
+      "evidence": [],
+      "links": [],
+      "visibility": "public",
+      "featured": true,
+      "order": 0
+    },
     {
       "id": "edu-1",
       "title": "Master of Arts in Education (MAEd)",
@@ -9,7 +26,12 @@
       "date_start": "2023",
       "date_end": "Present",
       "description": "Completed all academic course units with high distinction. Currently conducting thesis research on 'Inquiry-Based Modular Interventions in Junior High School Life Sciences under the MATATAG Framework'.",
-      "tags": ["Graduate Studies", "Science Pedagogy", "Curriculum Design", "Action Research"],
+      "tags": [
+        "Graduate Studies",
+        "Science Pedagogy",
+        "Curriculum Design",
+        "Action Research"
+      ],
       "evidence": [
         {
           "label": "Certificate of Course Completion (Academic Units)",
@@ -19,9 +41,12 @@
         }
       ],
       "links": [
-        { "label": "View Graduate School Portal", "url": "#" }
+        {
+          "label": "View Graduate School Portal",
+          "url": "#"
+        }
       ],
-      "visibility": "public",
+      "visibility": "hidden",
       "featured": true,
       "order": 1
     },
@@ -33,7 +58,12 @@
       "date_start": "2015",
       "date_end": "2019",
       "description": "Graduated Cum Laude with a General Weighted Average (GWA) of 1.42. Recipient of the Academic Excellence Award and Tertiary Education Subsidy (TES) Scholarship grant.",
-      "tags": ["Undergraduate", "Biological Science", "Cum Laude", "Academic Scholar"],
+      "tags": [
+        "Undergraduate",
+        "Biological Science",
+        "Cum Laude",
+        "Academic Scholar"
+      ],
       "evidence": [
         {
           "label": "Diploma Scan (Certified True Copy)",
@@ -49,7 +79,7 @@
         }
       ],
       "links": [],
-      "visibility": "public",
+      "visibility": "hidden",
       "featured": true,
       "order": 2
     }

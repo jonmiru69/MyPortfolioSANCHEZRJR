@@ -82,6 +82,7 @@ export function renderCertificates(container, data) {
           ${item.issue_date ? `<p>Issued: ${escapeText(item.issue_date)}</p>` : ''}
           ${item.valid_until ? `<p>Valid until: ${escapeText(item.valid_until)}</p>` : ''}
           ${item.delivery_mode ? `<p>Delivery: ${escapeText(item.delivery_mode)}</p>` : ''}
+          ${/^https?:\/\//i.test(item.verification_url || '') ? `<p><a href="${escapeText(item.verification_url)}" target="_blank" rel="noopener noreferrer">Open verification page</a></p>` : ''}
 
           <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.75rem;">
             ${skillsChips}

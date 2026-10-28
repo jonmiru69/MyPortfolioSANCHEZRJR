@@ -4,15 +4,16 @@
     "name": "Ramelito Jr. C. Sanchez",
     "credentials": "LPT",
     "preferred_name": "Sir Johnmil",
-    "title": "High School Science & Research Educator - RA 7610",
+    "title": "High School Science & Research Educator",
     "positioning_sentence": "Advancing secondary science education and scientific inquiry through evidence-based pedagogy, curriculum alignment, and technology integration.",
     "date_range": "2019 – 2026",
     "avatar": "assets/images/profile-portrait.svg",
-    "cover_image": "assets/images/cover-hero.svg",
+    "cover_image": "assets/images/certificate-previews/ilaw.png",
     "email": "sanchez.ramelito@deped.gov.ph",
     "location": "Philippines",
     "footer_text": "Ramelito Jr. C. Sanchez, LPT (Jonmiru) · DepEd Science Educator · STE Program",
-    "label_template": "Portfolio for {name}"
+    "label_template": "Portfolio for {name}",
+    "cover_image_alt": "Certificate for ILAW in Action professional learning"
   },
   "theme": {
     "default_mode": "light",
@@ -108,8 +109,8 @@
     "success_message": "Inquiry received! Thank you for reaching out. I will be in touch shortly."
   },
   "seo": {
-    "site_title": "Ramelito Jr. C. Sanchez, LPT | High School Science & Research Educator - RA 7610",
-    "site_description": "Official tabbed professional binder of RAMELITO JR. C. SANCHEZ, LPT, High School Science & Research Educator | LICENSED UNDER RA 7610",
+    "site_title": "Ramelito Jr. C. Sanchez, LPT | Science & Research Educator",
+    "site_description": "Professional portfolio of Ramelito Jr. C. Sanchez, science and research educator.",
     "og_image": "assets/images/cover-hero.svg",
     "keywords": "Ramelito Sanchez, LPT, STE Science, MATATAG Curriculum, DepEd Portfolio, Teacher Portfolio, Science Educator"
   },

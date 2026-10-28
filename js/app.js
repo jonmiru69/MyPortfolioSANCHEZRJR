@@ -214,7 +214,7 @@ class App {
       document.title = `${tabLabel} · ${store.site?.identity?.name || 'Portfolio Binder'}`;
 
       if (route === 'cover') {
-        renderCover(this.pageContainer, store.site);
+        await renderCover(this.pageContainer, store.site);
       } else if (route === 'contents') {
         renderContents(this.pageContainer);
       } else if (route === 'profile') {

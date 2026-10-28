@@ -4,6 +4,7 @@
  */
 
 export function openLightbox(evidenceItem) {
+  const previousFocus = document.activeElement;
   // Remove any existing lightbox
   const existing = document.querySelector('.lightbox-backdrop');
   if (existing) existing.remove();
@@ -21,20 +22,22 @@ export function openLightbox(evidenceItem) {
   closeBtn.className = 'lightbox-close-btn';
   closeBtn.innerHTML = '&times;';
   closeBtn.setAttribute('aria-label', 'Close lightbox');
-  closeBtn.onclick = () => backdrop.remove();
+  const close = () => { backdrop.remove(); if (previousFocus && previousFocus.isConnected) previousFocus.focus(); };
+  closeBtn.onclick = close;
 
   const isDoc = evidenceItem.type === 'document' || (evidenceItem.file && evidenceItem.file.endsWith('.pdf'));
 
-  const img = document.createElement('img');
+  const img = document.createElement(isDoc ? 'iframe' : 'img');
   img.className = 'lightbox-img';
   img.src = evidenceItem.file || 'assets/docs/sample-certificate.svg';
-  img.alt = evidenceItem.label || 'Document preview';
+  if (isDoc) { img.title = evidenceItem.label || 'Document preview'; img.style.minHeight = '70vh'; img.style.width = '100%'; }
+  else img.alt = evidenceItem.label || 'Document preview';
 
   const bar = document.createElement('div');
   bar.className = 'lightbox-bar';
 
   const labelSpan = document.createElement('span');
-  labelSpan.innerHTML = `<strong>${evidenceItem.label || 'Evidence Document'}</strong>`;
+  labelSpan.textContent = evidenceItem.label || 'Evidence Document';
 
   const contextSpan = document.createElement('span');
   contextSpan.className = 'text-muted';
@@ -56,8 +59,10 @@ export function openLightbox(evidenceItem) {
   backdrop.appendChild(content);
 
   backdrop.addEventListener('click', (e) => {
-    if (e.target === backdrop) backdrop.remove();
+    if (e.target === backdrop) close();
   });
+  window.addEventListener('hashchange', close, { once: true });
+  backdrop.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
 
   document.body.appendChild(backdrop);
   closeBtn.focus();

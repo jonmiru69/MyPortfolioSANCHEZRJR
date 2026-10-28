@@ -71,7 +71,7 @@ export function renderContentEditor(container) {
 
         ${selectedTabId === 'certificates' ? `
         <fieldset class="admin-card"><legend>Certificate and training details</legend>
-          ${[['type','Category'], ['hours','Training hours'], ['issue_date','Issue date'], ['valid_until','Valid until'], ['credential_id','Credential or certificate number'], ['verification_url','Verification URL'], ['delivery_mode','Delivery mode']].map(([field,label]) => `
+          ${[['type','Category'], ['hours','Training hours'], ['issue_date','Issue date'], ['valid_until','Valid until'], ['credential_id','Credential or certificate number'], ['verification_url','Verification URL'], ['delivery_mode','Delivery mode'], ['preview_image','Cover preview image path']].map(([field,label]) => `
             <div class="form-group"><label class="form-label" for="certificate-${idx}-${field}">${label}</label>
               <input id="certificate-${idx}-${field}" class="form-input item-field" data-idx="${idx}" data-field="${field}" value="${String(item[field] ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" />
             </div>`).join('')}

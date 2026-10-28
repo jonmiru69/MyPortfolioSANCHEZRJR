@@ -2,8 +2,11 @@ import { store } from '../store.js';
 
 const escape = value => String(value || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-export function renderCover(container, siteData) {
+export async function renderCover(container, siteData) {
   const identity = siteData.identity || {};
+  const certificateData = await store.getTabContent('certificates');
+  if (!location.hash.includes('cover') && location.hash !== '' && location.hash !== '#/') return;
+  const previews = (certificateData.items || []).filter(item => item.visibility !== 'hidden' && item.preview_image).slice(0, 4);
   const tabs = store.getVisibleTabs();
   const featured = tabs.filter(t => !['cover', 'contents'].includes(t.id)).slice(0, 4);
   const destination = tabs.find(t => t.id === 'contents') || featured[0];
@@ -22,5 +25,6 @@ export function renderCover(container, siteData) {
         <div><h2>Explore the work</h2><p>Teaching, research and professional practice, collected in one place.</p></div>
         <div class="cover-links">${featured.map(t => `<a href="#/${escape(t.slug || t.id)}"><span>${escape(t.label)}</span><span aria-hidden="true">↗</span></a>`).join('')}</div>
       </div>
+      ${previews.length ? `<section class="cover-evidence"><div><h2>Learning in practice</h2><p>Explore a selection of professional learning records.</p><a href="#/certificates">View certificates ↗</a></div><div class="cover-evidence-images">${previews.map(item => `<a href="#/certificates"><img src="${escape(item.preview_image)}" alt="${escape(item.title)} certificate" loading="lazy"></a>`).join('')}</div></section>` : ''}
     </div>`;
 }

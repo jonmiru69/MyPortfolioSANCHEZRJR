@@ -1,6 +1,640 @@
 {
-  "summary": "Professional development programs, curriculum training, pedagogical seminars, and accredited training hours.",
+  "summary": "Certificates of participation, completion, and recognition in teaching, research, technology, and service.",
   "items": [
+    {
+      "id": "certificate-1",
+      "title": "AI learning modules for youth",
+      "subtitle": "",
+      "organization": "AI Class ASEAN",
+      "date_start": "2026-05-23",
+      "date_end": "",
+      "year": 2026,
+      "hours": null,
+      "type": "Technology",
+      "issue_date": "2026-05-23",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Online",
+      "description": "Completion of 15 AI learning modules.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/ai-class-asean.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 1
+    },
+    {
+      "id": "certificate-2",
+      "title": "AI Fluency: Framework & Foundations",
+      "subtitle": "",
+      "organization": "Anthropic",
+      "date_start": "",
+      "date_end": "",
+      "year": null,
+      "hours": null,
+      "type": "Technology",
+      "issue_date": "",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "",
+      "description": "Certificate of completion. The document does not state a date or duration.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/ai-fluency.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 2
+    },
+    {
+      "id": "certificate-3",
+      "title": "Tutorial and Remedial Services Program",
+      "subtitle": "",
+      "organization": "College of Teacher Education – Extension Program",
+      "date_start": "2025-04-04",
+      "date_end": "",
+      "year": 2025,
+      "hours": null,
+      "type": "Service",
+      "issue_date": "2025-04-04",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "",
+      "description": "Certificate of recognition for support of the program at Medina Integrated School during school year 2024–2025.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/tutorial-outreach.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 3
+    },
+    {
+      "id": "certificate-4",
+      "title": "AI Unlocked: Practical Tools for the Modern World",
+      "subtitle": "",
+      "organization": "DICT Bulacan / ICT Literacy and Competency Development Bureau",
+      "date_start": "2026-06-10",
+      "date_end": "",
+      "year": 2026,
+      "hours": 4,
+      "type": "Technology",
+      "issue_date": "2026-06-10",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Online",
+      "description": "Certificate of participation in a four-hour webinar.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/ai-unlocked.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 4
+    },
+    {
+      "id": "certificate-5",
+      "title": "Problem Solving and Decision Making in Research and Development Management",
+      "subtitle": "",
+      "organization": "DICT Region V – Catanduanes Provincial Office",
+      "date_start": "2026-06-02",
+      "date_end": "",
+      "year": 2026,
+      "hours": 2,
+      "type": "Research",
+      "issue_date": "2026-06-02",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Google Meet",
+      "description": "Certificate of attendance in a two-hour webinar.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/research-decision-making.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 5
+    },
+    {
+      "id": "certificate-6",
+      "title": "Duties and Responsibilities of Administrative Officer II in DepEd",
+      "subtitle": "",
+      "organization": "TeachTech Education Training and Assessment Center, Inc.",
+      "date_start": "2026-10-25",
+      "date_end": "",
+      "year": 2026,
+      "hours": 2,
+      "type": "Professional development",
+      "issue_date": "2026-10-25",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Zoom and YouTube",
+      "description": "Certificate of participation in a two-hour learning session.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/administrative-officer.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 6
+    },
+    {
+      "id": "certificate-7",
+      "title": "Building Safe Spaces: Communication and Action under the Anti-Bullying IRR",
+      "subtitle": "",
+      "organization": "TeachTech Education Training and Assessment Center, Inc.",
+      "date_start": "2026-08-21",
+      "date_end": "",
+      "year": 2026,
+      "hours": 2,
+      "type": "Professional development",
+      "issue_date": "2026-08-21",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Zoom and YouTube",
+      "description": "Two-hour session in the National Webinar Series on Mental Health Education in Philippine School Setting (non-CPD).",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/safe-spaces.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 7
+    },
+    {
+      "id": "certificate-8",
+      "title": "Silent Cries: Recognizing Early Warning Signs of Student Distress",
+      "subtitle": "",
+      "organization": "TeachTech Education Training and Assessment Center, Inc.",
+      "date_start": "2026-08-22",
+      "date_end": "",
+      "year": 2026,
+      "hours": 2,
+      "type": "Professional development",
+      "issue_date": "2026-08-22",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Zoom and YouTube",
+      "description": "Two-hour session in the National Webinar Series on Mental Health Education in Philippine School Setting (non-CPD).",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/student-distress.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 8
+    },
+    {
+      "id": "certificate-9",
+      "title": "Mental Health Matters: Prioritizing Yourself to Better Serve Others",
+      "subtitle": "",
+      "organization": "TeachTech Education Training and Assessment Center, Inc.",
+      "date_start": "2026-08-23",
+      "date_end": "",
+      "year": 2026,
+      "hours": 2,
+      "type": "Professional development",
+      "issue_date": "2026-08-23",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Zoom and YouTube",
+      "description": "Two-hour session in the National Webinar Series on Mental Health Education in Philippine School Setting (non-CPD).",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/mental-health-matters.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 9
+    },
+    {
+      "id": "certificate-10",
+      "title": "Discipline or Damage? The Lasting Impact of Corporal Punishment in Schools",
+      "subtitle": "",
+      "organization": "TeachTech Education Training and Assessment Center, Inc.",
+      "date_start": "2026-08-29",
+      "date_end": "",
+      "year": 2026,
+      "hours": 2,
+      "type": "Professional development",
+      "issue_date": "2026-08-29",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Zoom and YouTube",
+      "description": "Two-hour session in the National Webinar Series on Mental Health Education in Philippine School Setting (non-CPD).",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/corporal-punishment.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 10
+    },
+    {
+      "id": "certificate-11",
+      "title": "Breaking the Stigma: Challenging Myths and Misconceptions about Suicide",
+      "subtitle": "",
+      "organization": "TeachTech Education Training and Assessment Center, Inc.",
+      "date_start": "2026-08-31",
+      "date_end": "",
+      "year": 2026,
+      "hours": 2,
+      "type": "Professional development",
+      "issue_date": "2026-08-31",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Zoom and YouTube",
+      "description": "Two-hour session in the National Webinar Series on Mental Health Education in Philippine School Setting (non-CPD).",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/breaking-stigma.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 11
+    },
+    {
+      "id": "certificate-12",
+      "title": "Teaching Smarter, Not Harder: Empowering Filipino Educators with Ethical Use of Sayuna AI",
+      "subtitle": "",
+      "organization": "TeachTech Education Training and Assessment Center, Inc.",
+      "date_start": "2026-08-09",
+      "date_end": "",
+      "year": 2026,
+      "hours": 2,
+      "type": "Technology",
+      "issue_date": "2026-08-09",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Zoom and YouTube",
+      "description": "Two-hour session in a webinar series on educational technology tools (non-CPD).",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/sayuna-ai.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 12
+    },
+    {
+      "id": "certificate-13",
+      "title": "Researching Responsibly: Ethical and Responsible Use of Artificial Intelligence in Language and Linguistic Research",
+      "subtitle": "",
+      "organization": "PNU Applied Linguistics Society and PNU Graduate Society of English Language Educators",
+      "date_start": "2026-10-24",
+      "date_end": "",
+      "year": 2026,
+      "hours": null,
+      "type": "Research",
+      "issue_date": "2026-10-24",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Zoom",
+      "description": "Session 5 of Writing Qualitative Research: A Webinar Series for Thesis and Dissertation Development.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/responsible-ai-research.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 13
+    },
+    {
+      "id": "certificate-14",
+      "title": "Waves: Masterclass in Teaching Essential Science High School Content (Physics)",
+      "subtitle": "",
+      "organization": "Filipino Science Hub and Philippine Normal University",
+      "date_start": "2026-10-03",
+      "date_end": "",
+      "year": 2026,
+      "hours": 3.5,
+      "type": "Teaching",
+      "issue_date": "2026-10-06",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Online",
+      "description": "Certificate of attendance; the document states a session from 9:00 a.m. to 12:30 p.m.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/physics-waves.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 14,
+      "preview_image": "assets/images/certificate-previews/waves.png"
+    },
+    {
+      "id": "certificate-15",
+      "title": "Work, Energy, and Power: Masterclass in Teaching Essential Science High School Content (Physics)",
+      "subtitle": "",
+      "organization": "Filipino Science Hub and Philippine Normal University",
+      "date_start": "2026-10-17",
+      "date_end": "",
+      "year": 2026,
+      "hours": 3.5,
+      "type": "Teaching",
+      "issue_date": "2026-10-19",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Online",
+      "description": "Certificate of attendance; the document states a session from 9:00 a.m. to 12:30 p.m.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/physics-work-energy-power.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 15,
+      "preview_image": "assets/images/certificate-previews/work-energy.png"
+    },
+    {
+      "id": "certificate-16",
+      "title": "Electricity and Magnetism: Masterclass in Teaching Essential Science High School Content (Physics)",
+      "subtitle": "",
+      "organization": "Filipino Science Hub and Philippine Normal University",
+      "date_start": "2026-10-10",
+      "date_end": "",
+      "year": 2026,
+      "hours": 3.5,
+      "type": "Teaching",
+      "issue_date": "2026-10-12",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Online",
+      "description": "Certificate of attendance; the document states a session from 9:00 a.m. to 12:30 p.m.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/physics-electricity-magnetism.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 16,
+      "preview_image": "assets/images/certificate-previews/electricity.png"
+    },
+    {
+      "id": "certificate-17",
+      "title": "ILAW in Action: Design and Deliver Effective Lessons through Explicit Instruction",
+      "subtitle": "",
+      "organization": "DepEd NEAP and GBF STEM Collab",
+      "date_start": "2026-09-10",
+      "date_end": "",
+      "year": 2026,
+      "hours": 24,
+      "type": "Teaching",
+      "issue_date": "2026-10-02",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Online",
+      "description": "Webinar held September 10–12, 2026; certificate states 24 training hours.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/ilaw-in-action.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 17,
+      "preview_image": "assets/images/certificate-previews/ilaw.png"
+    },
+    {
+      "id": "certificate-18",
+      "title": "Artificial Intelligence for Communities Workshop",
+      "subtitle": "",
+      "organization": "VJAL Institute",
+      "date_start": "2026-06-05",
+      "date_end": "",
+      "year": 2026,
+      "hours": null,
+      "type": "Technology",
+      "issue_date": "2026-06-05",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "",
+      "description": "Certificate of completion. Duration is not stated.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/ai-for-communities.pdf",
+          "type": "document",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 18
+    },
+    {
+      "id": "certificate-19",
+      "title": "3rd ISTREL International Transdisciplinary Research Conference 2026",
+      "subtitle": "",
+      "organization": "International Society of Transdisciplinary Researchers, Educators, and Leaders, Inc.",
+      "date_start": "2026-05-31",
+      "date_end": "",
+      "year": 2026,
+      "hours": null,
+      "type": "Research",
+      "issue_date": "2026-05-31",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Google Meet",
+      "description": "Certificate of participation.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/istrel-conference.png",
+          "type": "image",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 19
+    },
+    {
+      "id": "certificate-20",
+      "title": "2nd Southeast Asian Conference on Indigenous Peoples 2026",
+      "subtitle": "",
+      "organization": "International Society of Transdisciplinary Researchers, Educators, and Leaders, Inc.",
+      "date_start": "2026-05-31",
+      "date_end": "",
+      "year": 2026,
+      "hours": null,
+      "type": "Research",
+      "issue_date": "2026-05-31",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Google Meet",
+      "description": "Certificate of participation.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/indigenous-peoples-conference.png",
+          "type": "image",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 20
+    },
+    {
+      "id": "certificate-21",
+      "title": "PAFTE Free Webinar Series 7",
+      "subtitle": "",
+      "organization": "Philippine Association for Teachers and Educators, Inc.",
+      "date_start": "2026-09-12",
+      "date_end": "",
+      "year": 2026,
+      "hours": 4,
+      "type": "Teaching",
+      "issue_date": "2026-09-12",
+      "valid_until": "",
+      "credential_id": "",
+      "verification_url": "",
+      "delivery_mode": "Microsoft Live",
+      "description": "Three learning sessions covering active learning, inclusive education, and interactive learning in the age of AI.",
+      "skills": [],
+      "tags": [],
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/pafte-webinar-series-7.jpg",
+          "type": "image",
+          "context": "Certificate supplied by the portfolio owner."
+        }
+      ],
+      "visibility": "public",
+      "featured": false,
+      "order": 21
+    },
     {
       "id": "cert-3",
       "title": "Division Research Congress & Ethics in Student Investigatory Projects",
@@ -30,7 +664,7 @@
           "context": "Accreditation for Junior High School STE research advisers."
         }
       ],
-      "visibility": "public",
+      "visibility": "hidden",
       "featured": true,
       "order": 3
     },
@@ -63,7 +697,7 @@
           "context": "Issued under the DepEd OER Digital Learning Initiative."
         }
       ],
-      "visibility": "public",
+      "visibility": "hidden",
       "featured": false,
       "order": 4
     }
