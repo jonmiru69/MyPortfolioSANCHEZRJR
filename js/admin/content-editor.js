@@ -8,9 +8,9 @@ import { createDefaultItem } from '../schema.js';
 import { processImageUpload, validateDocumentUpload, formatBytes } from '../media.js';
 const safe = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-export function renderContentEditor(container) {
+export function renderContentEditor(container, initialTabId = null, initialItemId = null) {
   const tabs = (store.site?.tabs || []).filter(t => t.id !== 'cover' && t.id !== 'contents');
-  let selectedTabId = tabs[0]?.id || 'profile';
+  let selectedTabId = tabs.some(t => t.id === initialTabId) ? initialTabId : (tabs[0]?.id || 'profile');
 
   async function renderEditor() {
     const content = await store.getTabContent(selectedTabId);
@@ -20,13 +20,13 @@ export function renderContentEditor(container) {
       <option value="${t.id}" ${t.id === selectedTabId ? 'selected' : ''}>${t.label} (${t.id})</option>
     `).join('');
 
-    const itemsHtml = items.map((item, idx) => `
+    const itemsHtml = items.map((item, idx) => initialItemId && item.id !== initialItemId ? '' : `
       <div class="admin-card" style="margin-bottom: 1rem; border-left: 3px solid ${item.visibility === 'hidden' ? 'var(--text-muted)' : 'var(--color-accent)'};">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
           <div>
             <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-accent);">ITEM #${idx + 1} · ID: ${item.id}</span>
-            <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-top: 0.2rem;">${item.title || '(Untitled Item)'}</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">${item.subtitle || ''}</p>
+            <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-top: 0.2rem;">${safe(item.title || '(Untitled Item)')}</h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">${safe(item.subtitle || '')}</p>
           </div>
           <div style="display: flex; gap: 0.4rem; align-items: center;">
             <button class="btn btn-secondary btn-sm btn-item-up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''}>↑</button>
@@ -46,33 +46,33 @@ export function renderContentEditor(container) {
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem;">
           <div class="form-group">
             <label class="form-label">Item Title</label>
-            <input type="text" class="form-input item-field" data-idx="${idx}" data-field="title" value="${item.title || ''}" />
+            <input type="text" class="form-input item-field" data-idx="${idx}" data-field="title" value="${safe(item.title || '')}" />
           </div>
           <div class="form-group">
             <label class="form-label">Subtitle / Specialization</label>
-            <input type="text" class="form-input item-field" data-idx="${idx}" data-field="subtitle" value="${item.subtitle || ''}" />
+            <input type="text" class="form-input item-field" data-idx="${idx}" data-field="subtitle" value="${safe(item.subtitle || '')}" />
           </div>
           <div class="form-group">
             <label class="form-label">Organization / School</label>
-            <input type="text" class="form-input item-field" data-idx="${idx}" data-field="organization" value="${item.organization || ''}" />
+            <input type="text" class="form-input item-field" data-idx="${idx}" data-field="organization" value="${safe(item.organization || '')}" />
           </div>
           <div class="form-group">
             <label class="form-label">Date Range</label>
             <div style="display: flex; gap: 0.5rem;">
-              <input type="text" class="form-input item-field" data-idx="${idx}" data-field="date_start" value="${item.date_start || ''}" placeholder="Start" />
-              <input type="text" class="form-input item-field" data-idx="${idx}" data-field="date_end" value="${item.date_end || ''}" placeholder="End" />
+              <input type="text" class="form-input item-field" data-idx="${idx}" data-field="date_start" value="${safe(item.date_start || '')}" placeholder="Start" />
+              <input type="text" class="form-input item-field" data-idx="${idx}" data-field="date_end" value="${safe(item.date_end || '')}" placeholder="End" />
             </div>
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Description / Abstract</label>
-          <textarea class="form-textarea item-field" data-idx="${idx}" data-field="description" style="min-height: 80px;">${item.description || ''}</textarea>
+          <textarea class="form-textarea item-field" data-idx="${idx}" data-field="description" style="min-height: 80px;">${safe(item.description || '')}</textarea>
         </div>
 
         ${selectedTabId === 'certificates' ? `
         <fieldset class="admin-card"><legend>Certificate and training details</legend>
-          ${[['type','Category'], ['hours','Training hours'], ['issue_date','Issue date'], ['valid_until','Valid until'], ['credential_id','Credential or certificate number'], ['verification_url','Verification URL'], ['delivery_mode','Delivery mode'], ['preview_image','Cover preview image path']].map(([field,label]) => `
+          ${[['type','Category'], ['certificate_kind','Certificate type'], ['hours','Training hours'], ['issue_date','Issue date'], ['valid_until','Valid until'], ['credential_id','Credential or certificate number'], ['verification_url','Verification URL'], ['delivery_mode','Delivery mode'], ['preview_image','Cover preview image path']].map(([field,label]) => `
             <div class="form-group"><label class="form-label" for="certificate-${idx}-${field}">${label}</label>
               <input id="certificate-${idx}-${field}" class="form-input item-field" data-idx="${idx}" data-field="${field}" value="${String(item[field] ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" />
             </div>`).join('')}
@@ -153,6 +153,7 @@ export function renderContentEditor(container) {
     // Tab Switcher
     container.querySelector('#select-active-tab')?.addEventListener('change', (e) => {
       selectedTabId = e.target.value;
+      initialItemId = null;
       renderEditor();
     });
 

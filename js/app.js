@@ -5,6 +5,7 @@
 
 import { store } from './store.js';
 import { router } from './router.js';
+import { setupInlineOwner } from './inline-owner.js';
 
 // Renderers
 import { renderCover } from './render/cover.js';
@@ -85,6 +86,7 @@ class App {
     this.setupHeader();
     this.setupFooter();
     this.renderTabs();
+    this.ownerTools = setupInlineOwner(this);
     const menu = document.getElementById('section-menu-toggle');
     if (menu && this.tabsContainer) {
       document.documentElement.classList.add('js-nav');
@@ -286,6 +288,7 @@ class App {
         const data = await store.getTabContent(route);
         renderCustom(this.pageContainer, tabMeta || { label: route, id: route }, data);
       }
+      this.ownerTools?.decorate();
     } catch (err) {
       console.error(`Error loading tab "${route}":`, err);
       this.pageContainer.innerHTML = `
@@ -299,6 +302,7 @@ class App {
       `;
     }
   }
+  currentRoute() { return router.currentRoute; }
 }
 
 // Bootstrap on DOM ready

@@ -16,7 +16,7 @@ export function renderLicenses(container, data) {
     `).join('');
 
     return `
-      <div class="evidence-sleeve">
+      <div class="evidence-sleeve" data-owner-item="${String(item.id || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')}">
         <div class="evidence-header">
           <div>
             <h3 class="evidence-title">${item.title}</h3>

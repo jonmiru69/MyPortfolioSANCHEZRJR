@@ -20,7 +20,7 @@ export function renderResearch(container, data) {
     `).join('');
 
     return `
-      <div class="evidence-sleeve">
+      <div class="evidence-sleeve" data-owner-item="${String(item.id || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')}">
         <div class="evidence-header">
           <div>
             <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">

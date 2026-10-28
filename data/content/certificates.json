@@ -33,7 +33,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 1
+      "order": 1,
+      "certificate_kind": "Completion record"
     },
     {
       "id": "certificate-2",
@@ -66,7 +67,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 2
+      "order": 2,
+      "certificate_kind": "Completion"
     },
     {
       "id": "certificate-3",
@@ -99,7 +101,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 3
+      "order": 3,
+      "certificate_kind": "Recognition"
     },
     {
       "id": "certificate-4",
@@ -132,7 +135,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 4
+      "order": 4,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-5",
@@ -165,7 +169,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 5
+      "order": 5,
+      "certificate_kind": "Attendance"
     },
     {
       "id": "certificate-6",
@@ -195,7 +200,8 @@
       ],
       "visibility": "hidden",
       "featured": false,
-      "order": 6
+      "order": 6,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-7",
@@ -228,7 +234,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 7
+      "order": 7,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-8",
@@ -261,7 +268,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 8
+      "order": 8,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-9",
@@ -294,7 +302,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 9
+      "order": 9,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-10",
@@ -327,7 +336,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 10
+      "order": 10,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-11",
@@ -360,7 +370,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 11
+      "order": 11,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-12",
@@ -393,7 +404,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 12
+      "order": 12,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-13",
@@ -426,7 +438,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 13
+      "order": 13,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-14",
@@ -460,7 +473,8 @@
       "visibility": "public",
       "featured": false,
       "order": 14,
-      "preview_image": "assets/images/certificate-previews/waves.png"
+      "preview_image": "assets/images/certificate-previews/waves.png",
+      "certificate_kind": "Attendance"
     },
     {
       "id": "certificate-15",
@@ -494,7 +508,8 @@
       "visibility": "public",
       "featured": false,
       "order": 15,
-      "preview_image": "assets/images/certificate-previews/work-energy.png"
+      "preview_image": "assets/images/certificate-previews/work-energy.png",
+      "certificate_kind": "Attendance"
     },
     {
       "id": "certificate-16",
@@ -528,7 +543,8 @@
       "visibility": "public",
       "featured": false,
       "order": 16,
-      "preview_image": "assets/images/certificate-previews/electricity.png"
+      "preview_image": "assets/images/certificate-previews/electricity.png",
+      "certificate_kind": "Attendance"
     },
     {
       "id": "certificate-17",
@@ -559,7 +575,8 @@
       "visibility": "hidden",
       "featured": false,
       "order": 17,
-      "preview_image": "assets/images/certificate-previews/ilaw.png"
+      "preview_image": "assets/images/certificate-previews/ilaw.png",
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-18",
@@ -592,7 +609,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 18
+      "order": 18,
+      "certificate_kind": "Completion"
     },
     {
       "id": "certificate-19",
@@ -625,7 +643,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 19
+      "order": 19,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-20",
@@ -658,7 +677,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 20
+      "order": 20,
+      "certificate_kind": "Participation"
     },
     {
       "id": "certificate-21",
@@ -691,7 +711,8 @@
       ],
       "visibility": "public",
       "featured": false,
-      "order": 21
+      "order": 21,
+      "certificate_kind": "Participation"
     }
   ]
 }

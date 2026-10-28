@@ -4,6 +4,7 @@
  */
 
 import { openLightbox } from './lightbox.js';
+import { store } from '../store.js';
 const escapeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 export function renderCertificates(container, data) {
@@ -11,6 +12,7 @@ export function renderCertificates(container, data) {
   let currentTypeFilter = 'all';
   let currentYearFilter = 'all';
   let currentSort = 'newest';
+  let thumbnailUrls = [];
 
   // Extract unique years and types
   const itemYear = item => (item.date_start || '').slice(0, 4) || String(item.year || '');
@@ -38,6 +40,7 @@ export function renderCertificates(container, data) {
   function updateList() {
     const listContainer = container.querySelector('#cert-list-container');
     if (!listContainer) return;
+    thumbnailUrls.forEach(url => URL.revokeObjectURL(url)); thumbnailUrls = [];
 
     const filtered = getFilteredItems();
     if (filtered.length === 0) {
@@ -52,18 +55,20 @@ export function renderCertificates(container, data) {
     listContainer.innerHTML = filtered.map(item => {
       const evidenceChips = (item.evidence || []).map((ev, evIdx) => `
         <button class="chip chip-evidence btn-preview-evidence" data-item-id="${escapeText(item.id)}" data-ev-idx="${evIdx}">
-          ${escapeText(ev.label || 'View certificate')}
+          ${ev.preview_images?.[0] ? `<img class="certificate-thumbnail" src="${escapeText(ev.preview_images[0])}" alt="" loading="lazy">` : ''}
+          <span>${escapeText(ev.label || 'View certificate')}</span>
         </button>
       `).join('');
 
       const skillsChips = (item.skills || []).map(s => `<span class="chip">${escapeText(s)}</span>`).join('');
 
       return `
-        <div class="evidence-sleeve">
+        <div class="evidence-sleeve" data-owner-item="${escapeText(item.id)}">
           <div class="evidence-header">
             <div>
               <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
                 <span class="chip chip-accent">${escapeText(item.type || 'Training')}</span>
+                ${item.certificate_kind ? `<span class="chip">${escapeText(item.certificate_kind)}</span>` : ''}
                 ${item.hours != null && item.hours !== '' ? `<span class="chip">${escapeText(item.hours)} hours</span>` : ''}
               </div>
               <h3 class="evidence-title">${escapeText(item.title)}</h3>
@@ -100,6 +105,12 @@ export function renderCertificates(container, data) {
     }).join('');
 
     // Reattach preview listeners
+    listContainer.querySelectorAll('.certificate-thumbnail').forEach(img => {
+      const path = img.getAttribute('src');
+      store.loadDraft(path).then(blob => {
+        if (blob instanceof Blob && img.isConnected) { const url = URL.createObjectURL(blob); thumbnailUrls.push(url); img.src = url; }
+      });
+    });
     listContainer.querySelectorAll('.btn-preview-evidence').forEach(btn => {
       btn.addEventListener('click', () => {
         const itemId = btn.getAttribute('data-item-id');
@@ -110,6 +121,7 @@ export function renderCertificates(container, data) {
         }
       });
     });
+    container.dispatchEvent(new CustomEvent('portfolio-list-rendered', { bubbles: true }));
   }
 
   const typeOptions = types.map(t => `<option value="${escapeText(t)}">${escapeText(t)}</option>`).join('');

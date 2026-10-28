@@ -18,7 +18,7 @@ export function renderEducation(container, data) {
     const tagsHtml = (item.tags || []).map(t => `<span class="chip">${t}</span>`).join('');
 
     return `
-      <div class="evidence-sleeve">
+      <div class="evidence-sleeve" data-owner-item="${String(item.id || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')}">
         <div class="evidence-header">
           <div>
             <h3 class="evidence-title">${item.title}</h3>
