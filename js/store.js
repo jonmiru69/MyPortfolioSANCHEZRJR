@@ -134,7 +134,7 @@ class Store {
       // Fallback minimal configuration
       this.site = {
         version: 1,
-        identity: { name: "Ramelito Jr. C. Sanchez", credentials: "LPT", title: "Educator" },
+        identity: { name: "Portfolio owner", credentials: "", title: "" },
         theme: { default_mode: "dark" },
         tabs: [{ id: "cover", slug: "cover", label: "Cover", enabled: true, order: 1 }]
       };

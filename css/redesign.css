@@ -82,3 +82,13 @@ body { font-size: 16px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
+
+/* User-supplied cyan palette: #1d9db5 #28c0dd #54cde4 #80daeb #ace7f2 #d8f4f9 #fff */
+[data-theme="light"] { --bg-canvas:#d8f4f9; --bg-binder:#fff; --bg-surface:#fff; --bg-surface-elevated:#d8f4f9; --text-primary:#082e38; --text-secondary:#16434d; --text-muted:#315a63; --text-on-accent:#062f39; }
+[data-theme="dark"] { --bg-canvas:#082e38; --bg-binder:#103f49; --bg-surface:#103f49; --bg-surface-elevated:#185461; --text-primary:#fff; --text-secondary:#d8f4f9; --text-muted:#ace7f2; --text-on-accent:#062f39; }
+:root { --font-display:"Albert Sans","Segoe UI",sans-serif; --font-body:"Albert Sans","Segoe UI",sans-serif; --font-mono:"Albert Sans","Segoe UI",sans-serif; }
+.cover-image { background:#1d9db5; perspective:1000px; }
+.cover-image img { transition:transform .4s ease; }
+@media (hover:hover) and (prefers-reduced-motion:no-preference) { .cover-image:hover img { transform:scale(1.025) rotateY(-3deg); } .cover-links a:hover { transform:translateX(5px); } }
+.cover-links a { transition:transform .2s ease; }
+.btn-primary, .skip-link { color:#062f39; }

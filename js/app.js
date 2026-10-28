@@ -71,9 +71,35 @@ class App {
       }
     }
 
+    const seo = store.site?.seo || {};
+    const setMeta = (selector, value) => { const el = document.querySelector(selector); if (el && value) el.content = value; };
+    setMeta('meta[name="description"]', seo.site_description);
+    setMeta('meta[name="keywords"]', seo.keywords);
+    setMeta('meta[name="author"]', store.site?.identity?.name);
+    setMeta('meta[property="og:title"]', seo.site_title);
+    setMeta('meta[property="og:description"]', seo.site_description);
+    setMeta('meta[property="og:image"]', seo.og_image);
+    setMeta('meta[name="twitter:title"]', seo.site_title);
+    setMeta('meta[name="twitter:description"]', seo.site_description);
+    setMeta('meta[name="twitter:image"]', seo.og_image);
     this.setupHeader();
     this.setupFooter();
     this.renderTabs();
+    const menu = document.getElementById('section-menu-toggle');
+    if (menu && this.tabsContainer) {
+      document.documentElement.classList.add('js-nav');
+      menu.addEventListener('click', () => {
+        const open = menu.getAttribute('aria-expanded') !== 'true';
+        menu.setAttribute('aria-expanded', String(open));
+        this.tabsContainer.classList.toggle('menu-open', open);
+      });
+      this.tabsContainer.addEventListener('click', event => {
+        if (event.target.closest('a')) {
+          menu.setAttribute('aria-expanded', 'false');
+          this.tabsContainer.classList.remove('menu-open');
+        }
+      });
+    }
 
     // Setup Route Listeners
     store.subscribe('route-changed', (route) => this.handleRoute(route));
@@ -83,7 +109,7 @@ class App {
     });
     store.subscribe('theme-changed', (mode) => {
       if (this.themeToggleBtn) {
-        this.themeToggleBtn.innerHTML = mode === 'dark' ? '☀️ Paper' : '🌙 Dark';
+        this.themeToggleBtn.innerHTML = mode === 'dark' ? 'Light mode' : 'Dark mode';
       }
     });
 
@@ -105,7 +131,7 @@ class App {
 
     // Theme Toggle
     if (this.themeToggleBtn) {
-      this.themeToggleBtn.innerHTML = store.themeMode === 'dark' ? '☀️ Paper' : '🌙 Dark';
+      this.themeToggleBtn.innerHTML = store.themeMode === 'dark' ? 'Light mode' : 'Dark mode';
       this.themeToggleBtn.addEventListener('click', () => store.toggleTheme());
     }
 
@@ -135,18 +161,17 @@ class App {
     const visibleTabs = store.getVisibleTabs();
 
     this.tabsContainer.innerHTML = visibleTabs.map((tab, idx) => {
-      const num = (idx + 1).toString().padStart(2, '0');
+
       const isActive = router.currentRoute === tab.slug || router.currentRoute === tab.id;
       return `
-        <a 
-          href="#/${tab.slug || tab.id}" 
-          class="binder-tab ${isActive ? 'active' : ''}" 
+        <a
+          href="#/${tab.slug || tab.id}"
+          class="binder-tab ${isActive ? 'active' : ''}"
           data-tab-slug="${tab.slug || tab.id}"
-          role="tab"
-          aria-selected="${isActive ? 'true' : 'false'}"
+          ${isActive ? 'aria-current="page"' : ''}
           title="${tab.label}: ${tab.summary || ''}"
         >
-          <span class="binder-tab-num">${num}</span>
+
           <span class="binder-tab-label">${tab.label}</span>
         </a>
       `;

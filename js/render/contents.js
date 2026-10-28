@@ -36,12 +36,12 @@ export function renderContents(container) {
       <span class="signature-heading">TABLE OF CONTENTS</span>
       <h2 class="tab-title">Portfolio Evidence Index</h2>
       <p class="tab-summary">
-        A structured catalog of professional competencies, instructional materials, investigatory research outputs, and verified PPST means of verification.
+        Choose a section to explore the portfolio.
       </p>
 
       <div style="display: flex; gap: 0.75rem; margin-bottom: 2rem;">
         <button id="btn-print-binder" class="btn btn-secondary btn-sm">
-          🖨️ Print Full Binder
+          Print this page
         </button>
       </div>
 

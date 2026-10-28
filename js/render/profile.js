@@ -51,8 +51,8 @@ export function renderProfile(container, data, siteData) {
             alt="Portrait of ${identity.name || 'Educator'}" 
             style="width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 1.25rem; display: block; border: 2px solid var(--color-accent);"
           />
-          <h4 style="font-size: 1.2rem; margin-bottom: 0.2rem;">${identity.name || 'Ramelito Jr. C. Sanchez'}</h4>
-          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-accent);">${identity.credentials || 'LPT'} · ${identity.preferred_name ? `("${identity.preferred_name}")` : ''}</span>
+          <h4 style="font-size: 1.2rem; margin-bottom: 0.2rem;">${identity.name || 'Portfolio owner'}</h4>
+          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-accent);">${identity.credentials || ''} · ${identity.preferred_name ? `("${identity.preferred_name}")` : ''}</span>
           
           <table style="width: 100%; border-collapse: collapse; margin-top: 1.5rem; text-align: left;">
             <tbody>

@@ -73,28 +73,9 @@ class Router {
       }
     }
 
-    if (this.currentRoute === 'admin') return; // Do not flip tabs in admin panel
-
-    const visibleTabs = store.getVisibleTabs();
-    if (!visibleTabs || visibleTabs.length === 0) return;
-
-    const currentIndex = visibleTabs.findIndex(t => t.slug === this.currentRoute || t.id === this.currentRoute);
-
-    if (e.key === 'ArrowRight' || e.key === 'PageDown') {
-      e.preventDefault();
-      const nextIndex = (currentIndex + 1) % visibleTabs.length;
-      this.navigate(visibleTabs[nextIndex].slug || visibleTabs[nextIndex].id);
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-      e.preventDefault();
-      const prevIndex = (currentIndex - 1 + visibleTabs.length) % visibleTabs.length;
-      this.navigate(visibleTabs[prevIndex].slug || visibleTabs[prevIndex].id);
-    } else if (e.key === 'Home') {
-      e.preventDefault();
-      this.navigate(visibleTabs[0].slug || visibleTabs[0].id);
-    } else if (e.key === 'End') {
-      e.preventDefault();
-      this.navigate(visibleTabs[visibleTabs.length - 1].slug || visibleTabs[visibleTabs.length - 1].id);
-    }
+    // Ordinary arrow, Home and End keys keep their browser and control behavior.
+    // The visible navigation links provide keyboard access to every section.
+    return;
   }
 }
 

@@ -16,8 +16,8 @@
   },
   "theme": {
     "default_mode": "light",
-    "color_accent": "#3b8296",
-    "bg_canvas": "#0a0b0d",
+    "color_accent": "#28c0dd",
+    "bg_canvas": "#082e38",
     "tracking_display": "0.35em",
     "transition_speed": "400ms"
   },

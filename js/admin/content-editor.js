@@ -69,6 +69,14 @@ export function renderContentEditor(container) {
           <textarea class="form-textarea item-field" data-idx="${idx}" data-field="description" style="min-height: 80px;">${item.description || ''}</textarea>
         </div>
 
+        ${selectedTabId === 'certificates' ? `
+        <fieldset class="admin-card"><legend>Certificate and training details</legend>
+          ${[['type','Category'], ['hours','Training hours'], ['issue_date','Issue date'], ['valid_until','Valid until'], ['credential_id','Credential or certificate number'], ['verification_url','Verification URL'], ['delivery_mode','Delivery mode']].map(([field,label]) => `
+            <div class="form-group"><label class="form-label" for="certificate-${idx}-${field}">${label}</label>
+              <input id="certificate-${idx}-${field}" class="form-input item-field" data-idx="${idx}" data-field="${field}" value="${String(item[field] ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}" />
+            </div>`).join('')}
+          <p>Leave a field blank when the document does not state it. Details do not establish independent verification.</p>
+        </fieldset>` : ''}
         <!-- Evidence Attachment Management -->
         <div style="background: var(--bg-surface); border: 1px dashed var(--border-color); border-radius: var(--radius-sm); padding: 1rem; margin-top: 1rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
@@ -143,7 +151,7 @@ export function renderContentEditor(container) {
         const idx = parseInt(e.target.getAttribute('data-idx'), 10);
         const field = e.target.getAttribute('data-field');
         if (content.items[idx]) {
-          content.items[idx][field] = e.target.value;
+          content.items[idx][field] = field === 'hours' ? (e.target.value === '' ? null : Number(e.target.value)) : e.target.value;
           await store.saveDraft(`content/${selectedTabId}.json`, content);
         }
       });
