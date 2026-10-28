@@ -4,6 +4,7 @@
  */
 
 import { openLightbox } from './lightbox.js';
+const escapeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 export function renderCertificates(container, data) {
   let items = (data?.items || []).filter(i => i.visibility !== 'hidden');
@@ -62,7 +63,7 @@ export function renderCertificates(container, data) {
             <div>
               <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
                 <span class="chip chip-accent">${item.type || 'Training'}</span>
-                <span class="chip">${item.hours || 0} Hours</span>
+                ${item.hours != null && item.hours !== '' ? `<span class="chip">${escapeText(item.hours)} hours</span>` : ''}
               </div>
               <h3 class="evidence-title">${item.title}</h3>
               <p class="evidence-subtitle">${item.subtitle || ''}</p>
@@ -77,6 +78,10 @@ export function renderCertificates(container, data) {
           <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 0.75rem;">
             ${item.description}
           </p>
+
+          ${item.issue_date ? `<p>Issued: ${escapeText(item.issue_date)}</p>` : ''}
+          ${item.valid_until ? `<p>Valid until: ${escapeText(item.valid_until)}</p>` : ''}
+          ${item.delivery_mode ? `<p>Delivery: ${escapeText(item.delivery_mode)}</p>` : ''}
 
           <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.75rem;">
             ${skillsChips}
