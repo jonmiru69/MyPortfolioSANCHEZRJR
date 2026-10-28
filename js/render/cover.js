@@ -16,6 +16,7 @@ export async function renderCover(container, siteData) {
         <h1 class="cover-name">${escape(identity.name || 'Portfolio')}</h1>
         <p class="overview-title">${escape(identity.title)}${identity.credentials ? ` · ${escape(identity.credentials)}` : ''}</p>
         <p class="cover-statement">${escape(identity.positioning_sentence)}</p>
+        ${identity.licensure_rating ? `<p class="overview-rating">Licensure GWA rating: ${escape(identity.licensure_rating)}</p>` : ''}
         <a class="btn btn-primary cover-action" href="#/profile">${escape(overview.action_label || 'Read my profile')} <span aria-hidden="true">↗</span></a>
       </div>
       <section class="overview-content">

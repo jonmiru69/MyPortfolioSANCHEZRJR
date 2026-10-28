@@ -26,14 +26,14 @@ export function renderProfile(container, data, siteData) {
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; margin-bottom: 2.5rem; align-items: start;">
         <div>
-          <div style="margin-bottom: 2rem;">
+          ${profile.statement ? `<div style="margin-bottom: 2rem;">
             <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; color: var(--color-accent); font-family: var(--font-display); letter-spacing: var(--tracking-wide); text-transform: uppercase;">
               Teaching Ethos &amp; Mission
             </h3>
             <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-primary); font-style: italic;">
               "${profile.statement || ''}"
             </p>
-          </div>
+          </div>` : ''}
 
           <div>
             <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; color: var(--color-accent); font-family: var(--font-display); letter-spacing: var(--tracking-wide); text-transform: uppercase;">

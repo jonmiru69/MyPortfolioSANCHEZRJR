@@ -22,20 +22,18 @@ export function renderLicenses(container, data) {
             <h3 class="evidence-title">${item.title}</h3>
             <p class="evidence-subtitle">${item.subtitle || ''}</p>
           </div>
-          <span class="chip chip-accent" style="font-family: var(--font-mono); font-size: 0.75rem;">
-            ${item.status || 'Active'}
-          </span>
+          ${item.status ? `<span class="chip chip-accent">${item.status}</span>` : ''}
         </div>
 
         <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 0.85rem 1rem; margin: 0.75rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-          <div>
+          ${item.license_number_masked ? `<div>
             <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); display: block;">MASKED REGISTRATION / SERIAL:</span>
             <strong style="font-family: var(--font-mono); font-size: 0.95rem; color: var(--text-primary); letter-spacing: 0.05em;">${item.license_number_masked}</strong>
-          </div>
-          <div>
-            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); display: block;">VERIFIED RATING:</span>
-            <strong style="font-family: var(--font-mono); font-size: 0.95rem; color: var(--color-accent);">${item.rating || 'Verified'}</strong>
-          </div>
+          </div>` : ''}
+          ${item.rating ? `<div>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); display: block;">LICENSURE GWA RATING:</span>
+            <strong style="font-family: var(--font-mono); font-size: 0.95rem; color: var(--color-accent);">${item.rating}</strong>
+          </div>` : ''}
         </div>
 
         <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 0.75rem;">
@@ -55,7 +53,7 @@ export function renderLicenses(container, data) {
   container.innerHTML = `
     <div class="page-view licenses-page">
       <span class="signature-heading">PORTFOLIO FOR LICENSES &amp; ELIGIBILITIES</span>
-      <h2 class="tab-title">Board Accreditations &amp; Civil Service</h2>
+      <h2 class="tab-title">Professional licensure</h2>
       <p class="tab-summary">${data?.summary || ''}</p>
 
       <div style="background: var(--bg-surface-elevated); border-left: 3px solid var(--color-accent); padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 2rem;">

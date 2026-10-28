@@ -1,5 +1,17 @@
 {
-  "summary": "This section is being prepared.",
-  "notice": "For security and privacy compliance (Data Privacy Act of 2012 / RA 10173), all regulatory registration and serial numbers are strictly masked. Official unmasked verification is available upon formal request via the PRC LERIS portal.",
-  "items": []
+  "summary": "Professional teaching licensure.",
+  "notice": "The licensure rating is supplied by the owner.",
+  "items": [
+    {
+      "id": "teacher-licensure",
+      "title": "Licensed Professional Teacher",
+      "subtitle": "Licensure GWA rating: 92.60",
+      "license_number_masked": "",
+      "rating": "92.60",
+      "description": "Licensure rating supplied by the owner.",
+      "evidence": [],
+      "visibility": "public",
+      "order": 1
+    }
+  ]
 }

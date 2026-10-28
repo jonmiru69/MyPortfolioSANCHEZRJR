@@ -4,17 +4,18 @@
     "name": "Ramelito Jr. C. Sanchez",
     "credentials": "LPT",
     "preferred_name": "Sir Johnmil",
-    "title": "Science educator",
-    "positioning_sentence": "Advancing secondary science education and scientific inquiry through evidence-based pedagogy, curriculum alignment, and technology integration.",
+    "title": "High School Science and Research Teacher",
+    "positioning_sentence": "Licensed Professional Teacher",
     "date_range": "2026 - Present",
     "avatar": "assets/images/profile-portrait.svg",
     "cover_image": "",
     "email": "rsanchez.faculty@cstr.edu.ph",
     "location": "Philippines",
-    "footer_text": "Ramelito Jr. C. Sanchez, LPT | High School Science & Research Educator",
+    "footer_text": "Ramelito Jr. C. Sanchez, LPT | High School Science and Research Teacher",
     "label_template": "Portfolio for {name}",
     "cover_image_alt": "",
-    "institution": "Colegio de Sto. Tomas - Recoletos, Incorporated"
+    "institution": "Colegio de Sto. Tomas-Recoletos, Incorporated",
+    "licensure_rating": "92.60"
   },
   "theme": {
     "default_mode": "light",
@@ -95,7 +96,7 @@
   },
   "seo": {
     "site_title": "Ramelito Jr. C. Sanchez | Science Educator",
-    "site_description": "Professional portfolio of Ramelito Jr. C. Sanchez, educator at Colegio de Sto. Tomas - Recoletos, Incorporated.",
+    "site_description": "Portfolio of Ramelito Jr. C. Sanchez, LPT, High School Science and Research Teacher at Colegio de Sto. Tomas-Recoletos, Incorporated.",
     "og_image": "assets/images/cover-hero.svg",
     "keywords": "Ramelito Sanchez, science educator, Colegio de Sto. Tomas - Recoletos, teaching portfolio"
   },
@@ -120,7 +121,7 @@
       "id": "profile",
       "slug": "profile",
       "label": "Profile",
-      "summary": "Personal statement, professional background, and core focus.",
+      "summary": "Background and professional information.",
       "enabled": true,
       "order": 3
     },
@@ -128,7 +129,7 @@
       "id": "resume",
       "slug": "resume",
       "label": "Résumé / CV",
-      "summary": "Structured professional curriculum vitae with printable sheet.",
+      "summary": "Résumé information.",
       "enabled": true,
       "order": 4
     },
@@ -136,7 +137,7 @@
       "id": "philosophy",
       "slug": "philosophy",
       "label": "Philosophy",
-      "summary": "Teaching philosophy, educational core beliefs, and 5-year goals.",
+      "summary": "Teaching philosophy.",
       "enabled": true,
       "order": 5
     },
@@ -144,7 +145,7 @@
       "id": "education",
       "slug": "education",
       "label": "Education",
-      "summary": "Academic degrees, honors, General Weighted Average, and scholarships.",
+      "summary": "Academic qualifications.",
       "enabled": true,
       "order": 6
     },
@@ -152,7 +153,7 @@
       "id": "licenses",
       "slug": "licenses",
       "label": "Eligibilities",
-      "summary": "Board Licensure Examination for Professional Teachers (BLEPT) and civil credentials.",
+      "summary": "Professional licensure.",
       "enabled": true,
       "order": 7
     },
@@ -160,7 +161,7 @@
       "id": "certificates",
       "slug": "certificates",
       "label": "Certificates",
-      "summary": "Professional development trainings, workshops, hours, and scanned MOVs.",
+      "summary": "Certificates and professional learning.",
       "enabled": true,
       "order": 8
     },
@@ -168,7 +169,7 @@
       "id": "research",
       "slug": "research",
       "label": "Research",
-      "summary": "Investigatory projects, action research, thesis abstracts, and conference papers.",
+      "summary": "Research information.",
       "enabled": false,
       "order": 10
     },
@@ -184,15 +185,15 @@
       "id": "materials",
       "slug": "materials",
       "label": "Materials",
-      "summary": "Daily Lesson Logs (DLL), LAS, laboratory guides, and assessment TOS.",
+      "summary": "Teaching materials.",
       "enabled": true,
       "order": 11
     },
     {
       "id": "performance",
       "slug": "performance",
-      "label": "PPST Evidence",
-      "summary": "Matrix of PPST domains, COT ratings, learner outcomes, and reflection notes.",
+      "label": "Professional evidence",
+      "summary": "Professional evidence.",
       "enabled": true,
       "order": 12
     },
@@ -200,7 +201,7 @@
       "id": "awards",
       "slug": "awards",
       "label": "Awards",
-      "summary": "Teaching recognitions, research mentorship honors, and institutional citations.",
+      "summary": "Awards and recognitions.",
       "enabled": true,
       "order": 13
     },
@@ -208,7 +209,7 @@
       "id": "service",
       "slug": "service",
       "label": "Service",
-      "summary": "Class advisory, Science club coordinatorship, committee leadership, and outreach.",
+      "summary": "Service information.",
       "enabled": false,
       "order": 14
     },
@@ -216,7 +217,7 @@
       "id": "projects",
       "slug": "projects",
       "label": "Digital Tools",
-      "summary": "Educational tools, interactive simulations, and open educational resources.",
+      "summary": "Projects and digital tools.",
       "enabled": false,
       "order": 15
     },
@@ -224,7 +225,7 @@
       "id": "development",
       "slug": "development",
       "label": "Growth Plan",
-      "summary": "Individual Performance Commitment and Review (IPCRF-DP) reflections and next steps.",
+      "summary": "Professional development.",
       "enabled": false,
       "order": 16
     },
@@ -232,7 +233,7 @@
       "id": "reading",
       "slug": "reading",
       "label": "Memberships",
-      "summary": "Professional organizations and current literature in science education.",
+      "summary": "Professional memberships.",
       "enabled": true,
       "order": 17
     },
@@ -240,7 +241,7 @@
       "id": "testimonials",
       "slug": "testimonials",
       "label": "References",
-      "summary": "Supervisory endorsements, peer feedback, and verified professional references.",
+      "summary": "Professional references.",
       "enabled": false,
       "order": 18
     },
@@ -248,7 +249,7 @@
       "id": "gallery",
       "slug": "gallery",
       "label": "Gallery",
-      "summary": "Classroom inquiry, laboratory activities, and Science Month exhibits in action.",
+      "summary": "Portfolio gallery.",
       "enabled": true,
       "order": 19
     },

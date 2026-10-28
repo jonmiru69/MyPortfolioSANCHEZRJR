@@ -43,6 +43,7 @@ export async function renderSiteEditor(container) {
         <div class="form-group"><label class="form-label" for="id-date">Date range</label><input id="id-date" class="form-input" value="${safe(identity.date_range)}" /></div>
         <div class="form-group"><label class="form-label" for="id-location">Location</label><input id="id-location" class="form-input" value="${safe(identity.location)}" /></div>
         <div class="form-group"><label class="form-label" for="id-institution">Institution</label><input id="id-institution" class="form-input" value="${safe(identity.institution)}" /></div>
+        <div class="form-group"><label class="form-label" for="id-licensure-rating">Licensure GWA rating</label><input id="id-licensure-rating" class="form-input" value="${safe(identity.licensure_rating)}" /></div>
         <div class="form-group"><label class="form-label" for="id-email">Public email</label><input id="id-email" type="email" class="form-input" value="${safe(identity.email)}" /></div>
         <div class="form-group"><label class="form-label" for="id-avatar">Portrait image path or URL</label><input id="id-avatar" class="form-input" value="${safe(identity.avatar)}" /></div>
         <div class="form-group"><label class="form-label" for="id-cover">Cover image path or URL</label><input id="id-cover" class="form-input" value="${safe(identity.cover_image)}" /></div>
@@ -120,6 +121,7 @@ export async function renderSiteEditor(container) {
       date_range: container.querySelector('#id-date').value.trim(),
       location: container.querySelector('#id-location').value.trim(),
       institution: container.querySelector('#id-institution').value.trim(),
+      licensure_rating: container.querySelector('#id-licensure-rating').value.trim(),
       email: container.querySelector('#id-email').value.trim(),
       avatar: container.querySelector('#id-avatar').value.trim(),
       cover_image: container.querySelector('#id-cover').value.trim(),
