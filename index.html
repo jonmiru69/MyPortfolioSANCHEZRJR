@@ -7,13 +7,13 @@
   <meta name="keywords" content="Ramelito Sanchez, LPT, STE Science, MATATAG Curriculum, DepEd Portfolio, Teacher Portfolio, Science Educator" />
   <meta name="author" content="Ramelito Jr. C. Sanchez, LPT" />
   <meta name="color-scheme" content="dark light" />
-  
+
   <!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Ramelito Jr. C. Sanchez, LPT · Science Educator & STE Faculty Portfolio" />
   <meta property="og:description" content="Tabbed professional teaching portfolio with verified evidence sleeves, lesson exemplars, and RPMS-PPST performance matrices." />
   <meta property="og:image" content="assets/images/cover-hero.svg" />
-  
+
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Ramelito Jr. C. Sanchez, LPT · Science Educator Portfolio" />
@@ -21,7 +21,7 @@
   <meta name="twitter:image" content="assets/images/cover-hero.svg" />
 
   <title>Ramelito Jr. C. Sanchez, LPT · Science Educator &amp; STE Faculty Portfolio</title>
-  
+
   <link rel="icon" type="image/svg+xml" href="assets/images/profile-portrait.svg" />
 
   <!-- Stylesheets -->
@@ -29,54 +29,31 @@
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/binder.css" />
   <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/redesign.css" />
   <link rel="stylesheet" href="css/print.css" media="print" />
 
-  <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Ramelito Jr. C. Sanchez",
-    "alternateName": "Jonmiru",
-    "jobTitle": "Special Science Teacher (STE Program)",
-    "description": "Secondary Science Educator and STEM research adviser in the Philippine Department of Education.",
-    "email": "mailto:sanchez.ramelito@deped.gov.ph",
-    "url": "https://jonmiru.github.io/portfolio-binder",
-    "alumniOf": "State University",
-    "hasCredential": [
-      {
-        "@type": "EducationalOccupationalCredential",
-        "name": "Licensed Professional Teacher (LPT)",
-        "credentialCategory": "Professional License",
-        "recognizedBy": {
-          "@type": "Organization",
-          "name": "Professional Regulation Commission"
-        }
-      }
-    ]
-  }
-  </script>
+
 </head>
 <body>
   <!-- Accessible Skip Link -->
-  <a href="#binder-page-content" class="skip-link">Skip to binder contents</a>
+  <a href="#binder-page-content" class="skip-link">Skip to content</a>
 
   <!-- Top Bar / Perspective & Theme Controls -->
   <header class="top-bar no-print" role="banner">
     <div class="top-bar-branding">
       <span class="binder-logo" id="site-branding-title">Ramelito Jr. C. Sanchez</span>
-      <span class="chip chip-accent text-mono" style="font-size: 0.7rem;">STE Faculty · LPT</span>
+
     </div>
 
     <div class="top-bar-controls">
       <div class="preset-selector">
         <label for="audience-preset-select" class="visually-hidden">Audience Preset</label>
-        <span style="font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase;">View:</span>
+        <span>Portfolio view:</span>
         <select id="audience-preset-select" class="preset-select" title="Switch audience perspective view"></select>
       </div>
 
       <button id="btn-toggle-theme" class="theme-toggle-btn" aria-label="Toggle dark and paper theme">
-        ☀️ Paper
+        Light mode
       </button>
     </div>
   </header>
@@ -84,7 +61,7 @@
   <!-- Binder Physical Metaphor Wrapper -->
   <main class="binder-wrapper" role="main">
     <div class="binder-container">
-      
+
       <!-- Binder Spine / Punch Hole Rings (Desktop Left Edge) -->
       <aside class="binder-spine no-print" aria-hidden="true">
         <div class="binder-ring"></div>
@@ -100,7 +77,8 @@
       </section>
 
       <!-- Binder Divider Tabs (Desktop Right Edge / Mobile Top Bar) -->
-      <nav class="binder-tabs no-print" id="binder-tabs-nav" role="tablist" aria-label="Binder divider tabs">
+      <button class="section-menu-toggle no-print" id="section-menu-toggle" type="button" aria-expanded="false" aria-controls="binder-tabs-nav">Browse sections</button>
+      <nav class="binder-tabs no-print" id="binder-tabs-nav" aria-label="Portfolio sections">
         <!-- Dynamically Populated Tabs -->
       </nav>
 

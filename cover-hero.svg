@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" role="img" aria-label="An illustration of scientific observation">
+<rect width="1000" height="700" fill="#183b36"/>
+<circle cx="500" cy="350" r="220" fill="#b7d5c6"/>
+<circle cx="500" cy="350" r="145" fill="#183b36"/>
+<circle cx="500" cy="350" r="72" fill="#b7d5c6"/>
+<path d="M0 550h1000v150H0z" fill="#102925"/>
+</svg>

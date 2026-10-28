@@ -1,0 +1,58 @@
+{
+  "summary": "State regulatory board examination ratings and civil service eligibilities with protected masked identification.",
+  "notice": "For security and privacy compliance (Data Privacy Act of 2012 / RA 10173), all regulatory registration and serial numbers are strictly masked. Official unmasked verification is available upon formal request via the PRC LERIS portal.",
+  "items": [
+    {
+      "id": "lic-1",
+      "title": "Licensed Professional Teacher (LPT)",
+      "subtitle": "Board Licensure Examination for Professional Teachers (Secondary Level - Biological Science)",
+      "organization": "Professional Regulation Commission (PRC)",
+      "date_start": "2019",
+      "date_end": "Valid / Active",
+      "license_number_masked": "PRC Reg. No. ****8492",
+      "rating": "86.80% Board Rating (First Attempt)",
+      "status": "Active / Good Standing",
+      "description": "Certified as a professional educator authorized to practice secondary education in the Republic of the Philippines under RA 7836 as amended by RA 9293.",
+      "tags": ["LPT", "PRC", "Board Passer", "Secondary Science"],
+      "evidence": [
+        {
+          "label": "PRC Certificate of Good Standing / Verification Note",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Verification slip showing active professional license standing in secondary education."
+        }
+      ],
+      "links": [
+        { "label": "PRC Verification Portal", "url": "https://online.prc.gov.ph/Verification" }
+      ],
+      "visibility": "public",
+      "featured": true,
+      "order": 1
+    },
+    {
+      "id": "lic-2",
+      "title": "Civil Service Commission Professional Eligibility",
+      "subtitle": "Career Service Professional Examination",
+      "organization": "Civil Service Commission (CSC)",
+      "date_start": "2018",
+      "date_end": "Lifetime",
+      "license_number_masked": "CSC Cert. No. ****3109",
+      "rating": "85.24% Rating",
+      "status": "Conferred / Permanent",
+      "description": "Qualified for permanent technical and professional appointments in the Philippine government civil service under Presidential Decree No. 807 / Executive Order 292.",
+      "tags": ["CSC", "Career Service", "Professional Eligibility"],
+      "evidence": [
+        {
+          "label": "CSC Certificate of Eligibility (Masked Copy)",
+          "file": "assets/docs/sample-certificate.svg",
+          "type": "document",
+          "context": "Civil Service Professional eligibility confirmation record."
+        }
+      ],
+      "links": [],
+      "visibility": "public",
+      "featured": false,
+      "order": 2
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+/* ==========================================================================
+   PRINT & PDF STYLESHEET
+   Clean, paper-optimized printing for binder and individual CV
+   ========================================================================== */
+
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 1.5cm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Hide interactive, non-print elements */
+  .skip-link,
+  .top-bar,
+  .binder-spine,
+  .binder-tabs,
+  .site-footer,
+  .lightbox-backdrop,
+  .admin-panel,
+  .btn,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset binder frame */
+  .binder-wrapper {
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .binder-container {
+    max-width: 100% !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+    display: block !important;
+  }
+
+  .binder-page {
+    padding: 0 !important;
+    background: #ffffff !important;
+    min-height: auto !important;
+  }
+
+  /* Clean headings & text */
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  .signature-heading {
+    color: #333333 !important;
+  }
+
+  p, li {
+    color: #222222 !important;
+  }
+
+  /* Evidence sleeves clean cards */
+  .evidence-sleeve {
+    background: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 1.2cm !important;
+    padding: 1cm !important;
+  }
+
+  .evidence-sleeve::before {
+    display: none !important;
+  }
+
+  /* Chips */
+  .chip {
+    background: #f0f0f0 !important;
+    color: #333333 !important;
+    border: 1px solid #cccccc !important;
+  }
+
+  /* Links with URLs in print */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #555555;
+  }
+
+  /* Print Page Breaks */
+  .print-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* CV Specific Clean Mode */
+  .cv-document {
+    padding: 0 !important;
+  }
+}
