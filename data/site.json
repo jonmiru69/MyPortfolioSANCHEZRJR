@@ -194,7 +194,7 @@
       "slug": "performance",
       "label": "Professional evidence",
       "summary": "Professional evidence.",
-      "enabled": true,
+      "enabled": false,
       "order": 12
     },
     {
@@ -234,7 +234,7 @@
       "slug": "reading",
       "label": "Memberships",
       "summary": "Professional memberships.",
-      "enabled": true,
+      "enabled": false,
       "order": 17
     },
     {
@@ -250,7 +250,7 @@
       "slug": "gallery",
       "label": "Gallery",
       "summary": "Portfolio gallery.",
-      "enabled": true,
+      "enabled": false,
       "order": 19
     },
     {
