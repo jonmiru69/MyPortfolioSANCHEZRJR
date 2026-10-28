@@ -37,17 +37,13 @@ class App {
   constructor() {
     this.pageContainer = null;
     this.tabsContainer = null;
-    this.presetSelect = null;
     this.themeToggleBtn = null;
-    this.siteTitleEl = null;
   }
 
   async init() {
     this.pageContainer = document.getElementById('binder-page-content');
     this.tabsContainer = document.getElementById('binder-tabs-nav');
-    this.presetSelect = document.getElementById('audience-preset-select');
     this.themeToggleBtn = document.getElementById('btn-toggle-theme');
-    this.siteTitleEl = document.getElementById('site-branding-title');
 
     // Initialize Store (load site.json & drafts)
     await store.init();
@@ -126,27 +122,12 @@ class App {
   }
 
   setupHeader() {
-    // Populate Presets
-    if (this.presetSelect && store.site?.presets) {
-      this.presetSelect.innerHTML = store.site.presets.map(p => `
-        <option value="${p.id}" ${p.id === store.activePreset ? 'selected' : ''}>${p.name}</option>
-      `).join('');
-
-      this.presetSelect.addEventListener('change', (e) => {
-        store.setPreset(e.target.value);
-      });
-    }
-
     // Theme Toggle
     if (this.themeToggleBtn) {
       this.themeToggleBtn.innerHTML = store.themeMode === 'dark' ? 'Light mode' : 'Dark mode';
       this.themeToggleBtn.addEventListener('click', () => store.toggleTheme());
     }
 
-    // Branding Title
-    if (this.siteTitleEl && store.site?.identity) {
-      this.siteTitleEl.textContent = store.site.identity.name || 'Portfolio Binder';
-    }
   }
 
   setupFooter() {
@@ -185,6 +166,14 @@ class App {
       `;
     }).join('');
     if (this.navToggle) this.tabsContainer.prepend(this.navToggle);
+    const navHeading = document.createElement('div'); navHeading.className='nav-heading';
+    const name = document.createElement('strong'); name.className='nav-owner-name'; name.textContent=store.site?.identity?.name || 'Portfolio';
+    const label = document.createElement('label'); label.textContent='Portfolio view'; label.htmlFor='nav-preset';
+    const select = document.createElement('select'); select.id='nav-preset'; select.className='form-select';
+    for(const preset of store.site?.presets || []) { const option=document.createElement('option'); option.value=preset.id; option.textContent=preset.name; option.selected=preset.id===store.activePreset; select.append(option); }
+    select.addEventListener('change', () => store.setPreset(select.value));
+    navHeading.append(name,label,select);
+    this.navToggle?.after(navHeading);
   }
 
   async handleRoute(route) {
