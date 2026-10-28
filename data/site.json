@@ -144,7 +144,7 @@
       "slug": "resume",
       "label": "Résumé / CV",
       "summary": "Structured professional curriculum vitae with printable sheet.",
-      "enabled": false,
+      "enabled": true,
       "order": 4
     },
     {
@@ -180,19 +180,19 @@
       "order": 8
     },
     {
-      "id": "research",
-      "slug": "research",
-      "label": "Research",
-      "summary": "Investigatory projects, action research, thesis abstracts, and conference papers.",
-      "enabled": true,
-      "order": 9
-    },
-    {
       "id": "teaching",
       "slug": "teaching",
       "label": "Teaching",
       "summary": "Teaching assignments in the STE Program, grade levels, and MATATAG curriculum.",
       "enabled": true,
+      "order": 9
+    },
+    {
+      "id": "research",
+      "slug": "research",
+      "label": "Research",
+      "summary": "Investigatory projects, action research, thesis abstracts, and conference papers.",
+      "enabled": false,
       "order": 10
     },
     {
@@ -208,7 +208,7 @@
       "slug": "performance",
       "label": "PPST Evidence",
       "summary": "Matrix of PPST domains, COT ratings, learner outcomes, and reflection notes.",
-      "enabled": false,
+      "enabled": true,
       "order": 12
     },
     {
@@ -216,7 +216,7 @@
       "slug": "awards",
       "label": "Awards",
       "summary": "Teaching recognitions, research mentorship honors, and institutional citations.",
-      "enabled": false,
+      "enabled": true,
       "order": 13
     },
     {
