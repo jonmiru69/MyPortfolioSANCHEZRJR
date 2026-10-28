@@ -117,6 +117,10 @@ class App {
       }
     });
 
+    store.subscribe('published-updated', () => {
+      this.renderTabs(); this.setupFooter(); this.handleRoute(router.currentRoute);
+    });
+
     // Start Router
     router.init();
   }

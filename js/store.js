@@ -3,6 +3,7 @@
  * Handles data fetching, client-side draft caching, autosave, and event dispatching.
  */
 
+import { cloud } from './cloud.js';
 import { validateSiteConfig, CURRENT_SCHEMA_VERSION, migrateData } from './schema.js';
 
 const DB_NAME = 'portfolio_binder_db';
@@ -20,12 +21,37 @@ class Store {
     this.listeners = new Map();
     this.db = null;
     this.isDraftMode = false;
+    this.published = null;
+    this.revision = 0;
+    this.draftVersion = 0;
+    this.cloudTimer = null;
+    this.cloudSaving = null;
+    this.cloudNeedsReview = false;
+    this.cloudStatus = '';
   }
 
   async init() {
     await this.initDB();
     await this.loadSiteConfig();
-    await this.checkDrafts();
+    await cloud.init();
+    if (cloud.url) {
+      try { this.acceptPublished(await cloud.snapshot()); }
+      catch { this.cloudStatus = 'Cloud unavailable — showing the last published website backup.'; }
+    }
+    if (!this.published) this.published = {site: structuredClone(this.site), content: {}};
+    const refresh = async () => {
+      if (!cloud.url || this.isDraftMode || document.hidden) return;
+      try {
+        const snapshot = await cloud.snapshot();
+        if (snapshot.revision !== this.revision) {
+          this.acceptPublished(snapshot);
+          this.emit('published-updated', snapshot);
+        }
+      } catch { /* Keep the current published view during a temporary outage. */ }
+    };
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', refresh);
+    setInterval(refresh, 30000);
   }
 
   // --- IndexedDB Setup ---
@@ -56,6 +82,8 @@ class Store {
   async saveDraft(key, data) {
     this.drafts[key] = data;
     this.changedFiles.add(key);
+    this.draftVersion++;
+    if (this.isDraftMode && cloud.url) this.scheduleCloudSave();
     this.emit('unsaved-changed', { count: this.changedFiles.size, changed: Array.from(this.changedFiles) });
 
     if (!this.db) return;
@@ -73,6 +101,7 @@ class Store {
   }
 
   async loadDraft(key) {
+    if (!this.isDraftMode && !key.startsWith('content/') && key !== 'site.json') return null;
     if (!this.db) return this.drafts[key] || null;
     return new Promise((resolve) => {
       try {
@@ -106,19 +135,97 @@ class Store {
     });
   }
 
-  async checkDrafts() {
-    const siteDraft = await this.loadDraft('site.json');
-    if (siteDraft) {
-      this.site = siteDraft;
-      this.isDraftMode = true;
-      this.changedFiles.add('site.json');
+  acceptPublished(snapshot) {
+    this.published = structuredClone(snapshot);
+    this.revision = snapshot.revision || 0;
+    this.site = structuredClone(snapshot.site);
+    this.content = structuredClone(snapshot.content || {});
+  }
+
+  async readDraftEntries() {
+    if (!this.db) return Object.entries(this.drafts).map(([key, data]) => ({key, data}));
+    return new Promise(resolve => {
+      const request = this.db.transaction([DRAFT_STORE], 'readonly').objectStore(DRAFT_STORE).getAll();
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => resolve([]);
+    });
+  }
+
+  async setOwnerMode(enabled) {
+    clearTimeout(this.cloudTimer);
+    this.isDraftMode = enabled;
+    if (!enabled) {
+      if (cloud.url) {
+        try { this.acceptPublished(await cloud.snapshot()); } catch { this.acceptPublished(this.published); }
+      } else this.acceptPublished(this.published);
+      return;
     }
+    const entries = await this.readDraftEntries();
+    for (const {key, data} of entries) {
+      this.drafts[key] = data;
+      this.changedFiles.add(key);
+      if (key === 'site.json') this.site = structuredClone(data);
+      if (key.startsWith('content/')) this.content[key.slice(8, -5)] = structuredClone(data);
+    }
+    if (entries.length) {
+      this.cloudNeedsReview = true;
+      this.setCloudStatus('Recovered device drafts — review and publish to sync them.');
+    } else this.setCloudStatus(cloud.url ? 'All changes saved online' : 'Local drafts');
+  }
+
+  setCloudStatus(message) {
+    this.cloudStatus = message;
+    this.emit('cloud-status', message);
+  }
+
+  scheduleCloudSave() {
+    clearTimeout(this.cloudTimer);
+    if (this.cloudNeedsReview) return;
+    this.setCloudStatus('Saving changes online…');
+    this.cloudTimer = setTimeout(() => this.publishCloud().catch(() => {}), 1200);
+  }
+
+  async publishCloud() {
+    clearTimeout(this.cloudTimer);
+    if (this.cloudSaving) return this.cloudSaving;
+    if (!this.changedFiles.size) return;
+    this.cloudNeedsReview = false;
+    this.cloudSaving = (async () => {
+      const generation = this.draftVersion;
+      this.setCloudStatus('Saving changes online…');
+      try {
+        const bundle = structuredClone(await this.exportFullSiteData());
+        const assets = [];
+        for (const key of this.changedFiles) {
+          const data = await this.loadDraft(key);
+          if (data instanceof Blob) assets.push([key, data]);
+        }
+        const snapshot = await cloud.publish(bundle, assets, this.revision);
+        this.published = structuredClone(snapshot);
+        this.revision = snapshot.revision;
+        if (generation === this.draftVersion) {
+          this.site = structuredClone(snapshot.site);
+          this.content = structuredClone(snapshot.content);
+          await this.clearDrafts();
+          if (generation === this.draftVersion) this.setCloudStatus('All changes saved online');
+          else this.scheduleCloudSave();
+        } else this.scheduleCloudSave();
+        this.emit('cloud-saved', snapshot);
+        return snapshot;
+      } catch (error) {
+        this.cloudNeedsReview = true;
+        this.setCloudStatus('Not synced — ' + error.message);
+        throw error;
+      }
+    })();
+    try { return await this.cloudSaving; }
+    finally { this.cloudSaving = null; }
   }
 
   // --- Site & Content Fetching ---
   async loadSiteConfig() {
     try {
-      const res = await fetch('data/site.json');
+      const res = await fetch('data/site.json', {cache: 'no-store'});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       let data = await res.json();
       data = migrateData(data, data.version || 1, CURRENT_SCHEMA_VERSION);
@@ -147,10 +254,10 @@ class Store {
     }
 
     const draftKey = `content/${tabId}.json`;
-    if (this.drafts[draftKey]) {
+    if (this.isDraftMode && this.drafts[draftKey]) {
       return this.drafts[draftKey];
     }
-    const dbDraft = await this.loadDraft(draftKey);
+    const dbDraft = this.isDraftMode ? await this.loadDraft(draftKey) : null;
     if (dbDraft) {
       this.drafts[draftKey] = dbDraft;
       return dbDraft;
@@ -161,7 +268,7 @@ class Store {
     }
 
     try {
-      const res = await fetch(`data/content/${tabId}.json`);
+      const res = await fetch(`data/content/${tabId}.json`, {cache: 'no-store'});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       this.content[tabId] = data;

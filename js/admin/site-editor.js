@@ -21,7 +21,7 @@ export async function renderSiteEditor(container) {
       </div>
       <label class="portrait-upload" for="portrait-file" tabindex="0" role="button"><img id="portrait-preview" src="${safe(identity.avatar)}" alt="Current profile photo"><span>Change profile photo</span></label>
       <input id="portrait-file" type="file" accept="image/jpeg,image/png,image/webp" hidden />
-      <p>Photo changes are saved as a local draft; publish to make them public.</p>
+      <p>Photo changes save online automatically in owner mode. Wait for “All changes saved online” before closing this page.</p>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
         <div class="form-group">
@@ -67,7 +67,7 @@ export async function renderSiteEditor(container) {
 
     <div class="admin-card">
       <div class="admin-card-header"><h3>Profile writing</h3></div>
-      <p>These fields appear in the Profile section. Changes are saved as a local draft until you publish.</p>
+      <p>These fields appear in the Profile section. Changes save online automatically in owner mode. Recovered device drafts require review and publishing once.</p>
       <div class="form-group"><label class="form-label" for="profile-summary">Summary</label><textarea id="profile-summary" class="form-textarea">${safe(profile.summary)}</textarea></div>
       <div class="form-group"><label class="form-label" for="profile-statement">Personal statement</label><textarea id="profile-statement" class="form-textarea">${safe(profile.statement)}</textarea></div>
       <div class="form-group"><label class="form-label" for="profile-bio">Biography</label><textarea id="profile-bio" class="form-textarea">${safe(profile.bio)}</textarea></div>

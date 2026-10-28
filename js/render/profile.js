@@ -27,7 +27,7 @@ export async function renderProfile(container, data, siteData) {
       <h2 class="tab-title">Educator Profile &amp; Statement</h2>
       <p class="tab-summary">${profile.summary || ''}</p>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; margin-bottom: 2.5rem; align-items: start;">
+      <div class="profile-layout">
         <div>
           ${profile.statement ? `<div style="margin-bottom: 2rem;">
             <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; color: var(--color-accent); font-family: var(--font-display); letter-spacing: var(--tracking-wide); text-transform: uppercase;">
@@ -52,7 +52,7 @@ export async function renderProfile(container, data, siteData) {
           <img 
             src="${portrait}"
             alt="Portrait of ${identity.name || 'Educator'}" 
-            style="width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 1.25rem; display: block; border: 2px solid var(--color-accent);"
+            style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%; margin: 0 auto 1.25rem; display: block; border: 2px solid var(--color-accent);"
           />
           <h4 style="font-size: 1.2rem; margin-bottom: 0.2rem;">${identity.name || 'Portfolio owner'}</h4>
           <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-accent);">${identity.credentials || ''} · ${identity.preferred_name ? `("${identity.preferred_name}")` : ''}</span>

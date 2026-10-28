@@ -13,7 +13,11 @@ import { renderSiteEditor } from './site-editor.js';
 import { renderPublish } from './publish.js';
 import { renderBackup } from './backup.js';
 
-export function renderAdmin(container) {
+export async function renderAdmin(container) {
+  if (github.isAuthenticated() && !store.isDraftMode) {
+    const access = await github.testConnection();
+    if (access.ok) await store.setOwnerMode(true);
+  }
   let activeSubTab = 'connection';
 
   function renderView() {
@@ -27,7 +31,7 @@ export function renderAdmin(container) {
             <span class="signature-heading">OWNER ADMINISTRATION</span>
             <h2>Portfolio Control Panel</h2>
             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0;">
-              Zero-cost static content management and GitHub Pages direct publishing.
+              Portfolio content and photos sync through Cloudflare D1. The GitHub token verifies owner access.
             </p>
           </div>
 
@@ -75,7 +79,7 @@ export function renderAdmin(container) {
           <div class="admin-unsaved-bar">
             <div>
               <strong style="color: var(--color-warning);">⚡ You have ${changedCount} pending change(s) in local draft.</strong>
-              <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">Changes are saved locally in IndexedDB and can be reviewed before publishing.</p>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">Changes sync online automatically. Recovered drafts and failed saves remain on this device until you publish successfully.</p>
             </div>
             <div style="display: flex; gap: 0.5rem;">
               <button id="btn-shortcut-preview" class="btn btn-secondary btn-sm">Preview Public Site</button>
@@ -89,6 +93,7 @@ export function renderAdmin(container) {
     // Subtab Click Handler
     container.querySelectorAll('.admin-nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (!store.isDraftMode && btn.getAttribute('data-subtab') !== 'connection') return;
         activeSubTab = btn.getAttribute('data-subtab');
         renderView();
       });
@@ -140,7 +145,7 @@ export function renderAdmin(container) {
         </div>
 
         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-          To enable live 1-commit publishing to GitHub Pages, provide a <strong>Fine-Grained Personal Access Token (PAT)</strong> scoped specifically to this repository with <code>Contents: Read and write</code> permission.
+          To verify owner access for Cloudflare saves, provide a <strong>Fine-Grained Personal Access Token (PAT)</strong> scoped specifically to this repository with <code>Contents: Read and write</code> permission.
         </p>
 
         <form id="gh-auth-form">
@@ -172,7 +177,7 @@ export function renderAdmin(container) {
               placeholder="github_pat_11..." 
             />
             <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.35rem;">
-              Tokens are never logged or sent to any server other than <code>api.github.com</code>.
+              Your token is sent securely to the portfolio’s Cloudflare API and GitHub to verify owner access. It is never stored in the database.
             </span>
           </div>
 
@@ -216,6 +221,7 @@ export function renderAdmin(container) {
 
       const test = await github.testConnection();
       if (test.ok) {
+        await store.setOwnerMode(true);
         resultBox.style.background = 'rgba(52, 211, 153, 0.1)';
         resultBox.style.border = '1px solid var(--color-success)';
         resultBox.innerHTML = `✓ <strong>Connected!</strong> Repository <code>${test.repoName}</code> found with push permissions. Ready to publish.`;
@@ -226,9 +232,10 @@ export function renderAdmin(container) {
       }
     });
 
-    subContainer.querySelector('#btn-disconnect-gh')?.addEventListener('click', () => {
+    subContainer.querySelector('#btn-disconnect-gh')?.addEventListener('click', async () => {
       if (confirm('Disconnect GitHub credentials from this session?')) {
         github.disconnect();
+        await store.setOwnerMode(false);
         renderView();
       }
     });

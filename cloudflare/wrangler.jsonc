@@ -1,0 +1,15 @@
+{
+  "name": "ramelito-portfolio-api",
+  "account_id": "544629c352638f3cfa4f01f207d0fda0",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-28",
+  "workers_dev": true,
+  "preview_urls": false,
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "ramelito-portfolio",
+    "database_id": "900c072b-3c77-420e-9818-9f704f90a688"
+  }],
+  "vars": {"PUBLIC_ORIGIN": "https://jonmiru69.github.io"},
+  "observability": {"enabled": false}
+}

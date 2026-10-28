@@ -13,7 +13,20 @@ export function setupInlineOwner(app) {
   const button = document.createElement('button');
   button.type = 'button'; button.className = 'theme-toggle-btn'; button.textContent = 'Owner mode';
   button.setAttribute('aria-pressed', 'false');
-  document.querySelector('.top-bar-controls')?.append(button);
+  const sync = document.createElement('button');
+  sync.type = 'button'; sync.className = 'cloud-sync-status'; sync.hidden = true;
+  sync.setAttribute('aria-live', 'polite');
+  sync.title = 'Review and publish saved device drafts';
+  sync.addEventListener('click', () => openPanel('Sync portfolio', renderPublish));
+  const updateStatus = message => { sync.textContent = message || 'All changes saved online'; sync.hidden = !enabled; };
+  store.subscribe('cloud-status', updateStatus);
+  document.querySelector('.top-bar-controls')?.append(sync, button);
+
+  async function activate() {
+    await store.setOwnerMode(true);
+    enabled = true; button.textContent = 'Exit owner mode'; button.setAttribute('aria-pressed','true');
+    updateStatus(store.cloudStatus);
+  }
 
   function openPanel(title, render) {
     const dialog = document.createElement('dialog'); dialog.className = 'owner-dialog';
@@ -28,25 +41,31 @@ export function setupInlineOwner(app) {
   }
   function authenticate() {
     openPanel('Connect owner access', body => {
-      body.innerHTML = '<p>Enter the same GitHub personal access token used to publish this portfolio. It stays in this browser session.</p><form><label for="inline-token">GitHub token</label><input id="inline-token" type="password" autocomplete="off" required class="form-input"><button type="submit" class="btn btn-primary">Connect</button><p role="status"></p></form>';
+      body.innerHTML = '<p>Enter your existing GitHub token to verify owner access. Changes and photos save through your Cloudflare API; the token is not stored in the database.</p><form><label for="inline-token">GitHub token</label><input id="inline-token" type="password" autocomplete="off" required class="form-input"><button type="submit" class="btn btn-primary">Connect</button><p role="status"></p></form>';
       body.querySelector('form').addEventListener('submit', async e => {
         e.preventDefault(); const form = e.currentTarget; const status = form.querySelector('[role="status"]');
         const token = form.querySelector('input').value; status.textContent = 'Checking access…';
         github.setCredentials(token, github.owner || 'jonmiru69', github.repo || 'MyPortfolioSANCHEZRJR', github.branch || 'main', false);
         const result = await github.testConnection();
         if (!result.ok) { github.disconnect(); status.textContent = result.error || 'Could not verify access.'; return; }
-        enabled = true; button.textContent = 'Exit owner mode'; button.setAttribute('aria-pressed','true');
+        await activate();
         body.closest('dialog').close();
       });
     });
   }
   button.addEventListener('click', async () => {
-    if (enabled) { enabled = false; button.textContent = 'Owner mode'; button.setAttribute('aria-pressed','false'); decorate(); return; }
+    if (enabled) {
+      button.disabled = true;
+      if (store.changedFiles.size && !store.cloudNeedsReview) { try { await store.publishCloud(); } catch {} }
+      await store.setOwnerMode(false);
+      enabled = false; button.disabled = false; button.textContent = 'Owner mode'; button.setAttribute('aria-pressed','false');
+      updateStatus(''); await app.handleRoute(app.currentRoute()); return;
+    }
     if (!github.isAuthenticated()) { authenticate(); return; }
     button.disabled = true;
     const result = await github.testConnection(); button.disabled = false;
     if (!result.ok) { authenticate(); return; }
-    enabled = true; button.textContent = 'Exit owner mode'; button.setAttribute('aria-pressed','true'); decorate();
+    await activate(); await app.handleRoute(app.currentRoute());
   });
   function menu(label, actions) {
     const details = document.createElement('div'); details.className = 'owner-menu';
@@ -102,5 +121,5 @@ export function setupInlineOwner(app) {
     });
   }
   app.pageContainer.addEventListener('portfolio-list-rendered', () => queueMicrotask(decorate));
-  return { decorate };
+  return { decorate, isEnabled: () => enabled };
 }
