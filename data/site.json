@@ -114,7 +114,7 @@
       "slug": "contents",
       "label": "All sections",
       "summary": "Interactive table of contents indexing all evidence sections.",
-      "enabled": true,
+      "enabled": false,
       "order": 2
     },
     {
@@ -130,7 +130,7 @@
       "slug": "resume",
       "label": "Résumé / CV",
       "summary": "Résumé information.",
-      "enabled": false,
+      "enabled": true,
       "order": 4
     },
     {
