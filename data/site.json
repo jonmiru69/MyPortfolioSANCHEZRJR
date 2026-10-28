@@ -4,16 +4,17 @@
     "name": "Ramelito Jr. C. Sanchez",
     "credentials": "LPT",
     "preferred_name": "Sir Johnmil",
-    "title": "High School Science & Research Educator",
+    "title": "Science educator",
     "positioning_sentence": "Advancing secondary science education and scientific inquiry through evidence-based pedagogy, curriculum alignment, and technology integration.",
     "date_range": "2019 – 2026",
     "avatar": "assets/images/profile-portrait.svg",
-    "cover_image": "assets/images/certificate-previews/ilaw.png",
-    "email": "sanchez.ramelito@deped.gov.ph",
+    "cover_image": "",
+    "email": "sanchezramil2202@gmail.com",
     "location": "Philippines",
-    "footer_text": "Ramelito Jr. C. Sanchez, LPT (Jonmiru) · DepEd Science Educator · STE Program",
+    "footer_text": "Ramelito Jr. C. Sanchez · Colegio de Sto. Tomas - Recoletos, Incorporated",
     "label_template": "Portfolio for {name}",
-    "cover_image_alt": "Certificate for ILAW in Action professional learning"
+    "cover_image_alt": "",
+    "institution": "Colegio de Sto. Tomas - Recoletos, Incorporated"
   },
   "theme": {
     "default_mode": "light",
@@ -70,22 +71,6 @@
       ]
     },
     {
-      "id": "rpms",
-      "name": "DepEd RPMS-PPST Evaluation",
-      "description": "Evidence matrix aligned with the 7 PPST domains and MATATAG curriculum.",
-      "tabs": [
-        "cover",
-        "contents",
-        "performance",
-        "materials",
-        "teaching",
-        "certificates",
-        "development",
-        "service",
-        "awards"
-      ]
-    },
-    {
       "id": "grad",
       "name": "Graduate School & Fellowship",
       "description": "Focused on research outputs, academic honors, and leadership.",
@@ -109,24 +94,24 @@
     "success_message": "Inquiry received! Thank you for reaching out. I will be in touch shortly."
   },
   "seo": {
-    "site_title": "Ramelito Jr. C. Sanchez, LPT | Science & Research Educator",
-    "site_description": "Professional portfolio of Ramelito Jr. C. Sanchez, science and research educator.",
+    "site_title": "Ramelito Jr. C. Sanchez | Science Educator",
+    "site_description": "Professional portfolio of Ramelito Jr. C. Sanchez, educator at Colegio de Sto. Tomas - Recoletos, Incorporated.",
     "og_image": "assets/images/cover-hero.svg",
-    "keywords": "Ramelito Sanchez, LPT, STE Science, MATATAG Curriculum, DepEd Portfolio, Teacher Portfolio, Science Educator"
+    "keywords": "Ramelito Sanchez, science educator, Colegio de Sto. Tomas - Recoletos, teaching portfolio"
   },
   "tabs": [
     {
       "id": "cover",
       "slug": "cover",
-      "label": "Cover",
-      "summary": "Portfolio title page, positioning sentence, and credentials.",
+      "label": "Overview",
+      "summary": "An introduction to the portfolio.",
       "enabled": true,
       "order": 1
     },
     {
       "id": "contents",
       "slug": "contents",
-      "label": "Contents",
+      "label": "All sections",
       "summary": "Interactive table of contents indexing all evidence sections.",
       "enabled": true,
       "order": 2
@@ -152,7 +137,7 @@
       "slug": "philosophy",
       "label": "Philosophy",
       "summary": "Teaching philosophy, educational core beliefs, and 5-year goals.",
-      "enabled": true,
+      "enabled": false,
       "order": 5
     },
     {
@@ -168,7 +153,7 @@
       "slug": "licenses",
       "label": "Eligibilities",
       "summary": "Board Licensure Examination for Professional Teachers (BLEPT) and civil credentials.",
-      "enabled": true,
+      "enabled": false,
       "order": 7
     },
     {
@@ -184,14 +169,14 @@
       "slug": "research",
       "label": "Research",
       "summary": "Investigatory projects, action research, thesis abstracts, and conference papers.",
-      "enabled": true,
+      "enabled": false,
       "order": 9
     },
     {
       "id": "teaching",
       "slug": "teaching",
       "label": "Teaching",
-      "summary": "Teaching assignments in the STE Program, grade levels, and MATATAG curriculum.",
+      "summary": "Teaching experience, subjects, and classroom practice.",
       "enabled": true,
       "order": 10
     },
@@ -200,7 +185,7 @@
       "slug": "materials",
       "label": "Materials",
       "summary": "Daily Lesson Logs (DLL), LAS, laboratory guides, and assessment TOS.",
-      "enabled": true,
+      "enabled": false,
       "order": 11
     },
     {
@@ -248,7 +233,7 @@
       "slug": "reading",
       "label": "Memberships",
       "summary": "Professional organizations and current literature in science education.",
-      "enabled": true,
+      "enabled": false,
       "order": 17
     },
     {
@@ -264,16 +249,22 @@
       "slug": "gallery",
       "label": "Gallery",
       "summary": "Classroom inquiry, laboratory activities, and Science Month exhibits in action.",
-      "enabled": true,
+      "enabled": false,
       "order": 19
     },
     {
       "id": "contact",
       "slug": "contact",
       "label": "Contact",
-      "summary": "Direct communication channel, DepEd email, and institutional affiliation.",
+      "summary": "Contact information and professional inquiries.",
       "enabled": true,
       "order": 20
     }
-  ]
+  ],
+  "overview": {
+    "heading": "Explore the portfolio",
+    "description": "Discover my background, teaching experience and professional learning.",
+    "action_label": "Read my profile",
+    "learning_heading": "Professional learning"
+  }
 }

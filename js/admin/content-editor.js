@@ -6,6 +6,7 @@
 import { store } from '../store.js';
 import { createDefaultItem } from '../schema.js';
 import { processImageUpload, validateDocumentUpload, formatBytes } from '../media.js';
+const safe = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 export function renderContentEditor(container) {
   const tabs = (store.site?.tabs || []).filter(t => t.id !== 'cover' && t.id !== 'contents');
@@ -90,9 +91,10 @@ export function renderContentEditor(container) {
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
               ${item.evidence.map((ev, evIdx) => `
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; background: var(--bg-surface-elevated); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm);">
-                  <span>📄 <strong>${ev.label}</strong> <em class="text-muted">(${ev.file || 'no file'})</em></span>
+                  <span><strong>${safe(ev.label)}</strong> <em class="text-muted">(${safe(ev.file || 'no file')})</em></span>
                   <button class="btn btn-outline btn-sm btn-del-evidence" data-item-idx="${idx}" data-ev-idx="${evIdx}" style="color: var(--color-danger); padding: 0.15rem 0.4rem; font-size: 0.7rem;">Remove</button>
                 </div>
+                ${selectedTabId === 'certificates' ? `<div class="form-group"><label class="form-label" for="preview-${idx}-${evIdx}">Preview image paths (one per line)</label><textarea id="preview-${idx}-${evIdx}" class="form-textarea preview-paths" data-item-idx="${idx}" data-ev-idx="${evIdx}">${safe((ev.preview_images || []).join('\n'))}</textarea></div>` : ''}
               `).join('')}
             </div>
           ` : `
@@ -127,8 +129,26 @@ export function renderContentEditor(container) {
             </div>
           `}
         </div>
+        <details class="advanced-editor">
+          <summary>Advanced: edit all section data</summary>
+          <p>Edit the section data as JSON. This includes fields not shown in the item editor. Save a backup first.</p>
+          <label class="form-label" for="raw-content">Section data</label>
+          <textarea id="raw-content" class="form-textarea" rows="20">${safe(JSON.stringify(content, null, 2))}</textarea>
+          <button id="save-raw-content" type="button" class="btn btn-secondary">Save section data</button>
+          <p id="raw-content-status" role="status"></p>
+        </details>
       </div>
     `;
+
+    container.querySelector('#save-raw-content')?.addEventListener('click', async () => {
+      try {
+        const parsed = JSON.parse(container.querySelector('#raw-content').value);
+        if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') throw new Error('Section data must be a JSON object.');
+        store.content[selectedTabId] = parsed;
+        await store.saveDraft(`content/${selectedTabId}.json`, parsed);
+        renderEditor();
+      } catch (err) { container.querySelector('#raw-content-status').textContent = 'Could not save: ' + err.message; }
+    });
 
     // Tab Switcher
     container.querySelector('#select-active-tab')?.addEventListener('change', (e) => {
@@ -243,6 +263,11 @@ export function renderContentEditor(container) {
     });
 
     // Remove Evidence
+    container.querySelectorAll('.preview-paths').forEach(input => input.addEventListener('change', async e => {
+      const itemIdx = Number(e.target.dataset.itemIdx), evIdx = Number(e.target.dataset.evIdx);
+      content.items[itemIdx].evidence[evIdx].preview_images = e.target.value.split('\n').map(x => x.trim()).filter(Boolean);
+      await store.saveDraft(`content/${selectedTabId}.json`, content);
+    }));
     container.querySelectorAll('.btn-del-evidence').forEach(btn => {
       btn.addEventListener('click', async () => {
         const itemIdx = parseInt(btn.getAttribute('data-item-idx'), 10);
@@ -259,10 +284,13 @@ export function renderContentEditor(container) {
   function promptEvidenceUpload(itemIdx) {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
-    fileInput.accept = 'image/*,.pdf,.svg';
+    fileInput.accept = selectedTabId === 'certificates' ? 'image/jpeg,image/png,image/webp' : 'image/*,.pdf,.svg';
     fileInput.onchange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
+      if (selectedTabId === 'certificates' && !['image/jpeg','image/png','image/webp'].includes(file.type)) {
+        alert('For certificate previews, choose a JPG, PNG or WebP image.'); return;
+      }
 
       const label = prompt('Enter a label for this evidence document (e.g. "Certificate Scan", "Approved MOV"):');
       if (!label) return;
@@ -299,6 +327,7 @@ export function renderContentEditor(container) {
           label,
           file: filePath,
           type: file.type.startsWith('image/') ? 'image' : 'document',
+          preview_images: file.type.startsWith('image/') ? [filePath] : [],
           context
         });
 

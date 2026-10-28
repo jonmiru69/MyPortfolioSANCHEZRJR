@@ -36,11 +36,11 @@ export function renderTeaching(container, data) {
             </div>
             <div>
               <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); display: block;">CURRICULUM FRAMEWORK:</span>
-              <strong style="font-size: 0.85rem; color: var(--color-accent);">${item.curriculum || 'MATATAG Curriculum'}</strong>
+              <strong style="font-size: 0.85rem; color: var(--color-accent);">${item.curriculum || 'Not specified'}</strong>
             </div>
             <div>
               <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); display: block;">TARGET GRADE LEVELS:</span>
-              <strong style="font-size: 0.85rem; color: var(--text-primary);">${item.grade_levels || 'Junior High'}</strong>
+              <strong style="font-size: 0.85rem; color: var(--text-primary);">${item.grade_levels || 'Not specified'}</strong>
             </div>
           </div>
         </div>

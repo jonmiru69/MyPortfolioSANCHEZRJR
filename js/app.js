@@ -58,7 +58,7 @@ class App {
     // Apply custom design tokens from site.json
     if (store.site?.theme) {
       if (store.site.theme.color_accent) {
-        document.documentElement.style.setProperty('--color-accent', store.site.theme.color_accent);
+        document.documentElement.style.setProperty('--brand-accent', store.site.theme.color_accent);
       }
       if (store.site.theme.bg_canvas) {
         document.documentElement.style.setProperty('--bg-canvas', store.site.theme.bg_canvas);
@@ -180,6 +180,7 @@ class App {
 
   async handleRoute(route) {
     if (!this.pageContainer) return;
+    document.body.classList.toggle('is-admin', route === 'admin');
 
     // Admin view overrides standard binder wrapper
     const binderContainer = document.querySelector('.binder-container');

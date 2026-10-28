@@ -1,47 +1,18 @@
 {
-  "summary": "Personal statement, professional focus, and core ethos as a 21st-century science educator.",
-  "statement": "As a licensed professional teacher dedicated to the Special Science Program (STE) and the Philippine MATATAG curriculum, my mission is to nurture critical thinkers who view scientific inquiry not as a set of textbook facts, but as an indispensable tool for community problem-solving and nation-building.",
-  "bio": "Ramelito Jr. C. Sanchez, LPT (widely known as Jonmiru) is a secondary science teacher and STEM research adviser in the Division of City Schools. With expertise in biological sciences, curriculum localization, and open scientific tooling, he coaches learners in investigative projects spanning environmental science, biotechnology, and robotics. He actively participates in DepEd learning action cells (LAC), instructional material development, and digital literacy advocacy.",
+  "summary": "Science educator at Colegio de Sto. Tomas - Recoletos, Incorporated.",
+  "statement": "I aim to help learners develop curiosity, critical thinking, and confidence through science and inquiry.",
+  "bio": "Ramelito Jr. C. Sanchez is an educator at Colegio de Sto. Tomas - Recoletos, Incorporated.",
   "key_facts": [
     {
-      "label": "Designation",
-      "value": "Special Science Teacher (STE Program)"
+      "label": "Institution",
+      "value": "Colegio de Sto. Tomas - Recoletos, Incorporated"
     },
     {
-      "label": "Eligibilities",
-      "value": "Licensed Professional Teacher (PRC), Civil Service Eligible"
-    },
-    {
-      "label": "Curriculum",
-      "value": "MATATAG Secondary Science & STE Specialized Electives"
-    },
-    {
-      "label": "Research Advisory",
-      "value": "Regional Science & Technology Fair (RSTF) Finalist Coach"
-    },
-    {
-      "label": "Instructional Focus",
-      "value": "Inquiry-Based Learning (5E Model), Micro-Scale Chemistry, Open EdTech"
+      "label": "Qualification",
+      "value": "Bachelor of Secondary Education, major in Science"
     }
   ],
-  "highlights": [
-    {
-      "id": "prof-1",
-      "title": "STE Science Mentorship",
-      "subtitle": "Mentoring young researchers in investigatory projects",
-      "description": "Guided student teams through ethical clearance, experimental design, and data synthesis, leading to division and regional recognitions in Life Science and Environmental Science.",
-      "featured": true,
-      "order": 1
-    },
-    {
-      "id": "prof-2",
-      "title": "MATATAG Pilot Integration",
-      "subtitle": "Unpacking competencies & formative assessment",
-      "description": "Authored localized activity sheets and formative probes aligned with the decongested MATATAG curriculum framework for Junior High School Science.",
-      "featured": true,
-      "order": 2
-    }
-  ],
+  "highlights": [],
   "items": [
     {
       "id": "profile-1792048979331",

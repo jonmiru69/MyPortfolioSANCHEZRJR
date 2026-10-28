@@ -1,10 +1,12 @@
+import { store } from '../store.js';
 /**
  * Accessible Modal Lightbox
  * For previewing sheet protector evidence files, certificates, and images.
  */
 
-export function openLightbox(evidenceItem) {
+export function openLightbox(evidenceItem, options = {}) {
   const previousFocus = document.activeElement;
+  const objectUrls = [];
   // Remove any existing lightbox
   const existing = document.querySelector('.lightbox-backdrop');
   if (existing) existing.remove();
@@ -22,8 +24,37 @@ export function openLightbox(evidenceItem) {
   closeBtn.className = 'lightbox-close-btn';
   closeBtn.innerHTML = '&times;';
   closeBtn.setAttribute('aria-label', 'Close lightbox');
-  const close = () => { backdrop.remove(); if (previousFocus && previousFocus.isConnected) previousFocus.focus(); };
+  const close = () => { window.removeEventListener('hashchange', close); backdrop.remove(); objectUrls.forEach(url => URL.revokeObjectURL(url)); if (previousFocus && previousFocus.isConnected) previousFocus.focus(); };
   closeBtn.onclick = close;
+
+  if (options.imageOnly) {
+    content.classList.add('image-only-preview');
+    const pages = evidenceItem.preview_images?.length ? evidenceItem.preview_images : (/\.(png|jpe?g|webp|gif)$/i.test(evidenceItem.file || '') ? [evidenceItem.file] : []);
+    const viewer = document.createElement('div');
+    viewer.className = 'preview-pages';
+    if (!pages.length) {
+      const message = document.createElement('p');
+      message.textContent = 'Image preview is not available. Ask the portfolio owner to add an image preview.';
+      viewer.appendChild(message);
+    }
+    pages.forEach((path, i) => {
+      const image = document.createElement('img');
+      image.src = path; image.alt = `${evidenceItem.label || 'Certificate'}, page ${i + 1} of ${pages.length}`;
+      store.loadDraft(path).then(blob => {
+        if (blob instanceof Blob && backdrop.isConnected) { const url = URL.createObjectURL(blob); objectUrls.push(url); image.src = url; }
+      });
+      image.loading = i ? 'lazy' : 'eager';
+      viewer.appendChild(image);
+    });
+    content.append(closeBtn, viewer); backdrop.appendChild(content);
+    backdrop.addEventListener('click', e => { if (e.target === backdrop) close(); });
+    backdrop.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.stopPropagation(); close(); }
+      if (e.key === 'Tab') { e.preventDefault(); closeBtn.focus(); }
+    });
+    window.addEventListener('hashchange', close, { once: true });
+    document.body.appendChild(backdrop); closeBtn.focus(); return;
+  }
 
   const isDoc = evidenceItem.type === 'document' || (evidenceItem.file && evidenceItem.file.endsWith('.pdf'));
 

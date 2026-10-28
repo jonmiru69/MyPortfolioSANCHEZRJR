@@ -13,7 +13,8 @@ export function renderCertificates(container, data) {
   let currentSort = 'newest';
 
   // Extract unique years and types
-  const years = Array.from(new Set(items.map(i => i.year || new Date(i.date_start).getFullYear()))).filter(Boolean).sort((a, b) => b - a);
+  const itemYear = item => (item.date_start || '').slice(0, 4) || String(item.year || '');
+  const years = Array.from(new Set(items.map(itemYear))).filter(y => /^\d{4}$/.test(y)).sort((a, b) => b.localeCompare(a));
   const types = Array.from(new Set(items.map(i => i.type))).filter(Boolean);
 
   function getFilteredItems() {
@@ -22,7 +23,7 @@ export function renderCertificates(container, data) {
       result = result.filter(i => i.type === currentTypeFilter);
     }
     if (currentYearFilter !== 'all') {
-      result = result.filter(i => (i.year?.toString() || '') === currentYearFilter);
+      result = result.filter(i => itemYear(i) === currentYearFilter);
     }
     if (currentSort === 'newest') {
       result.sort((a, b) => (b.date_start || '').localeCompare(a.date_start || ''));
@@ -50,33 +51,33 @@ export function renderCertificates(container, data) {
 
     listContainer.innerHTML = filtered.map(item => {
       const evidenceChips = (item.evidence || []).map((ev, evIdx) => `
-        <button class="chip chip-evidence btn-preview-evidence" data-item-id="${item.id}" data-ev-idx="${evIdx}">
-          📄 ${ev.label}
+        <button class="chip chip-evidence btn-preview-evidence" data-item-id="${escapeText(item.id)}" data-ev-idx="${evIdx}">
+          ${escapeText(ev.label || 'View certificate')}
         </button>
       `).join('');
 
-      const skillsChips = (item.skills || []).map(s => `<span class="chip">${s}</span>`).join('');
+      const skillsChips = (item.skills || []).map(s => `<span class="chip">${escapeText(s)}</span>`).join('');
 
       return `
         <div class="evidence-sleeve">
           <div class="evidence-header">
             <div>
               <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
-                <span class="chip chip-accent">${item.type || 'Training'}</span>
+                <span class="chip chip-accent">${escapeText(item.type || 'Training')}</span>
                 ${item.hours != null && item.hours !== '' ? `<span class="chip">${escapeText(item.hours)} hours</span>` : ''}
               </div>
-              <h3 class="evidence-title">${item.title}</h3>
-              <p class="evidence-subtitle">${item.subtitle || ''}</p>
+              <h3 class="evidence-title">${escapeText(item.title)}</h3>
+              <p class="evidence-subtitle">${escapeText(item.subtitle || '')}</p>
             </div>
-            <span class="evidence-meta">${item.date_start}</span>
+            <span class="evidence-meta">${escapeText(item.date_start)}</span>
           </div>
 
           <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-            Provider: <strong>${item.organization}</strong>
+            Provider: <strong>${escapeText(item.organization)}</strong>
           </p>
 
           <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 0.75rem;">
-            ${item.description}
+            ${escapeText(item.description)}
           </p>
 
           ${item.issue_date ? `<p>Issued: ${escapeText(item.issue_date)}</p>` : ''}
@@ -105,20 +106,20 @@ export function renderCertificates(container, data) {
         const evIdx = parseInt(btn.getAttribute('data-ev-idx'), 10);
         const item = items.find(i => i.id === itemId);
         if (item && item.evidence && item.evidence[evIdx]) {
-          openLightbox(item.evidence[evIdx]);
+          openLightbox(item.evidence[evIdx], { imageOnly: true });
         }
       });
     });
   }
 
-  const typeOptions = types.map(t => `<option value="${t}">${t}</option>`).join('');
+  const typeOptions = types.map(t => `<option value="${escapeText(t)}">${escapeText(t)}</option>`).join('');
   const yearOptions = years.map(y => `<option value="${y}">${y}</option>`).join('');
 
   container.innerHTML = `
     <div class="page-view certificates-page">
       <span class="signature-heading">PORTFOLIO FOR CERTIFICATES &amp; TRAININGS</span>
-      <h2 class="tab-title">Professional Development &amp; MOVs</h2>
-      <p class="tab-summary">${data?.summary || ''}</p>
+      <h2 class="tab-title">Certificates &amp; training</h2>
+      <p class="tab-summary">${escapeText(data?.summary || '')}</p>
 
       <!-- Filter Controls Bar -->
       <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">

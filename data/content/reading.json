@@ -1,46 +1,5 @@
 {
-  "summary": "Professional organization affiliations, disciplinary societies, and foundational literature shaping pedagogical practice.",
-  "memberships": [
-    {
-      "organization": "Biology Teachers Association of the Philippines (BIOTA)",
-      "role": "Regular Active Member",
-      "since": "2020",
-      "status": "Active"
-    },
-    {
-      "organization": "Philippine Association of Chemistry Teachers (PACT)",
-      "role": "Associate Member (Secondary Education Division)",
-      "since": "2022",
-      "status": "Active"
-    },
-    {
-      "organization": "Philippine Society of Youth Science Clubs (PSYSC)",
-      "role": "Registered Affiliated Club Adviser",
-      "since": "2021",
-      "status": "Active"
-    }
-  ],
-  "reading_list": [
-    {
-      "title": "The 5E Instructional Model: Creating Teachable Moments",
-      "author": "Rodger W. Bybee",
-      "category": "Science Pedagogy",
-      "status": "Completed / Core Guide",
-      "key_takeaway": "Emphasizes that conceptual explanation must emerge from students' exploration rather than preceding it."
-    },
-    {
-      "title": "Visible Learning for Science: What Works Best to Optimize Student Learning",
-      "author": "John Hattie, Douglas Fisher, Nancy Frey",
-      "category": "Formative Assessment & Evidence",
-      "status": "Completed",
-      "key_takeaway": "Provides high effect size interventions for student conceptual conceptualization and metacognitive laboratory reflection."
-    },
-    {
-      "title": "Decolonizing Science Education: Local Realities and Indigenous Knowledge",
-      "author": "Current Studies in Southeast Asian STEM Pedagogy",
-      "category": "Curriculum Contextualization",
-      "status": "Currently Reading",
-      "key_takeaway": "Investigating how Philippine ethnobotanical knowledge can contextualize modern plant physiology curricula."
-    }
-  ]
+  "summary": "This section is being prepared.",
+  "memberships": [],
+  "reading_list": []
 }

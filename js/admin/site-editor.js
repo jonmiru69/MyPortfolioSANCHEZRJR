@@ -10,6 +10,7 @@ export async function renderSiteEditor(container) {
   const identity = site.identity || {};
   const seo = site.seo || {};
   const contact = site.contact || {};
+  const overview = site.overview || {};
   const safe = value => String(value || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   container.innerHTML = `
@@ -41,12 +42,21 @@ export async function renderSiteEditor(container) {
         </div>
         <div class="form-group"><label class="form-label" for="id-date">Date range</label><input id="id-date" class="form-input" value="${safe(identity.date_range)}" /></div>
         <div class="form-group"><label class="form-label" for="id-location">Location</label><input id="id-location" class="form-input" value="${safe(identity.location)}" /></div>
+        <div class="form-group"><label class="form-label" for="id-institution">Institution</label><input id="id-institution" class="form-input" value="${safe(identity.institution)}" /></div>
         <div class="form-group"><label class="form-label" for="id-email">Public email</label><input id="id-email" type="email" class="form-input" value="${safe(identity.email)}" /></div>
         <div class="form-group"><label class="form-label" for="id-avatar">Portrait image path or URL</label><input id="id-avatar" class="form-input" value="${safe(identity.avatar)}" /></div>
         <div class="form-group"><label class="form-label" for="id-cover">Cover image path or URL</label><input id="id-cover" class="form-input" value="${safe(identity.cover_image)}" /></div>
         <div class="form-group"><label class="form-label" for="id-cover-alt">Cover image description</label><input id="id-cover-alt" class="form-input" value="${safe(identity.cover_image_alt)}" /></div>
         <div class="form-group" style="grid-column: 1 / -1;"><label class="form-label" for="id-footer">Footer text</label><input id="id-footer" class="form-input" value="${safe(identity.footer_text)}" /></div>
       </div>
+    </div>
+
+    <div class="admin-card">
+      <h3>Overview page</h3>
+      <div class="form-group"><label for="overview-heading" class="form-label">Sections heading</label><input id="overview-heading" class="form-input" value="${safe(overview.heading)}" /></div>
+      <div class="form-group"><label for="overview-description" class="form-label">Introduction to sections</label><textarea id="overview-description" class="form-textarea">${safe(overview.description)}</textarea></div>
+      <div class="form-group"><label for="overview-action" class="form-label">Profile link label</label><input id="overview-action" class="form-input" value="${safe(overview.action_label)}" /></div>
+      <div class="form-group"><label for="overview-learning" class="form-label">Learning heading</label><input id="overview-learning" class="form-input" value="${safe(overview.learning_heading)}" /></div>
     </div>
 
     <div class="admin-card">
@@ -109,11 +119,19 @@ export async function renderSiteEditor(container) {
       positioning_sentence: container.querySelector('#id-pos').value.trim(),
       date_range: container.querySelector('#id-date').value.trim(),
       location: container.querySelector('#id-location').value.trim(),
+      institution: container.querySelector('#id-institution').value.trim(),
       email: container.querySelector('#id-email').value.trim(),
       avatar: container.querySelector('#id-avatar').value.trim(),
       cover_image: container.querySelector('#id-cover').value.trim(),
       cover_image_alt: container.querySelector('#id-cover-alt').value.trim(),
       footer_text: container.querySelector('#id-footer').value.trim()
+    };
+    store.site.overview = {
+      ...store.site.overview,
+      heading: container.querySelector('#overview-heading').value.trim(),
+      description: container.querySelector('#overview-description').value.trim(),
+      action_label: container.querySelector('#overview-action').value.trim(),
+      learning_heading: container.querySelector('#overview-learning').value.trim()
     };
     store.site.seo = {
       ...store.site.seo,

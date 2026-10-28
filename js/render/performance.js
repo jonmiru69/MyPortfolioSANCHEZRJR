@@ -63,7 +63,7 @@ export function renderPerformance(container, data) {
 
       <!-- RPMS Notice -->
       <div style="background: var(--bg-surface-elevated); border-left: 3px solid var(--color-accent); padding: 0.85rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 2rem;">
-        <strong>DepEd RPMS Policy Note:</strong> ${data?.rpms_notice || ''}
+        <strong>Note:</strong> ${data?.rpms_notice || ''}
       </div>
 
       <!-- Rating Header Box -->

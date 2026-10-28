@@ -1,22 +1,48 @@
 {
-  "summary": "Direct communication channel for professional inquiries, demonstration teaching invitations, and academic collaboration.",
-  "official_email": "sanchez.ramelito@deped.gov.ph",
-  "academic_email": "ramelito.sanchez@alumni.edu.ph",
-  "office_location": "Science Department, Division City High School, DepEd SDO",
-  "consultation_hours": "Monday to Friday: 3:30 PM – 5:00 PM (PST) by appointment",
+  "summary": "Get in touch for professional inquiries and collaboration.",
+  "official_email": "sanchezramil2202@gmail.com",
+  "academic_email": "",
+  "office_location": "Colegio de Sto. Tomas - Recoletos, Incorporated",
+  "consultation_hours": "",
   "social_links": [
-    { "platform": "GitHub", "url": "https://github.com/jonmiru", "handle": "@jonmiru" },
-    { "platform": "LinkedIn", "url": "https://linkedin.com/in/jonmiru", "handle": "Ramelito Sanchez, LPT" },
-    { "platform": "ResearchGate", "url": "https://researchgate.net/profile/Ramelito-Sanchez", "handle": "Ramelito C Sanchez Jr" }
+    {
+      "platform": "GitHub",
+      "url": "https://github.com/jonmiru69",
+      "handle": "@jonmiru69"
+    }
   ],
   "form_settings": {
     "title": "Send an Inquiry or Professional Note",
     "subtitle": "Principals, research collaborators, and scholarship committees may submit messages directly below.",
     "fields": [
-      { "id": "full_name", "label": "Full Name", "type": "text", "required": true, "placeholder": "e.g., Dr. Jane Doe" },
-      { "id": "email", "label": "Email Address", "type": "email", "required": true, "placeholder": "e.g., jane.doe@institution.edu" },
-      { "id": "organization", "label": "Organization / School / Panel", "type": "text", "required": true, "placeholder": "e.g., University Graduate Committee" },
-      { "id": "message", "label": "Inquiry or Message", "type": "textarea", "required": true, "placeholder": "Please provide details regarding your inquiry, schedule, or request..." }
+      {
+        "id": "full_name",
+        "label": "Full Name",
+        "type": "text",
+        "required": true,
+        "placeholder": "e.g., Dr. Jane Doe"
+      },
+      {
+        "id": "email",
+        "label": "Email Address",
+        "type": "email",
+        "required": true,
+        "placeholder": "e.g., jane.doe@institution.edu"
+      },
+      {
+        "id": "organization",
+        "label": "Organization / School / Panel",
+        "type": "text",
+        "required": true,
+        "placeholder": "e.g., University Graduate Committee"
+      },
+      {
+        "id": "message",
+        "label": "Inquiry or Message",
+        "type": "textarea",
+        "required": true,
+        "placeholder": "Please provide details regarding your inquiry, schedule, or request..."
+      }
     ],
     "submit_label": "Transmit Message",
     "success_message": "Message received. I will reply shortly."

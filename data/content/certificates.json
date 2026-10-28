@@ -24,7 +24,11 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/ai-class-asean.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/ai-class-asean-1.webp",
+            "assets/images/certificate-pages/ai-class-asean-2.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -54,7 +58,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/ai-fluency.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/ai-fluency-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -84,7 +91,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/tutorial-outreach.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/tutorial-outreach-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -114,7 +124,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/ai-unlocked.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/ai-unlocked-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -144,7 +157,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/research-decision-making.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/research-decision-making-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -177,7 +193,7 @@
           "context": "Certificate supplied by the portfolio owner."
         }
       ],
-      "visibility": "public",
+      "visibility": "hidden",
       "featured": false,
       "order": 6
     },
@@ -204,7 +220,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/safe-spaces.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/safe-spaces-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -234,7 +253,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/student-distress.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/student-distress-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -264,7 +286,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/mental-health-matters.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/mental-health-matters-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -294,7 +319,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/corporal-punishment.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/corporal-punishment-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -324,7 +352,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/breaking-stigma.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/breaking-stigma-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -354,7 +385,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/sayuna-ai.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/sayuna-ai-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -384,7 +418,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/responsible-ai-research.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/responsible-ai-research-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -414,7 +451,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/physics-waves.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/physics-waves-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -445,7 +485,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/physics-work-energy-power.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/physics-work-energy-power-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -476,7 +519,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/physics-electricity-magnetism.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/physics-electricity-magnetism-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -510,7 +556,7 @@
           "context": "Certificate supplied by the portfolio owner."
         }
       ],
-      "visibility": "public",
+      "visibility": "hidden",
       "featured": false,
       "order": 17,
       "preview_image": "assets/images/certificate-previews/ilaw.png"
@@ -538,7 +584,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/ai-for-communities.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/ai-for-communities-1.webp"
+          ]
         }
       ],
       "visibility": "public",
@@ -568,7 +617,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/istrel-conference.png",
           "type": "image",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/docs/certificates/istrel-conference.png"
+          ]
         }
       ],
       "visibility": "public",
@@ -598,7 +650,10 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/indigenous-peoples-conference.png",
           "type": "image",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/docs/certificates/indigenous-peoples-conference.png"
+          ]
         }
       ],
       "visibility": "public",
@@ -628,78 +683,15 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/pafte-webinar-series-7.jpg",
           "type": "image",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/docs/certificates/pafte-webinar-series-7.jpg"
+          ]
         }
       ],
       "visibility": "public",
       "featured": false,
       "order": 21
-    },
-    {
-      "id": "cert-3",
-      "title": "Division Research Congress & Ethics in Student Investigatory Projects",
-      "subtitle": "Scientific Ethics, Statistical Modeling, and Fair Defense Guidelines (32 Training Hours)",
-      "organization": "Schools Division Research Committee (SDRC)",
-      "date_start": "2023-04",
-      "date_end": "2023-04",
-      "year": 2023,
-      "hours": 32,
-      "type": "Research",
-      "skills": [
-        "Research Ethics",
-        "Statistical Analysis",
-        "Intellectual Property"
-      ],
-      "description": "Certified research adviser training on ISEF rules, biosafety protocols, institutional review board (IRB) compliance, and experimental error analysis.",
-      "tags": [
-        "Research",
-        "SDRC",
-        "Ethics"
-      ],
-      "evidence": [
-        {
-          "label": "Division Research Adviser Certification",
-          "file": "assets/docs/sample-certificate.svg",
-          "type": "image",
-          "context": "Accreditation for Junior High School STE research advisers."
-        }
-      ],
-      "visibility": "hidden",
-      "featured": true,
-      "order": 3
-    },
-    {
-      "id": "cert-4",
-      "title": "Open Educational Resources (OER) and Digital Courseware Development",
-      "subtitle": "Creating Interactive Web Simulations & Self-Paced Modules (24 Training Hours)",
-      "organization": "DepEd Information and Communications Technology Service (ICTS)",
-      "date_start": "2022-09",
-      "date_end": "2022-09",
-      "year": 2022,
-      "hours": 24,
-      "type": "Technology",
-      "skills": [
-        "OER",
-        "Interactive Simulation",
-        "Instructional Design"
-      ],
-      "description": "Practical training in developing Creative Commons-licensed learning packages, integrating PhET interactive simulations, and building accessible digital lesson sheets.",
-      "tags": [
-        "ICTS",
-        "OER",
-        "EdTech"
-      ],
-      "evidence": [
-        {
-          "label": "ICTS Digital Courseware Certification",
-          "file": "assets/docs/sample-certificate.svg",
-          "type": "image",
-          "context": "Issued under the DepEd OER Digital Learning Initiative."
-        }
-      ],
-      "visibility": "hidden",
-      "featured": false,
-      "order": 4
     }
   ]
 }
