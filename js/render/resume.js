@@ -5,6 +5,9 @@
 
 export function renderResume(container, data) {
   const cv = data?.cv || {};
+  if (!Object.keys(cv).length) {
+    container.innerHTML = '<div class="page-view"><h2 class="tab-title">Résumé / CV</h2><p class="tab-summary">This section is being prepared.</p></div>'; return;
+  }
 
   const competenciesHtml = (cv.core_competencies || []).map(skill => `
     <span class="chip chip-accent">${skill}</span>

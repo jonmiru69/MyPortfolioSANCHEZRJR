@@ -6,12 +6,12 @@
     "preferred_name": "Sir Johnmil",
     "title": "Science educator",
     "positioning_sentence": "Advancing secondary science education and scientific inquiry through evidence-based pedagogy, curriculum alignment, and technology integration.",
-    "date_range": "2019 – 2026",
+    "date_range": "2026 - Present",
     "avatar": "assets/images/profile-portrait.svg",
     "cover_image": "",
-    "email": "sanchezramil2202@gmail.com",
+    "email": "rsanchez.faculty@cstr.edu.ph",
     "location": "Philippines",
-    "footer_text": "Ramelito Jr. C. Sanchez · Colegio de Sto. Tomas - Recoletos, Incorporated",
+    "footer_text": "Ramelito Jr. C. Sanchez, LPT | High School Science & Research Educator",
     "label_template": "Portfolio for {name}",
     "cover_image_alt": "",
     "institution": "Colegio de Sto. Tomas - Recoletos, Incorporated"
@@ -89,7 +89,7 @@
   ],
   "contact": {
     "method": "mailto",
-    "mailto_address": "sanchezramil2202@gmail.com",
+    "mailto_address": "rsanchez.faculty@cstr.edu.ph",
     "endpoint_url": "",
     "success_message": "Inquiry received! Thank you for reaching out. I will be in touch shortly."
   },
@@ -129,7 +129,7 @@
       "slug": "resume",
       "label": "Résumé / CV",
       "summary": "Structured professional curriculum vitae with printable sheet.",
-      "enabled": false,
+      "enabled": true,
       "order": 4
     },
     {
@@ -137,7 +137,7 @@
       "slug": "philosophy",
       "label": "Philosophy",
       "summary": "Teaching philosophy, educational core beliefs, and 5-year goals.",
-      "enabled": false,
+      "enabled": true,
       "order": 5
     },
     {
@@ -153,7 +153,7 @@
       "slug": "licenses",
       "label": "Eligibilities",
       "summary": "Board Licensure Examination for Professional Teachers (BLEPT) and civil credentials.",
-      "enabled": false,
+      "enabled": true,
       "order": 7
     },
     {
@@ -170,7 +170,7 @@
       "label": "Research",
       "summary": "Investigatory projects, action research, thesis abstracts, and conference papers.",
       "enabled": false,
-      "order": 9
+      "order": 10
     },
     {
       "id": "teaching",
@@ -178,14 +178,14 @@
       "label": "Teaching",
       "summary": "Teaching experience, subjects, and classroom practice.",
       "enabled": true,
-      "order": 10
+      "order": 9
     },
     {
       "id": "materials",
       "slug": "materials",
       "label": "Materials",
       "summary": "Daily Lesson Logs (DLL), LAS, laboratory guides, and assessment TOS.",
-      "enabled": false,
+      "enabled": true,
       "order": 11
     },
     {
@@ -193,7 +193,7 @@
       "slug": "performance",
       "label": "PPST Evidence",
       "summary": "Matrix of PPST domains, COT ratings, learner outcomes, and reflection notes.",
-      "enabled": false,
+      "enabled": true,
       "order": 12
     },
     {
@@ -201,7 +201,7 @@
       "slug": "awards",
       "label": "Awards",
       "summary": "Teaching recognitions, research mentorship honors, and institutional citations.",
-      "enabled": false,
+      "enabled": true,
       "order": 13
     },
     {
@@ -233,7 +233,7 @@
       "slug": "reading",
       "label": "Memberships",
       "summary": "Professional organizations and current literature in science education.",
-      "enabled": false,
+      "enabled": true,
       "order": 17
     },
     {
@@ -249,7 +249,7 @@
       "slug": "gallery",
       "label": "Gallery",
       "summary": "Classroom inquiry, laboratory activities, and Science Month exhibits in action.",
-      "enabled": false,
+      "enabled": true,
       "order": 19
     },
     {

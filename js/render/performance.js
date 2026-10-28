@@ -6,6 +6,9 @@
 import { openLightbox } from './lightbox.js';
 
 export function renderPerformance(container, data) {
+  if (!data?.domains?.length && !data?.cot_summary?.length && !Object.keys(data?.overall_rating || {}).length) {
+    container.innerHTML = '<div class="page-view"><h2 class="tab-title">Professional evidence</h2><p class="tab-summary">This section is being prepared.</p></div>'; return;
+  }
   const rating = data?.overall_rating || {};
   const cots = data?.cot_summary || [];
   const domains = data?.domains || [];
