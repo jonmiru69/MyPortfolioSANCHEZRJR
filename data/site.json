@@ -130,7 +130,7 @@
       "slug": "resume",
       "label": "Résumé / CV",
       "summary": "Résumé information.",
-      "enabled": true,
+      "enabled": false,
       "order": 4
     },
     {
@@ -138,7 +138,7 @@
       "slug": "philosophy",
       "label": "Philosophy",
       "summary": "Teaching philosophy.",
-      "enabled": true,
+      "enabled": false,
       "order": 5
     },
     {
@@ -178,7 +178,7 @@
       "slug": "teaching",
       "label": "Teaching",
       "summary": "Teaching experience, subjects, and classroom practice.",
-      "enabled": true,
+      "enabled": false,
       "order": 9
     },
     {
@@ -186,7 +186,7 @@
       "slug": "materials",
       "label": "Materials",
       "summary": "Teaching materials.",
-      "enabled": true,
+      "enabled": false,
       "order": 11
     },
     {
@@ -202,7 +202,7 @@
       "slug": "awards",
       "label": "Awards",
       "summary": "Awards and recognitions.",
-      "enabled": true,
+      "enabled": false,
       "order": 13
     },
     {
