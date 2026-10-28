@@ -3,9 +3,12 @@
  * Personal statement, short bio, key facts table, and educator portrait.
  */
 
-export function renderProfile(container, data, siteData) {
+import { store } from '../store.js';
+export async function renderProfile(container, data, siteData) {
   const profile = data || {};
   const identity = siteData?.identity || {};
+  const draft = identity.avatar ? await store.loadDraft(identity.avatar) : null;
+  const portrait = draft instanceof Blob ? URL.createObjectURL(draft) : (identity.avatar || 'assets/images/owner-portrait.png');
 
   const keyFactsHtml = (profile.key_facts || []).map(fact => `
     <tr style="border-bottom: 1px solid var(--border-color);">
@@ -47,7 +50,7 @@ export function renderProfile(container, data, siteData) {
 
         <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.5rem; text-align: center;">
           <img 
-            src="${identity.avatar || 'assets/images/profile-portrait.svg'}" 
+            src="${portrait}"
             alt="Portrait of ${identity.name || 'Educator'}" 
             style="width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 1.25rem; display: block; border: 2px solid var(--color-accent);"
           />
@@ -63,4 +66,6 @@ export function renderProfile(container, data, siteData) {
       </div>
     </div>
   `;
+  const image=container.querySelector('.profile-page img');
+  image?.addEventListener('error', () => { if (!image.src.endsWith('/assets/images/owner-portrait.png')) image.src='assets/images/owner-portrait.png'; }, { once:true });
 }

@@ -85,31 +85,28 @@ class App {
     setMeta('meta[name="twitter:image"]', seo.og_image);
     this.setupHeader();
     this.setupFooter();
+    this.navToggle = document.getElementById('section-menu-toggle');
     this.renderTabs();
     this.ownerTools = setupInlineOwner(this);
-    const menu = document.getElementById('section-menu-toggle');
+    const menu = this.navToggle;
     if (menu && this.tabsContainer) {
       document.documentElement.classList.add('js-nav');
-      document.querySelector('.top-bar-controls')?.prepend(menu);
       const desktop = () => window.matchMedia('(min-width: 769px)').matches;
-      menu.setAttribute('aria-expanded', String(desktop()));
-      window.matchMedia('(min-width: 769px)').addEventListener('change', e => {
-        menu.setAttribute('aria-expanded', String(e.matches));
-        document.body.classList.remove('nav-collapsed');
-        this.tabsContainer.classList.remove('menu-open');
-      });
-      menu.addEventListener('click', () => {
-        const open = menu.getAttribute('aria-expanded') !== 'true';
+      const setOpen = open => {
         menu.setAttribute('aria-expanded', String(open));
         this.tabsContainer.classList.toggle('menu-open', open);
-        document.body.classList.toggle('nav-collapsed', !open && desktop());
-      });
-      this.tabsContainer.addEventListener('click', event => {
-        if (event.target.closest('a') && !desktop()) {
-          menu.setAttribute('aria-expanded', 'false');
-          this.tabsContainer.classList.remove('menu-open');
-        }
-      });
+        document.body.classList.toggle('nav-expanded', open);
+      };
+      menu.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" fill="none" stroke="currentColor" stroke-width="2"/></svg>'; menu.setAttribute('aria-label', 'Expand or retract navigation');
+      setOpen(false);
+      menu.addEventListener('click', () => setOpen(menu.getAttribute('aria-expanded') !== 'true'));
+      this.tabsContainer.addEventListener('pointerenter', e => { if (desktop() && e.pointerType !== 'touch') setOpen(true); });
+      this.tabsContainer.addEventListener('pointerleave', () => { if (desktop()) setOpen(false); });
+      this.tabsContainer.addEventListener('focusin', e => { if (e.target !== menu) setOpen(true); });
+      this.tabsContainer.addEventListener('focusout', e => { if (!this.tabsContainer.contains(e.relatedTarget)) setOpen(false); });
+      this.tabsContainer.addEventListener('keydown', e => { if(e.key === 'Escape') { menu.focus(); setOpen(false); } });
+      this.tabsContainer.addEventListener('click', event => { if (event.target.closest('a') && !desktop()) setOpen(false); });
+      window.matchMedia('(min-width: 769px)').addEventListener('change', () => setOpen(false));
     }
 
     // Setup Route Listeners
@@ -187,6 +184,7 @@ class App {
         </a>
       `;
     }).join('');
+    if (this.navToggle) this.tabsContainer.prepend(this.navToggle);
   }
 
   async handleRoute(route) {
@@ -231,7 +229,7 @@ class App {
         renderContents(this.pageContainer);
       } else if (route === 'profile') {
         const data = await store.getTabContent('profile');
-        renderProfile(this.pageContainer, data, store.site);
+        await renderProfile(this.pageContainer, data, store.site);
       } else if (route === 'resume') {
         const data = await store.getTabContent('resume');
         renderResume(this.pageContainer, data);

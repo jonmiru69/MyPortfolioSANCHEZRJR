@@ -159,6 +159,34 @@ body { font-size: 16px; }
 .owner-tab-control { align-self:flex-end; margin-top:-3rem; z-index:2; }
 .owner-inline-control { position:relative; }
 .owner-detail-control { display:inline-block; margin:.25rem 0; }
+/* Menus escape card and navigation clipping through the top layer. */
+.owner-menu-trigger { display:inline-grid; place-items:center; width:40px; height:40px; border:0; cursor:pointer; font:700 1.4rem var(--font-body); color:var(--text-primary); background:var(--bg-surface-elevated); }
+.owner-menu-list { position:fixed; inset:auto; margin:0; border:0; padding:8px; min-width:min(210px,calc(100vw - 16px)); max-width:calc(100vw - 16px); max-height:calc(100dvh - 16px); overflow:auto; color:var(--text-primary); }
+.owner-menu-list:not(:popover-open) { display:none; }
+.owner-dialog { margin:auto; width:min(94vw,1000px); box-sizing:border-box; max-height:90dvh; overflow:auto; border-radius:4px; }
+.owner-dialog-header { display:flex; justify-content:space-between; align-items:center; gap:16px; position:sticky; top:0; padding-bottom:16px; background:var(--bg-surface); z-index:2; }
+.owner-dialog-header h2 { font-size:1.5rem; }
+.owner-tab-control { margin:0; align-self:flex-end; }
+.owner-detail-control { vertical-align:middle; margin:4px 0; }
+.binder-container,.nav-collapsed .binder-container { grid-template-columns:64px minmax(0,1fr); }
+.nav-expanded .binder-container { grid-template-columns:230px minmax(0,1fr); }
+.binder-tabs { width:100%; min-width:0; box-sizing:border-box; padding:16px 10px; overflow:visible; opacity:1; visibility:visible; }
+.binder-tabs .section-menu-toggle { display:block; min-width:44px; min-height:44px; margin:0 0 12px; padding:8px; }
+body:not(.nav-expanded) .binder-tabs .binder-tab,body:not(.nav-expanded) .binder-tabs .owner-tab-control { opacity:0; pointer-events:none; }
+.binder-tab { transition:opacity .18s ease; }
+.binder-page > #binder-page-content { max-width:1160px; margin-inline:auto; }
+.overview .cover-name { font-size:clamp(2.75rem,6vw,6.25rem); }
+.profile-page .tab-title { max-width:20ch; }
+.profile-page table td { overflow-wrap:anywhere; }
+@media(max-width:768px) {
+ .js-nav .binder-tabs:not(.menu-open) { display:flex !important; }
+ .binder-tabs { padding:8px 20px; min-height:60px; }
+ .binder-tabs:not(.menu-open) .binder-tab,.binder-tabs:not(.menu-open) .owner-tab-control { display:none; }
+ .binder-tabs .section-menu-toggle { margin:0; align-self:flex-start; }
+ .owner-dialog-header { align-items:flex-start; }
+ .owner-dialog { padding:16px; }
+ .overview .cover-name { font-size:clamp(2.5rem,10vw,4rem); }
+}
 .certificates-page .chip-evidence { display:inline-flex; flex-direction:column; align-items:flex-start; gap:.5rem; padding:.6rem; }
 .certificate-thumbnail { display:block; width:min(240px,70vw); aspect-ratio:4/3; object-fit:contain; background:var(--bg-surface-elevated); }
 .image-only-preview { animation:certificate-zoom .25s ease both; }

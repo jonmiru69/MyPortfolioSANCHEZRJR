@@ -7,6 +7,9 @@ import { renderPublish } from './admin/publish.js';
 
 export function setupInlineOwner(app) {
   let enabled = false;
+  const closeMenus = () => document.querySelectorAll('.owner-menu-list:popover-open').forEach(list => list.hidePopover());
+  window.addEventListener('resize', closeMenus);
+  document.addEventListener('scroll', e => { if (!e.target.closest?.('.owner-menu-list')) closeMenus(); }, true);
   const button = document.createElement('button');
   button.type = 'button'; button.className = 'theme-toggle-btn'; button.textContent = 'Owner mode';
   button.setAttribute('aria-pressed', 'false');
@@ -17,7 +20,8 @@ export function setupInlineOwner(app) {
     const heading = document.createElement('h2'); heading.textContent = title;
     const close = document.createElement('button'); close.type = 'button'; close.className = 'btn btn-secondary'; close.textContent = 'Close editor';
     const body = document.createElement('div'); body.className = 'owner-dialog-body';
-    dialog.append(heading, close, body); document.body.append(dialog);
+    const header = document.createElement('div'); header.className = 'owner-dialog-header'; header.append(heading, close);
+    dialog.append(header, body); document.body.append(dialog);
     close.addEventListener('click', () => dialog.close());
     dialog.addEventListener('close', () => { dialog.remove(); app.renderTabs(); app.handleRoute(app.currentRoute()); });
     dialog.showModal(); render(body);
@@ -45,10 +49,22 @@ export function setupInlineOwner(app) {
     enabled = true; button.textContent = 'Exit owner mode'; button.setAttribute('aria-pressed','true'); decorate();
   });
   function menu(label, actions) {
-    const details = document.createElement('details'); details.className = 'owner-menu';
-    const summary = document.createElement('summary'); summary.textContent = '⋮'; summary.setAttribute('aria-label', label); details.append(summary);
-    const list = document.createElement('div'); list.className = 'owner-menu-list';
-    for (const [name, handler] of actions) { const b = document.createElement('button'); b.type='button'; b.textContent=name; b.addEventListener('click', () => { details.open=false; handler(); }); list.append(b); }
+    const details = document.createElement('div'); details.className = 'owner-menu';
+    const summary = document.createElement('button'); summary.type='button'; summary.className='owner-menu-trigger'; summary.textContent = '⋮'; summary.setAttribute('aria-label', label); summary.setAttribute('aria-haspopup','menu'); summary.setAttribute('aria-expanded','false'); details.append(summary);
+    const list = document.createElement('div'); list.className = 'owner-menu-list'; list.setAttribute('popover','auto'); list.setAttribute('role','menu');
+    summary.addEventListener('click', () => {
+      if (list.matches(':popover-open')) { list.hidePopover(); return; }
+      list.showPopover();
+      const rect=summary.getBoundingClientRect(), box=list.getBoundingClientRect(), gap=8;
+      list.style.left=Math.max(gap,Math.min(rect.right-box.width,innerWidth-box.width-gap))+'px';
+      list.style.top=Math.max(gap,Math.min(rect.bottom+gap,innerHeight-box.height-gap))+'px';
+    });
+    list.addEventListener('toggle', () => summary.setAttribute('aria-expanded', String(list.matches(':popover-open'))));
+    list.addEventListener('keydown', e => {
+      const buttons=[...list.querySelectorAll('button')], index=buttons.indexOf(document.activeElement);
+      if(e.key==='ArrowDown'||e.key==='ArrowUp') { e.preventDefault(); buttons[(index+(e.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length]?.focus(); }
+    });
+    for (const [name, handler] of actions) { const b = document.createElement('button'); b.type='button'; b.setAttribute('role','menuitem'); b.textContent=name; b.addEventListener('click', () => { list.hidePopover(); handler(); }); list.append(b); }
     details.append(list); return details;
   }
   function decorate() {
