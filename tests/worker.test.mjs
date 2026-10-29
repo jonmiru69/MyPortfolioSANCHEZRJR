@@ -35,11 +35,13 @@ test("rejects untrusted origins and unauthenticated writes", async () => {
 });
 test("accepts both modern and legacy Office MIME types and rejects spoofed content", async () => {
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () =>
-    Response.json({
-      full_name: "jonmiru69/MyPortfolioSANCHEZRJR",
-      permissions: { push: true },
-    });
+  globalThis.fetch = async (url) =>
+    url === "https://api.github.com/user"
+      ? Response.json({ id: 291507377 })
+      : Response.json({
+          full_name: "jonmiru69/MyPortfolioSANCHEZRJR",
+          permissions: { push: true },
+        });
   let writes = 0;
   const database = {
     prepare: () => ({ bind: () => ({ first: async () => null }) }),
@@ -80,6 +82,75 @@ test("accepts both modern and legacy Office MIME types and rejects spoofed conte
       { ...env, DB: database },
     );
     assert.equal(response.status, 415);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("only the fixed owner with repository write access can publish", async () => {
+  const originalFetch = globalThis.fetch;
+  let writes = 0;
+  const DB = {
+    prepare: () => ({
+      bind: () => ({
+        run: async () => {
+          writes++;
+          return { meta: { changes: 1 } };
+        },
+      }),
+    }),
+  };
+  try {
+    for (const scenario of [
+      {
+        id: 999,
+        repo: "jonmiru69/MyPortfolioSANCHEZRJR",
+        push: true,
+        status: 401,
+      },
+      {
+        id: 291507377,
+        repo: "jonmiru69/MyPortfolioSANCHEZRJR",
+        push: false,
+        status: 401,
+      },
+      { id: 291507377, repo: "someone/another-repo", push: true, status: 401 },
+      {
+        id: 291507377,
+        repo: "jonmiru69/MyPortfolioSANCHEZRJR",
+        push: true,
+        status: 200,
+      },
+    ]) {
+      globalThis.fetch = async (url) =>
+        Response.json(
+          url === "https://api.github.com/user"
+            ? { id: scenario.id }
+            : {
+                full_name: scenario.repo,
+                permissions: { push: scenario.push },
+              },
+        );
+      const response = await worker.fetch(
+        new Request("https://api.example/snapshot", {
+          method: "PUT",
+          headers: {
+            Authorization: "Bearer test-only",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            revision: 1,
+            document: {
+              site: { tabs: [], identity: { name: "Owner" } },
+              content: {},
+            },
+          }),
+        }),
+        { ...env, DB },
+      );
+      assert.equal(response.status, scenario.status);
+    }
+    assert.equal(writes, 1, "denied users must never write to the database");
   } finally {
     globalThis.fetch = originalFetch;
   }

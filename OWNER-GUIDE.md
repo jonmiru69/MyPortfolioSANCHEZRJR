@@ -1,5 +1,7 @@
 # Editing your portfolio
 
+Online editing requires the original GitHub owner account and write access to this specific repository. Visitors and other repository collaborators cannot publish portfolio changes. Your GitHub profile link is omitted from the public Contact page; GitHub still verifies your private owner sign-in.
+
 1. Choose **Owner mode** and connect your GitHub owner access.
 2. Choose **Manage certificates**, or open any other portfolio section.
 3. Choose **Add certificate / Add item**, or the **Edit** button beside an existing record.

@@ -395,9 +395,11 @@ try {
     await page.locator("#cert-search").fill("Test " + ext + " upload");
     await page.locator(".certificate-record button[data-view]").first().click();
     await page.locator(".document-viewer").waitFor();
-    if (ext === "pdf")
+    if (ext === "pdf") {
+      // Draft blobs resolve after the dialog opens; wait for the viewer content.
+      await page.locator(".document-viewer iframe").waitFor();
       assert.equal(await page.locator(".document-viewer iframe").count(), 1);
-    else {
+    } else {
       await page.waitForFunction(
         () => document.querySelector(".document-viewer img")?.naturalWidth > 0,
       );
