@@ -143,3 +143,43 @@ test("a known imported duplicate is reconciled with the owner's original record"
   assert.equal(result.length, 1);
   assert.equal(result[0].id, "owner-upload");
 });
+
+test("retitled legacy records are reattached to the matching supplied certificate, while custom files are preserved", () => {
+  const source = [
+    {
+      id: "certificate-1",
+      title: "AI learning modules",
+      issue_date: "2026-05-23",
+      certificate_kind: "Completion",
+      delivery_mode: "Self-paced",
+      evidence: [{ file: "assets/ai.pdf" }],
+    },
+    {
+      id: "certificate-22",
+      title: "Harnessing Technology",
+      issue_date: "2026-10-24",
+      certificate_kind: "Participation",
+      delivery_mode: "Zoom",
+      evidence: [{ file: "assets/harnessing.pdf" }],
+    },
+  ];
+  const cloud = [
+    {
+      id: "certificate-1",
+      title: "HARNESSING TECHNOLOGY",
+      issue_date: "2026-10-24",
+      certificate_kind: "Completion",
+      delivery_mode: "Self-paced",
+      evidence: [{ file: "assets/ai.pdf" }],
+    },
+  ];
+  const result = reconcileCertificates(cloud, source);
+  assert.equal(result[0].evidence[0].file, "assets/harnessing.pdf");
+  assert.equal(result[0].certificate_kind, "Participation");
+  assert.equal(result[0].delivery_mode, "Zoom");
+  const custom = reconcileCertificates(
+    [{ ...cloud[0], evidence: [{ file: "https://owner.example/custom.pdf" }] }],
+    source,
+  );
+  assert.equal(custom[0].evidence[0].file, "https://owner.example/custom.pdf");
+});

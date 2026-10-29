@@ -51,6 +51,32 @@ export function reconcileCertificates(items, source) {
   for (const original of source) {
     const existing = result.find((item) => sameCertificate(item, original));
     if (existing) {
+      const staleSource = source.find(
+        (candidate) =>
+          !sameCertificate(candidate, original) &&
+          candidate.evidence?.some((sourceFile) =>
+            existing.evidence?.some((file) => file.file === sourceFile.file),
+          ),
+      );
+      if (staleSource && original.evidence?.length) {
+        // The old editor could change the title while leaving another bundled
+        // certificate attached. Repair only those provable legacy references.
+        const stalePaths = new Set(
+          staleSource.evidence.map((file) => file.file),
+        );
+        existing.evidence = [
+          ...existing.evidence.filter((file) => !stalePaths.has(file.file)),
+          ...structuredClone(original.evidence),
+        ];
+        for (const key of [
+          "certificate_kind",
+          "delivery_mode",
+          "seminar_topic",
+          "training_code",
+          "cpd_points",
+        ])
+          if (existing[key] === staleSource[key]) existing[key] = original[key];
+      }
       for (const key of ["seminar_topic", "training_code", "cpd_points"])
         if (existing[key] == null) existing[key] = original[key];
       continue;
