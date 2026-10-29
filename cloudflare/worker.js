@@ -1,4 +1,5 @@
 const REPOSITORY = "jonmiru69/MyPortfolioSANCHEZRJR";
+const OWNER_ID = 291507377;
 const MAX_MEDIA = 20 * 1024 * 1024;
 const CHUNK = 512 * 1024;
 import { FILE_TYPES, matchesFileSignature } from "../js/upload-policy.js";
@@ -14,17 +15,24 @@ function json(data, status = 200) {
 async function authorized(request) {
   const authorization = request.headers.get("Authorization") || "";
   if (!/^Bearer [^\s]+$/.test(authorization)) return false;
-  // Validate against this fixed repository; credentials never enter the database.
-  const response = await fetch(`https://api.github.com/repos/${REPOSITORY}`, {
-    headers: {
-      Authorization: authorization,
-      Accept: "application/vnd.github+json",
-      "User-Agent": "Ramelito-Portfolio",
-    },
-  });
-  if (!response.ok) return false;
-  const repo = await response.json();
+  // Require the fixed owner account as well as write access to this repository.
+  // A future collaborator's token must not grant portfolio editing access.
+  const headers = {
+    Authorization: authorization,
+    Accept: "application/vnd.github+json",
+    "User-Agent": "Ramelito-Portfolio",
+  };
+  const [response, userResponse] = await Promise.all([
+    fetch(`https://api.github.com/repos/${REPOSITORY}`, { headers }),
+    fetch("https://api.github.com/user", { headers }),
+  ]);
+  if (!response.ok || !userResponse.ok) return false;
+  const [repo, user] = await Promise.all([
+    response.json(),
+    userResponse.json(),
+  ]);
   return (
+    user.id === OWNER_ID &&
     repo.full_name?.toLowerCase() === REPOSITORY.toLowerCase() &&
     repo.permissions?.push === true
   );

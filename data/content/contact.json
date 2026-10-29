@@ -4,13 +4,7 @@
   "academic_email": "",
   "office_location": "Colegio de Sto. Tomas - Recoletos, Incorporated",
   "consultation_hours": "",
-  "social_links": [
-    {
-      "platform": "GitHub",
-      "url": "https://github.com/jonmiru69",
-      "handle": "@jonmiru69"
-    }
-  ],
+  "social_links": [],
   "form_settings": {
     "title": "Send an Inquiry or Professional Note",
     "subtitle": "Principals, research collaborators, and scholarship committees may submit messages directly below.",
