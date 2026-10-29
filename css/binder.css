@@ -1,480 +1,147 @@
-/* ==========================================================================
-   BINDER METAPHOR & LAYOUT
-   Physical tabbed binder surface, divider tabs, ring marks, sleeves, lightbox
-   ========================================================================== */
-
-/* Top Navigation Bar / Controls */
 .top-bar {
+  background: var(--nav);
+  color: var(--nav-ink);
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 2rem;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.85rem;
+  gap: 24px;
+  padding: 20px var(--page-margin);
 }
-
-.top-bar-branding {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.wordmark {
+  font: 700 24px/1.1 var(--font-display);
+  letter-spacing: -0.035em;
+  text-decoration: none;
+  white-space: nowrap;
 }
-
-.binder-logo {
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: var(--tracking-wide);
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  text-transform: uppercase;
-}
-
 .top-bar-controls {
   display: flex;
+  gap: 12px;
   align-items: center;
-  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
-
-.preset-selector {
+.top-bar .theme-toggle-btn {
+  background: transparent;
+  color: var(--nav-ink);
+  padding: 10px;
+}
+.binder-tabs {
+  position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  background: var(--nav);
+  color: var(--nav-ink);
+  padding: 0 var(--page-margin) 18px;
+  font: 500 16px/1.4 var(--font-display);
 }
-
-.preset-select {
-  background: var(--bg-surface-elevated);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 0.3rem 0.6rem;
-  font-size: 0.8rem;
+.binder-tab {
+  display: block;
+  padding: 8px 0;
+  text-decoration: none;
+}
+.binder-tab.active {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 8px;
+}
+.more-sections {
+  position: relative;
+  margin-left: auto;
+}
+.more-sections summary {
   cursor: pointer;
+  padding: 8px 0;
 }
-
-.theme-toggle-btn {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 0.35rem 0.65rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.78rem;
-  font-family: var(--font-mono);
-  transition: all 0.15s ease;
+.more-sections-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 260px;
+  padding: 20px 28px;
+  background: var(--nav);
 }
-
-.theme-toggle-btn:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+.more-sections-panel a {
+  padding: 12px 0;
 }
-
-/* Binder Container Structure */
 .binder-wrapper {
   flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 3rem 1.5rem;
-  position: relative;
+  padding: 56px var(--page-margin) 88px;
 }
-
 .binder-container {
-  display: flex;
-  position: relative;
+  width: 100%;
   max-width: var(--binder-max-width);
-  width: 100%;
-  min-height: var(--binder-min-height);
-  background: var(--bg-binder);
-  border-radius: var(--radius-md) 0 0 var(--radius-md);
-  box-shadow: var(--binder-shadow);
-  border: 1px solid var(--border-color);
-  overflow: visible;
+  margin: auto;
 }
-
-/* Spine / Ring Marks */
-.binder-spine {
-  width: var(--spine-width);
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.4) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(0, 0, 0, 0.3) 100%);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  padding: 4rem 0;
-  user-select: none;
-  position: relative;
-}
-
-.binder-ring {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--bg-canvas);
-  border: 3px solid rgba(255, 255, 255, 0.15);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(255, 255, 255, 0.1);
-  position: relative;
-}
-
-.binder-ring::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 6px;
-  height: 6px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
-}
-
-/* Binder Page Content Area */
 .binder-page {
-  flex: 1;
-  padding: var(--page-padding);
-  background: var(--bg-surface);
-  position: relative;
-  min-height: var(--binder-min-height);
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
 }
-
-/* Page Transition Animation */
-.page-view {
-  animation: pageTurn var(--transition-speed) var(--transition-ease) forwards;
-  will-change: opacity, transform;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.page-view:not(.cover-page) {
+  background: var(--paper);
+  padding: clamp(24px, 4vw, 64px);
 }
-
-@keyframes pageTurn {
-  0% {
-    opacity: 0;
-    transform: translateX(12px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Divider Tabs on Desktop (Right Edge) */
-.binder-tabs {
-  position: absolute;
-  left: 100%;
-  top: 2rem;
-  bottom: 2rem;
-  width: var(--tab-width);
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  z-index: 10;
-  pointer-events: auto;
-}
-
-.binder-tab {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.55rem 0.85rem;
-  background: var(--bg-surface-elevated);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  border-left: none;
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: var(--tab-shadow);
-  position: relative;
-  overflow: hidden;
-  user-select: none;
-}
-
-.binder-tab::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: transparent;
-  transition: background-color 0.2s;
-}
-
-.binder-tab:hover {
-  color: var(--text-primary);
-  background: var(--bg-surface);
-  transform: translateX(4px);
-}
-
-.binder-tab.active {
-  background: var(--color-accent);
-  color: var(--text-on-accent);
-  border-color: var(--color-accent);
-  font-weight: 700;
-  transform: translateX(8px);
-  box-shadow: 6px 2px 14px rgba(0, 0, 0, 0.35);
-  z-index: 20;
-}
-
-.binder-tab-num {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  opacity: 0.7;
-}
-
-.binder-tab.active .binder-tab-num {
-  opacity: 0.95;
-}
-
-.binder-tab-label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-left: 0.4rem;
-  flex: 1;
-}
-
-/* Sheet Protector / Evidence Sleeve Cards */
-.evidence-sleeve {
-  background: var(--bg-sleeve);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  position: relative;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: var(--sleeve-shadow);
-}
-
-.evidence-sleeve:hover {
-  border-color: var(--color-accent-border);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
-}
-
-.evidence-sleeve::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--color-accent) 0%, transparent 60%);
-  opacity: 0.4;
-}
-
-.evidence-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.75rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.evidence-title {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.2rem;
-}
-
-.evidence-subtitle {
-  font-size: 0.88rem;
-  color: var(--color-accent);
-  font-weight: 500;
-}
-
-.evidence-meta {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.evidence-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-/* Media Block with Fallback Panel */
-.tab-media-block {
-  width: 100%;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  margin-bottom: 2rem;
-  border: 1px solid var(--border-color);
-  background: var(--bg-surface-elevated);
-  position: relative;
-}
-
-.tab-media-img {
-  width: 100%;
-  height: auto;
-  max-height: 420px;
-  object-fit: cover;
-  display: block;
-}
-
-.media-fallback-panel {
-  padding: 3rem 2rem;
-  text-align: center;
-  background: var(--bg-surface-elevated);
-  border: 1px dashed var(--border-color);
-  border-radius: var(--radius-sm);
-}
-
-.media-fallback-icon {
-  font-size: 2rem;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-}
-
-/* Lightbox Modal */
-.lightbox-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(8px);
-  z-index: 10000;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.lightbox-content {
-  max-width: 90vw;
-  max-height: 85vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.lightbox-img {
-  max-width: 100%;
-  max-height: 75vh;
-  object-fit: contain;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.lightbox-bar {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  background: var(--bg-surface);
-  padding: 0.6rem 1.25rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  font-size: 0.85rem;
-  color: var(--text-primary);
-}
-
-.lightbox-close-btn {
-  position: absolute;
-  top: -2.5rem;
-  right: 0;
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-}
-
-/* Binder Footer */
 .site-footer {
-  padding: 1.5rem 2rem;
-  text-align: center;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  border-top: 1px solid var(--border-color);
-  background: var(--bg-surface);
+  background: var(--footer);
+  color: var(--ink);
+  padding: 16px var(--page-margin);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px 28px;
   flex-wrap: wrap;
-  gap: 1rem;
+  font: 400 16px/1.45 var(--font-display);
 }
-
-.footer-keys {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+.site-footer a {
+  margin-left: auto;
 }
-
-kbd {
-  background: var(--bg-surface-elevated);
-  border: 1px solid var(--border-color);
-  padding: 0.15rem 0.35rem;
-  border-radius: 3px;
-  font-size: 0.7rem;
+.loading-message {
+  padding: 80px 0;
 }
-
-/* Mobile Responsive */
-@media (max-width: 1024px) {
-  .binder-container {
-    flex-direction: column;
-    border-radius: var(--radius-sm);
-    width: 100%;
+@media (max-width: 680px) {
+  .top-bar {
+    padding-block: 16px;
+    gap: 12px;
+    align-items: flex-start;
   }
-
-  .binder-spine {
+  .wordmark {
+    font-size: 21px;
+    padding-top: 12px;
+  }
+  .top-bar-controls {
+    gap: 4px;
+  }
+  .top-bar .theme-toggle-btn {
+    font-size: 14px;
+    padding: 10px 8px;
+  }
+  .binder-tabs {
+    gap: 4px 20px;
+    font-size: 14px;
+  }
+  .binder-tabs > .binder-tab:nth-of-type(2),
+  .binder-tabs > .binder-tab:nth-of-type(5) {
     display: none;
   }
-
+  .more-sections {
+    margin-left: 0;
+  }
+  .more-sections-panel {
+    right: auto;
+    left: -170px;
+  }
   .binder-wrapper {
-    padding: 1rem;
+    padding: 24px 16px 48px;
   }
-
-  .binder-tabs {
-    position: static;
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 0.5rem 0;
-    gap: 0.4rem;
-    scrollbar-width: thin;
+  .site-footer {
+    padding: 14px 20px;
+    font-size: 14px;
   }
-
-  .binder-tab {
-    border-left: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    transform: none !important;
-    white-space: nowrap;
-    flex-shrink: 0;
+  .site-footer > span:nth-child(2) {
+    display: none;
   }
-
-  .binder-tab.active {
-    box-shadow: none;
-  }
-
-  .binder-page {
-    padding: 1.5rem;
+  .page-view:not(.cover-page) {
+    padding: 28px 20px;
   }
 }

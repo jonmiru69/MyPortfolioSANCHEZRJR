@@ -1,5 +1,5 @@
 {
-  "summary": "Certificates of participation, completion, and recognition in teaching, research, technology, and service.",
+  "summary": "Professional learning in science, research, technology and student well-being. Open each certificate to read the original document.",
   "items": [
     {
       "id": "certificate-1",
@@ -34,7 +34,10 @@
       "visibility": "public",
       "featured": false,
       "order": 1,
-      "certificate_kind": "Completion record"
+      "certificate_kind": "Completion record",
+      "seminar_topic": "AI fundamentals, ethics, generative AI, productivity and misinformation",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-2",
@@ -68,7 +71,10 @@
       "visibility": "public",
       "featured": false,
       "order": 2,
-      "certificate_kind": "Completion"
+      "certificate_kind": "Completion",
+      "seminar_topic": "AI fluency frameworks and foundations",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-3",
@@ -102,7 +108,10 @@
       "visibility": "public",
       "featured": false,
       "order": 3,
-      "certificate_kind": "Recognition"
+      "certificate_kind": "Recognition",
+      "seminar_topic": "Literacy, numeracy and remedial learning support",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-4",
@@ -136,7 +145,10 @@
       "visibility": "public",
       "featured": false,
       "order": 4,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Practical artificial intelligence tools",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-5",
@@ -170,7 +182,10 @@
       "visibility": "public",
       "featured": false,
       "order": 5,
-      "certificate_kind": "Attendance"
+      "certificate_kind": "Attendance",
+      "seminar_topic": "Problem solving and decision making in research and development",
+      "training_code": "R5ILCDB:2026-W-PSDM-1",
+      "cpd_points": null
     },
     {
       "id": "certificate-6",
@@ -195,13 +210,19 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/administrative-officer.pdf",
           "type": "document",
-          "context": "Certificate supplied by the portfolio owner."
+          "context": "Certificate supplied by the portfolio owner.",
+          "preview_images": [
+            "assets/images/certificate-pages/administrative-officer-1.webp"
+          ]
         }
       ],
       "visibility": "hidden",
       "featured": false,
       "order": 6,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Administrative Officer II duties and responsibilities in DepEd",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-7",
@@ -235,7 +256,10 @@
       "visibility": "public",
       "featured": false,
       "order": 7,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Anti-bullying communication and action",
+      "training_code": "",
+      "cpd_points": 0
     },
     {
       "id": "certificate-8",
@@ -269,7 +293,10 @@
       "visibility": "public",
       "featured": false,
       "order": 8,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Early warning signs of student distress",
+      "training_code": "",
+      "cpd_points": 0
     },
     {
       "id": "certificate-9",
@@ -303,7 +330,10 @@
       "visibility": "public",
       "featured": false,
       "order": 9,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Mental health and personal well-being",
+      "training_code": "",
+      "cpd_points": 0
     },
     {
       "id": "certificate-10",
@@ -337,7 +367,10 @@
       "visibility": "public",
       "featured": false,
       "order": 10,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "The impact of corporal punishment in schools",
+      "training_code": "",
+      "cpd_points": 0
     },
     {
       "id": "certificate-11",
@@ -371,7 +404,10 @@
       "visibility": "public",
       "featured": false,
       "order": 11,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Myths and misconceptions about suicide",
+      "training_code": "",
+      "cpd_points": 0
     },
     {
       "id": "certificate-12",
@@ -397,15 +433,16 @@
           "file": "assets/docs/certificates/sayuna-ai.pdf",
           "type": "document",
           "context": "Certificate supplied by the portfolio owner.",
-          "preview_images": [
-            "assets/images/certificate-pages/sayuna-ai-1.webp"
-          ]
+          "preview_images": ["assets/images/certificate-pages/sayuna-ai-1.webp"]
         }
       ],
       "visibility": "public",
       "featured": false,
       "order": 12,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Ethical use of Sayuna AI in teaching",
+      "training_code": "",
+      "cpd_points": 0
     },
     {
       "id": "certificate-13",
@@ -439,7 +476,10 @@
       "visibility": "public",
       "featured": false,
       "order": 13,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Ethical and responsible AI use in language and linguistic research",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-14",
@@ -474,7 +514,10 @@
       "featured": false,
       "order": 14,
       "preview_image": "assets/images/certificate-previews/waves.png",
-      "certificate_kind": "Attendance"
+      "certificate_kind": "Attendance",
+      "seminar_topic": "Teaching high school physics: waves",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-15",
@@ -509,7 +552,10 @@
       "featured": false,
       "order": 15,
       "preview_image": "assets/images/certificate-previews/work-energy.png",
-      "certificate_kind": "Attendance"
+      "certificate_kind": "Attendance",
+      "seminar_topic": "Teaching high school physics: work, energy and power",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-16",
@@ -544,7 +590,10 @@
       "featured": false,
       "order": 16,
       "preview_image": "assets/images/certificate-previews/electricity.png",
-      "certificate_kind": "Attendance"
+      "certificate_kind": "Attendance",
+      "seminar_topic": "Teaching high school physics: electricity and magnetism",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-17",
@@ -576,7 +625,10 @@
       "featured": false,
       "order": 17,
       "preview_image": "assets/images/certificate-previews/ilaw.png",
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Lesson design and explicit instruction",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-18",
@@ -610,7 +662,10 @@
       "visibility": "public",
       "featured": false,
       "order": 18,
-      "certificate_kind": "Completion"
+      "certificate_kind": "Completion",
+      "seminar_topic": "Artificial intelligence for communities",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-19",
@@ -636,15 +691,16 @@
           "file": "assets/docs/certificates/istrel-conference.png",
           "type": "image",
           "context": "Certificate supplied by the portfolio owner.",
-          "preview_images": [
-            "assets/docs/certificates/istrel-conference.png"
-          ]
+          "preview_images": ["assets/docs/certificates/istrel-conference.png"]
         }
       ],
       "visibility": "public",
       "featured": false,
       "order": 19,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Transdisciplinary research",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-20",
@@ -678,7 +734,10 @@
       "visibility": "public",
       "featured": false,
       "order": 20,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Indigenous peoples",
+      "training_code": "",
+      "cpd_points": null
     },
     {
       "id": "certificate-21",
@@ -712,7 +771,36 @@
       "visibility": "public",
       "featured": false,
       "order": 21,
-      "certificate_kind": "Participation"
+      "certificate_kind": "Participation",
+      "seminar_topic": "Active learning, inclusive education and interactive learning in the age of AI",
+      "training_code": "",
+      "cpd_points": null
+    },
+    {
+      "id": "certificate-22",
+      "issue_date": "2026-10-24",
+      "date_start": "2026-10-24",
+      "certificate_kind": "Participation",
+      "delivery_mode": "Online via Zoom",
+      "title": "Harnessing Technology for Transformative Education",
+      "seminar_topic": "Technology for transformative education",
+      "organization": "President Ramon Magsaysay State University – Masinloc Campus",
+      "training_code": "",
+      "cpd_points": null,
+      "visibility": "public",
+      "order": 22,
+      "evidence": [
+        {
+          "label": "View certificate",
+          "original_name": "HARNESSING TECHNOLOGY FOR TRANSFORMATIVE EDUCATION.pdf",
+          "file": "assets/docs/certificates/harnessing-technology.pdf",
+          "type": "document",
+          "mime": "application/pdf",
+          "preview_images": [
+            "assets/images/certificate-pages/harnessing-technology-1.webp"
+          ]
+        }
+      ]
     }
   ]
 }

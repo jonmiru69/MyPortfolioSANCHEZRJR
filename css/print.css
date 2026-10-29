@@ -1,107 +1,50 @@
-/* ==========================================================================
-   PRINT & PDF STYLESHEET
-   Clean, paper-optimized printing for binder and individual CV
-   ========================================================================== */
-
+@page {
+  size: A4;
+  margin: 10mm;
+}
 @media print {
-  @page {
-    size: letter portrait;
-    margin: 1.5cm;
-  }
-
   body {
-    background: #ffffff !important;
-    color: #111111 !important;
-    font-size: 11pt !important;
-    line-height: 1.5 !important;
+    background: white;
+    color: black;
+    display: block;
+    font-size: 11pt;
   }
-
-  /* Hide interactive, non-print elements */
-  .skip-link,
+  .no-print,
   .top-bar,
-  .binder-spine,
   .binder-tabs,
   .site-footer,
-  .lightbox-backdrop,
-  .admin-panel,
-  .btn,
-  .no-print {
+  .owner-inline-control,
+  .resume-tools {
     display: none !important;
   }
-
-  /* Reset binder frame */
-  .binder-wrapper {
-    padding: 0 !important;
-    display: block !important;
+  .binder-wrapper,
+  .binder-container,
+  .binder-page,
+  .page-view:not(.cover-page) {
+    margin: 0;
+    padding: 0;
+    max-width: none;
+    background: white;
   }
-
-  .binder-container {
-    max-width: 100% !important;
-    min-height: auto !important;
-    box-shadow: none !important;
-    border: none !important;
-    background: #ffffff !important;
-    display: block !important;
+  .resume-page .section-intro {
+    display: none;
   }
-
-  .binder-page {
-    padding: 0 !important;
-    background: #ffffff !important;
-    min-height: auto !important;
+  .resume-canvas {
+    padding: 0;
+    background: white;
   }
-
-  /* Clean headings & text */
-  h1, h2, h3, h4, h5, h6 {
-    color: #000000 !important;
-    page-break-after: avoid;
-    break-after: avoid;
+  .resume-canvas img {
+    width: 100%;
+    height: auto;
+    max-height: 277mm;
+    object-fit: contain;
   }
-
-  .signature-heading {
-    color: #333333 !important;
-  }
-
-  p, li {
-    color: #222222 !important;
-  }
-
-  /* Evidence sleeves clean cards */
-  .evidence-sleeve {
-    background: #ffffff !important;
-    border: 1px solid #cccccc !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
+  .certificate-record,
+  .portfolio-record {
     break-inside: avoid;
-    margin-bottom: 1.2cm !important;
-    padding: 1cm !important;
   }
-
-  .evidence-sleeve::before {
-    display: none !important;
-  }
-
-  /* Chips */
-  .chip {
-    background: #f0f0f0 !important;
-    color: #333333 !important;
-    border: 1px solid #cccccc !important;
-  }
-
-  /* Links with URLs in print */
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
-    font-size: 8pt;
-    color: #555555;
-  }
-
-  /* Print Page Breaks */
-  .print-page-break {
-    page-break-before: always;
-    break-before: page;
-  }
-
-  /* CV Specific Clean Mode */
-  .cv-document {
-    padding: 0 !important;
+  * {
+    animation: none !important;
+    transform: none !important;
   }
 }

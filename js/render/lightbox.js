@@ -1,100 +1,122 @@
-import { store } from '../store.js';
-/**
- * Accessible Modal Lightbox
- * For previewing sheet protector evidence files, certificates, and images.
- */
-
-export function openLightbox(evidenceItem, options = {}) {
-  const previousFocus = document.activeElement;
-  const objectUrls = [];
-  // Remove any existing lightbox
-  const existing = document.querySelector('.lightbox-backdrop');
-  if (existing) existing.remove();
-
-  const backdrop = document.createElement('div');
-  backdrop.className = 'lightbox-backdrop';
-  backdrop.setAttribute('role', 'dialog');
-  backdrop.setAttribute('aria-modal', 'true');
-  backdrop.setAttribute('aria-label', evidenceItem.label || 'Evidence Document');
-
-  const content = document.createElement('div');
-  content.className = 'lightbox-content';
-
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'lightbox-close-btn';
-  closeBtn.innerHTML = '&times;';
-  closeBtn.setAttribute('aria-label', 'Close lightbox');
-  const close = () => { window.removeEventListener('hashchange', close); backdrop.remove(); objectUrls.forEach(url => URL.revokeObjectURL(url)); if (previousFocus && previousFocus.isConnected) previousFocus.focus(); };
-  closeBtn.onclick = close;
-
-  if (options.imageOnly) {
-    content.classList.add('image-only-preview');
-    const pages = evidenceItem.preview_images?.length ? evidenceItem.preview_images : (/\.(png|jpe?g|webp|gif)$/i.test(evidenceItem.file || '') ? [evidenceItem.file] : []);
-    const viewer = document.createElement('div');
-    viewer.className = 'preview-pages';
-    if (!pages.length) {
-      const message = document.createElement('p');
-      message.textContent = 'Image preview is not available. Ask the portfolio owner to add an image preview.';
-      viewer.appendChild(message);
+import { store } from "../store.js";
+import { safeURL } from "../utils.js";
+export async function openLightbox(evidenceItem, options = {}) {
+  if (document.querySelector("dialog[open]")) return;
+  const previous = document.activeElement;
+  const urls = [];
+  const dialog = document.createElement("dialog");
+  dialog.className = "document-viewer";
+  dialog.setAttribute("aria-labelledby", "viewer-title");
+  dialog.dataset.ui = "";
+  const header = document.createElement("header");
+  header.className = "viewer-header";
+  const title = document.createElement("p");
+  title.id = "viewer-title";
+  title.textContent =
+    evidenceItem.original_name || evidenceItem.label || "Document";
+  const close = document.createElement("button");
+  close.type = "button";
+  close.className = "btn btn-secondary";
+  close.textContent = "Close";
+  close.onclick = () => dialog.close();
+  const download = document.createElement("a");
+  download.className = "btn btn-primary";
+  download.textContent = "Download file";
+  const file = safeURL(evidenceItem.file);
+  if (!file) return;
+  download.href = file;
+  download.target = "_blank";
+  download.rel = "noopener noreferrer";
+  download.download = evidenceItem.original_name || file.split("/").pop();
+  const viewport = document.createElement("div");
+  viewport.className = "document-viewport";
+  header.append(title, download, close);
+  dialog.append(header, viewport);
+  document.body.append(dialog);
+  document.body.classList.add("editor-open");
+  dialog.showModal();
+  const getURL = async (path) => {
+    const blob = await store.loadDraft(path);
+    if (blob instanceof Blob && dialog.isConnected) {
+      const url = URL.createObjectURL(blob);
+      urls.push(url);
+      return url;
     }
-    pages.forEach((path, i) => {
-      const image = document.createElement('img');
-      image.src = path; image.alt = `${evidenceItem.label || 'Certificate'}, page ${i + 1} of ${pages.length}`;
-      store.loadDraft(path).then(blob => {
-        if (blob instanceof Blob && backdrop.isConnected) { const url = URL.createObjectURL(blob); objectUrls.push(url); image.src = url; }
-      });
-      image.loading = i ? 'lazy' : 'eager';
-      viewer.appendChild(image);
-    });
-    content.append(closeBtn, viewer); backdrop.appendChild(content);
-    backdrop.addEventListener('click', e => { if (e.target === backdrop) close(); });
-    backdrop.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { e.stopPropagation(); close(); }
-      if (e.key === 'Tab') { e.preventDefault(); closeBtn.focus(); }
-    });
-    window.addEventListener('hashchange', close, { once: true });
-    document.body.appendChild(backdrop); closeBtn.focus(); return;
+    return safeURL(path);
+  };
+  const cleanup = () => {
+    window.removeEventListener("hashchange", routeClose);
+    urls.forEach((u) => URL.revokeObjectURL(u));
+    dialog.remove();
+    if (!document.querySelector("dialog[open]")) {
+      document.body.classList.remove("editor-open");
+      if (previous?.isConnected) previous.focus();
+    }
+  };
+  const routeClose = () => dialog.close();
+  window.addEventListener("hashchange", routeClose);
+  dialog.addEventListener("close", cleanup, { once: true });
+  const resolved = await getURL(file);
+  if (!dialog.isConnected) return;
+  download.href = resolved;
+  const pages = evidenceItem.preview_images?.length
+    ? evidenceItem.preview_images
+    : evidenceItem.type === "image" ||
+        /\.(png|jpe?g|webp|gif|avif|bmp)$/i.test(file)
+      ? [file]
+      : [];
+  if (pages.length) {
+    const sheets = document.createElement("div");
+    sheets.className = "document-pages";
+    viewport.append(sheets);
+    let zoom = 1;
+    const controls = document.createElement("div");
+    controls.className = "viewer-zoom";
+    const setZoom = (value) => {
+      zoom = Math.max(0.5, Math.min(8, value));
+      sheets.style.width = `${zoom * 100}%`;
+    };
+    for (const [label, action] of [
+      ["Zoom out", () => setZoom(zoom - 0.25)],
+      ["Zoom in", () => setZoom(zoom + 0.25)],
+      ["Fit width", () => setZoom(1)],
+    ]) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "btn btn-secondary";
+      button.textContent = label;
+      button.onclick = action;
+      controls.append(button);
+    }
+    header.after(controls);
+    for (let i = 0; i < pages.length; i++) {
+      const src = await getURL(pages[i]);
+      if (!dialog.isConnected) return;
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = `${evidenceItem.label || "Certificate"}, page ${i + 1}`;
+      img.loading = i ? "lazy" : "eager";
+      sheets.append(img);
+      if (i === 0 && options.actualSize) {
+        await img.decode().catch(() => {});
+        if (dialog.isConnected)
+          setZoom(img.naturalWidth / Math.max(1, sheets.clientWidth));
+      }
+    }
+  } else if (evidenceItem.mime === "application/pdf" || /\.pdf$/i.test(file)) {
+    const frame = document.createElement("iframe");
+    frame.src = resolved;
+    frame.title = evidenceItem.label || "PDF document";
+    viewport.append(frame);
+    const hint = document.createElement("p");
+    hint.textContent =
+      "If the PDF does not display on your device, use Download file to open it.";
+    viewport.append(hint);
+  } else {
+    const message = document.createElement("p");
+    message.textContent =
+      "This Word or PowerPoint document is ready to download. Open it in Word, PowerPoint or a compatible app.";
+    viewport.append(message);
   }
-
-  const isDoc = evidenceItem.type === 'document' || (evidenceItem.file && evidenceItem.file.endsWith('.pdf'));
-
-  const img = document.createElement(isDoc ? 'iframe' : 'img');
-  img.className = 'lightbox-img';
-  img.src = evidenceItem.file || 'assets/docs/sample-certificate.svg';
-  if (isDoc) { img.title = evidenceItem.label || 'Document preview'; img.style.minHeight = '70vh'; img.style.width = '100%'; }
-  else img.alt = evidenceItem.label || 'Document preview';
-
-  const bar = document.createElement('div');
-  bar.className = 'lightbox-bar';
-
-  const labelSpan = document.createElement('span');
-  labelSpan.textContent = evidenceItem.label || 'Evidence Document';
-
-  const contextSpan = document.createElement('span');
-  contextSpan.className = 'text-muted';
-  contextSpan.textContent = evidenceItem.context ? ` · ${evidenceItem.context}` : '';
-
-  const downloadLink = document.createElement('a');
-  downloadLink.href = evidenceItem.file || '#';
-  downloadLink.download = (evidenceItem.label || 'evidence').toLowerCase().replace(/\s+/g, '-');
-  downloadLink.className = 'btn btn-primary btn-sm';
-  downloadLink.innerHTML = `Download File`;
-
-  bar.appendChild(labelSpan);
-  if (evidenceItem.context) bar.appendChild(contextSpan);
-  bar.appendChild(downloadLink);
-
-  content.appendChild(closeBtn);
-  content.appendChild(img);
-  content.appendChild(bar);
-  backdrop.appendChild(content);
-
-  backdrop.addEventListener('click', (e) => {
-    if (e.target === backdrop) close();
-  });
-  window.addEventListener('hashchange', close, { once: true });
-  backdrop.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
-
-  document.body.appendChild(backdrop);
-  closeBtn.focus();
+  close.focus();
 }
