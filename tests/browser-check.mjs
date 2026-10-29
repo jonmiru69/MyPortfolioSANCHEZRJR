@@ -121,6 +121,12 @@ try {
   );
   assert.equal(await page.locator(".cover-page img").count(), 4);
   check("overview loads real portrait and three original certificate images");
+  assert.match(
+    await page.locator(".hero-role").innerText(),
+    /Licensed Professional Teacher/,
+  );
+  assert.doesNotMatch(await page.locator(".hero-role").innerText(), /\bLPT\b/);
+  check("overview spells out Licensed Professional Teacher");
   for (const route of [
     "profile",
     "resume",
@@ -308,15 +314,13 @@ try {
       .inputValue(),
     saved.title,
   );
-  await page
-    .locator("dialog input[type=file]")
-    .setInputFiles({
-      ...upload,
-      name: "replacement.pptx",
-      mimeType:
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      buffer: await readFile(fixtureFolder + "/certificate.pptx"),
-    });
+  await page.locator("dialog input[type=file]").setInputFiles({
+    ...upload,
+    name: "replacement.pptx",
+    mimeType:
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    buffer: await readFile(fixtureFolder + "/certificate.pptx"),
+  });
   await page
     .getByText("File selected. Save the certificate to upload it.", {
       exact: true,
@@ -412,13 +416,11 @@ try {
   await page
     .getByRole("button", { name: "Add certificate", exact: true })
     .click();
-  await page
-    .locator("dialog input[type=file]")
-    .setInputFiles({
-      name: "renamed.pdf",
-      mimeType: "application/pdf",
-      buffer: Buffer.from("not a PDF"),
-    });
+  await page.locator("dialog input[type=file]").setInputFiles({
+    name: "renamed.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from("not a PDF"),
+  });
   await page
     .getByText(
       "This file does not match its file extension. Choose the original file in a supported format.",
