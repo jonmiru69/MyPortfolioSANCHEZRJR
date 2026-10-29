@@ -1,88 +1,49 @@
-# Tabbed Portfolio Website: Professional Teaching Binder
+# Ramelito Sanchez — teaching portfolio
 
-> **A physical tabbed binder web portfolio engineered for Ramelito Jr. C. Sanchez, LPT (Jonmiru)**  
-> *Secondary Science Educator & STE Program Faculty · Department of Education*  
-> *Production-Ready · Zero Cost ($0) · Zero-Build Static Architecture on GitHub Pages*
+A responsive static portfolio for Ramelito Jr. C. Sanchez, LPT. Runs directly on GitHub Pages with native JavaScript modules; no build or paid service is required for the public site.
 
----
+## What is included
 
-## Highlights & Design Architecture
+- A document-inspired design using the owner's actual portrait, certificates and original résumé.
+- Readable navigation with direct Certificates and Résumé / CV links.
+- A searchable, paginated certificate archive. Each record displays exactly: date issued, certificate type, delivery mode, seminar title, seminar topic, seminar provider, training code and CPD points.
+- One native, accessible popup for each Add or Edit action across the portfolio. Save applies the changes together; Cancel leaves existing information intact. Unsaved-change confirmation stays inside the same popup.
+- File-picker uploads for JPEG, PNG, WebP, GIF, AVIF, BMP, PDF, DOC, DOCX, PPT and PPTX, up to 20 MB each. No asset paths or JSON editing are needed.
+- Full-width original résumé, with full-size viewing, download and print controls.
+- Light/dark appearance, keyboard focus support and reduced-motion support.
+- A compact footer in a different color from navigation.
 
-- **Physical Binder Metaphor:** Centered canvas surface with divider index tabs along the right edge, spine rings on the left, sheet protector evidence cards, and 250ms page-turn animation.
-- **Design Restraint (atalanta.tech Inferred Principles):** Mission-first hero positioning statement, wide signature display tracking (`0.35em` to `0.45em`), near-black `#0A0B0D` default background with refined paper theme toggle, and proof over claims.
-- **20 Structured Tabs:**
-  1. Cover · 2. Contents · 3. Profile · 4. Résumé / CV · 5. Philosophy · 6. Education · 7. Eligibilities (Masked) · 8. Certificates · 9. Research · 10. Teaching · 11. Materials · 12. Performance (7 PPST Domains) · 13. Awards · 14. Service · 15. Digital Tools · 16. Development Plan · 17. Reading & Memberships · 18. References (Opt-In) · 19. Gallery · 20. Contact
-- **Owner Admin Panel (`#/admin`):**
-  - Authenticated directly via fine-grained GitHub Personal Access Token (PAT) with `Contents: Read and write`.
-  - Visual editors for tabs (drag/order/rename/hide/custom), theme tokens, content items, and SEO.
-  - Client-side WebP compression and media validation.
-  - 1-Commit publishing directly to GitHub Pages via the Git Data API.
-  - Single-file JSON export and import for complete offline portability.
-- **Total Cost:** USD 0. No paid hosting, database, CMS, or domain required.
+## Preview
 
----
+Run `powershell -ExecutionPolicy Bypass -File ./serve.ps1` and open http://localhost:8080.
 
-## Local Development & Testing
+Alternatively, use any static HTTP server in this directory. ES modules and content fetches require HTTP; opening index.html directly from disk is not supported.
 
-Since this website uses plain HTML5, CSS custom properties, and native ES modules with zero build steps, you can run it using any static web server:
+## Owner editing and online storage
 
-### Option A: Using PowerShell (Built into Windows)
-```powershell
-# From the project directory:
-powershell -ExecutionPolicy Bypass -File ./serve.ps1
-# Open http://localhost:8080 in your browser
-```
+Choose **Owner mode** and connect a GitHub token with write access to this repository. Choose **Manage certificates** to reach the archive immediately. Add and Edit buttons open an editor for a single record. Personal details, contact information, the supplied résumé file and section settings use the same focused editing pattern.
 
-### Option B: Using Python (if installed)
-```bash
-python -m http.server 8000
-# Open http://localhost:8000
-```
+Saved records and files are first committed together to this device's IndexedDB. The configured Cloudflare service then saves them online. Check the sync message before leaving. Failed saves retain local drafts for retry; recovered drafts require review before publishing. Ordinary visitors see published content, not another visitor's device drafts.
 
-### Option C: Using VS Code / IDE Live Server
-Right-click `index.html` and click **Open with Live Server**.
+The updated Worker accepts all supported formats. If an older Worker returns “unsupported format,” the client stores that file through the existing GitHub connection and saves an immutable document URL in the cloud record. A Word or PowerPoint file downloads in its original format; the site does not send it to an external document viewer. PDFs and images can be previewed.
 
----
+The release migration adds the supplied résumé and newly supplied certificate to older cloud snapshots without overwriting owner-authored details or visibility choices. Two existing hidden certificate records remain hidden from public view and can be edited in owner mode.
 
-## Repository Structure
+## Checks
 
-```text
-portfolio-binder/
-├── index.html              # Main static binder interface & JSON-LD
-├── 404.html                # GitHub Pages redirect handler for hash routing
-├── .nojekyll               # Disables Jekyll processing on GitHub Pages
-├── robots.txt              # Search engine crawling rules
-├── sitemap.xml             # Search engine site index
-├── README.md               # Project overview & running instructions
-├── OWNER-GUIDE.md          # Step-by-step owner operational guide
-├── .github/
-│   └── workflows/
-│       └── validate.yml    # Free CI workflow testing JSON syntax and asset limits
-├── css/
-│   ├── tokens.css          # Design tokens & CSS custom properties (dark & paper)
-│   ├── base.css            # Typography, resets, buttons, chips, form controls
-│   ├── binder.css          # Physical binder layout, spine rings, tabs, sleeves, lightbox
-│   ├── admin.css           # Owner admin panel, editors, modal dialogs
-│   └── print.css           # Paper & PDF optimized print stylesheets
-├── js/
-│   ├── app.js              # Central entry point & renderer router
-│   ├── router.js           # Hash-based routing & keyboard navigation
-│   ├── store.js            # State store, IndexedDB drafts, presets, event emitter
-│   ├── schema.js           # Shared item schema validation & version migrations
-│   ├── media.js            # Client-side WebP compression & budget meter
-│   ├── github.js           # GitHub REST Git Data API 1-commit publisher
-│   ├── render/             # 21 modular tab renderers
-│   └── admin/              # Admin subview controllers & editors
-├── data/
-│   ├── site.json           # Site identity, theme tokens, tab definitions, SEO
-│   └── content/            # 18 structured content files for all evidence tabs
-└── assets/
-    ├── docs/               # Official verification and evidence documents
-    └── images/             # Vector portraits, cover art, and photo evidence
-```
+Run `npm test` with Node 22 or newer. Tests cover every accepted file format, signature/size rejection, Worker authorization/CORS, draft transactions, concurrent saves, failed-sync recovery, release migration, asset references, module syntax and preservation of the original résumé. No install is needed for these tests.
 
----
+Browser verification additionally covered all sections, real Word/PowerPoint/PDF/image uploads, certificate CRUD, cancellation, file replacement, custom section addresses, draft recovery, full-size viewing, and nine visible sections at 1440, 768 and 390 px. See REDESIGN-NOTES.md for the design and validation record.
 
-## Operational Guide
+The repeatable browser suite is `npm run test:browser`. It needs an existing Playwright installation and Chrome; `PLAYWRIGHT_MODULE` can point to an installed Playwright module, and `CHROME_PATH` can select another Chromium executable. Its test server disables online storage and uses test-only credentials, so it does not modify the live portfolio. Results and screenshots are written to `.test-results/`.
 
-See [OWNER-GUIDE.md](OWNER-GUIDE.md) for full instructions on setting up GitHub Pages, creating a fine-grained Personal Access Token, publishing updates, and safety guidelines.
+## Structure
+
+- `index.html`, `css/`: shell and visual system.
+- `js/render/`: public views and file viewer.
+- `js/admin/item-editor.js`, `dialog.js`: shared focused editors.
+- `js/store.js`: transactional device drafts and cloud synchronization.
+- `js/upload-policy.js`: shared browser/Worker file policy.
+- `data/`: identity, sections and portfolio content.
+- `assets/`: owner-supplied portrait, résumé and certificate documents.
+- `cloudflare/`: optional online storage Worker and database schema.

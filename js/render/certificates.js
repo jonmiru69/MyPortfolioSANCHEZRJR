@@ -1,185 +1,143 @@
-/**
- * Certificates & Trainings Page Renderer
- * Filterable by year and training type, sortable by hours and date, with evidence sleeves.
- */
-
-import { openLightbox } from './lightbox.js';
-import { store } from '../store.js';
-const escapeText = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
+import { store } from "../store.js";
+import { openLightbox } from "./lightbox.js";
+import { escapeHTML as safe } from "../utils.js";
 export function renderCertificates(container, data) {
-  let items = (data?.items || []).filter(i => i.visibility !== 'hidden');
-  let currentTypeFilter = 'all';
-  let currentYearFilter = 'all';
-  let currentSort = 'newest';
-  let thumbnailUrls = [];
-
-  // Extract unique years and types
-  const itemYear = item => (item.date_start || '').slice(0, 4) || String(item.year || '');
-  const years = Array.from(new Set(items.map(itemYear))).filter(y => /^\d{4}$/.test(y)).sort((a, b) => b.localeCompare(a));
-  const types = Array.from(new Set(items.map(i => i.type))).filter(Boolean);
-
-  function getFilteredItems() {
-    let result = [...items];
-    if (currentTypeFilter !== 'all') {
-      result = result.filter(i => i.type === currentTypeFilter);
-    }
-    if (currentYearFilter !== 'all') {
-      result = result.filter(i => itemYear(i) === currentYearFilter);
-    }
-    if (currentSort === 'newest') {
-      result.sort((a, b) => (b.date_start || '').localeCompare(a.date_start || ''));
-    } else if (currentSort === 'oldest') {
-      result.sort((a, b) => (a.date_start || '').localeCompare(b.date_start || ''));
-    } else if (currentSort === 'hours') {
-      result.sort((a, b) => (b.hours || 0) - (a.hours || 0));
-    }
-    return result;
-  }
-
-  function updateList() {
-    const listContainer = container.querySelector('#cert-list-container');
-    if (!listContainer) return;
-    thumbnailUrls.forEach(url => URL.revokeObjectURL(url)); thumbnailUrls = [];
-
-    const filtered = getFilteredItems();
-    if (filtered.length === 0) {
-      listContainer.innerHTML = `
-        <div style="text-align: center; padding: 3rem; color: var(--text-muted); border: 1px dashed var(--border-color); border-radius: var(--radius-sm);">
-          No certificates matching the selected filters.
-        </div>
-      `;
-      return;
-    }
-
-    listContainer.innerHTML = filtered.map(item => {
-      const evidenceChips = (item.evidence || []).map((ev, evIdx) => `
-        <button class="chip chip-evidence btn-preview-evidence" data-item-id="${escapeText(item.id)}" data-ev-idx="${evIdx}">
-          ${ev.preview_images?.[0] ? `<img class="certificate-thumbnail" src="${escapeText(ev.preview_images[0])}" alt="" loading="lazy">` : ''}
-          <span>${escapeText(ev.label || 'View certificate')}</span>
-        </button>
-      `).join('');
-
-      const skillsChips = (item.skills || []).map(s => `<span class="chip">${escapeText(s)}</span>`).join('');
-
-      return `
-        <div class="evidence-sleeve" data-owner-item="${escapeText(item.id)}">
-          <div class="evidence-header">
-            <div>
-              <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.25rem;">
-                <span class="chip chip-accent">${escapeText(item.type || 'Training')}</span>
-                ${item.certificate_kind ? `<span class="chip">${escapeText(item.certificate_kind)}</span>` : ''}
-                ${item.hours != null && item.hours !== '' ? `<span class="chip">${escapeText(item.hours)} hours</span>` : ''}
-              </div>
-              <h3 class="evidence-title">${escapeText(item.title)}</h3>
-              <p class="evidence-subtitle">${escapeText(item.subtitle || '')}</p>
-            </div>
-            <span class="evidence-meta">${escapeText(item.date_start)}</span>
-          </div>
-
-          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-            Provider: <strong>${escapeText(item.organization)}</strong>
-          </p>
-
-          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 0.75rem;">
-            ${escapeText(item.description)}
-          </p>
-
-          ${item.issue_date ? `<p>Issued: ${escapeText(item.issue_date)}</p>` : ''}
-          ${item.valid_until ? `<p>Valid until: ${escapeText(item.valid_until)}</p>` : ''}
-          ${item.delivery_mode ? `<p>Delivery: ${escapeText(item.delivery_mode)}</p>` : ''}
-          ${/^https?:\/\//i.test(item.verification_url || '') ? `<p><a href="${escapeText(item.verification_url)}" target="_blank" rel="noopener noreferrer">Open verification page</a></p>` : ''}
-
-          <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.75rem;">
-            ${skillsChips}
-          </div>
-
-          ${evidenceChips ? `
-            <div style="border-top: 1px dashed var(--border-color); padding-top: 0.75rem; margin-top: 0.75rem;">
-              <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">CERTIFICATE SLEEVE / MOV:</span>
-              <div class="evidence-chips">${evidenceChips}</div>
-            </div>
-          ` : ''}
-        </div>
-      `;
-    }).join('');
-
-    // Reattach preview listeners
-    listContainer.querySelectorAll('.certificate-thumbnail').forEach(img => {
-      const path = img.getAttribute('src');
-      store.loadDraft(path).then(blob => {
-        if (blob instanceof Blob && img.isConnected) { const url = URL.createObjectURL(blob); thumbnailUrls.push(url); img.src = url; }
-      });
+  const items = (data?.items || []).filter(
+    (i) => store.isDraftMode || i.visibility !== "hidden",
+  );
+  const date = (i) => i.issue_date || i.date_start || "";
+  const type = (i) => i.certificate_kind || "";
+  let page = 1;
+  const pageSize = 6;
+  let urls = [];
+  let generation = 0;
+  const types = [...new Set(items.map(type).filter(Boolean))].sort();
+  const years = [
+    ...new Set(
+      items.map((i) => date(i).slice(0, 4)).filter((y) => /^\d{4}$/.test(y)),
+    ),
+  ]
+    .sort()
+    .reverse();
+  container.innerHTML = `<div class="page-view certificates-page"><header class="section-intro"><h1 class="tab-title">Certificates</h1><p class="tab-summary">${safe(data.summary || "A record of professional learning in science, research and education.")}</p></header><form class="certificate-filters" data-ui role="search"><div><label for="cert-search">Find a certificate</label><input class="form-input" id="cert-search" type="search" placeholder="Title, topic or provider"></div><div><label for="filter-type">Certificate type</label><select id="filter-type" class="form-select"><option value="">All types</option>${types.map((t) => `<option>${safe(t)}</option>`).join("")}</select></div><div><label for="filter-year">Date issued</label><select id="filter-year" class="form-select"><option value="">All years</option>${years.map((y) => `<option>${y}</option>`).join("")}</select></div><div><label for="sort-order">Sort by</label><select id="sort-order" class="form-select"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="cpd">CPD points</option></select></div><button type="reset" class="btn btn-secondary">Reset filters</button></form><p id="cert-count" role="status" aria-live="polite"></p><div id="cert-list-container"></div><nav class="certificate-pagination" aria-label="Certificate pages"><button class="btn btn-secondary" id="cert-prev">Previous</button><span id="cert-page"></span><button class="btn btn-secondary" id="cert-next">Next</button></nav></div>`;
+  const $ = (selector) => container.querySelector(selector);
+  function update() {
+    generation++;
+    const current = generation;
+    urls.forEach((u) => URL.revokeObjectURL(u));
+    urls = [];
+    const query = $("#cert-search").value.trim().toLocaleLowerCase();
+    const wantedType = $("#filter-type").value,
+      wantedYear = $("#filter-year").value,
+      sort = $("#sort-order").value;
+    const filtered = items.filter(
+      (i) =>
+        (!query ||
+          [i.title, i.seminar_topic, i.organization, i.training_code]
+            .join(" ")
+            .toLocaleLowerCase()
+            .includes(query)) &&
+        (!wantedType || type(i) === wantedType) &&
+        (!wantedYear || date(i).startsWith(wantedYear)),
+    );
+    filtered.sort((a, b) =>
+      sort === "cpd"
+        ? (Number(b.cpd_points) || 0) - (Number(a.cpd_points) || 0)
+        : sort === "oldest"
+          ? date(a).localeCompare(date(b))
+          : date(b).localeCompare(date(a)),
+    );
+    const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    page = Math.min(page, pages);
+    $("#cert-count").textContent =
+      `${filtered.length} of ${items.length} certificates`;
+    $("#cert-page").textContent = `Page ${page} of ${pages}`;
+    $("#cert-prev").disabled = page === 1;
+    $("#cert-next").disabled = page === pages;
+    $("#cert-list-container").innerHTML =
+      filtered
+        .slice((page - 1) * pageSize, page * pageSize)
+        .map((item) => {
+          const ev = item.evidence?.[0];
+          const preview =
+            ev?.preview_images?.[0] || (ev?.type === "image" ? ev.file : "");
+          const fields = [
+            ["Date issued", date(item) ? formatDate(date(item)) : "Not stated"],
+            ["Certificate type", type(item) || "Not stated"],
+            ["Delivery mode", item.delivery_mode || "Not stated"],
+            ["Seminar title", item.title || "Untitled certificate"],
+            ["Seminar topic", item.seminar_topic || "Not stated"],
+            ["Seminar provider", item.organization || "Not stated"],
+            ["Training code", item.training_code || "Not stated"],
+            [
+              "CPD points",
+              item.cpd_points == null || item.cpd_points === ""
+                ? "Not stated"
+                : String(item.cpd_points),
+            ],
+          ];
+          return `<article class="certificate-record" data-owner-item="${safe(item.id)}"><div class="certificate-art">${preview ? `<button class="certificate-image-button" data-view="${safe(item.id)}" aria-label="View ${safe(item.title)}"><img src="${safe(preview)}" alt="Certificate for ${safe(item.title)}" loading="lazy" width="800" height="600"></button>` : `<div class="document-cover"><p>${safe(ev?.original_name || "Certificate document")}</p><span>${safe(ev?.mime?.split("/").pop() || "Document")}</span></div>`}${item.visibility === "hidden" ? '<p class="hidden-item-note">Hidden from visitors</p>' : ""}</div><div class="certificate-information"><dl>${fields.map(([k, v]) => `<div><dt>${k}</dt><dd>${safe(v)}</dd></div>`).join("")}</dl>${ev ? `<button class="btn btn-primary" data-view="${safe(item.id)}">View certificate</button>` : "<p>No file attached</p>"}</div></article>`;
+        })
+        .join("") ||
+      '<div class="empty-state"><h2>No matches</h2><p>Try another title, provider or year, or reset the filters.</p></div>';
+    container.querySelectorAll("[data-view]").forEach(
+      (b) =>
+        (b.onclick = () => {
+          const item = items.find((i) => i.id === b.dataset.view);
+          openLightbox(item.evidence[0]);
+        }),
+    );
+    container.querySelectorAll(".certificate-art img").forEach(async (img) => {
+      const blob = await store.loadDraft(img.getAttribute("src"));
+      if (blob instanceof Blob && current === generation && img.isConnected) {
+        const url = URL.createObjectURL(blob);
+        urls.push(url);
+        img.src = url;
+      }
     });
-    listContainer.querySelectorAll('.btn-preview-evidence').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const itemId = btn.getAttribute('data-item-id');
-        const evIdx = parseInt(btn.getAttribute('data-ev-idx'), 10);
-        const item = items.find(i => i.id === itemId);
-        if (item && item.evidence && item.evidence[evIdx]) {
-          openLightbox(item.evidence[evIdx], { imageOnly: true });
-        }
-      });
-    });
-    container.dispatchEvent(new CustomEvent('portfolio-list-rendered', { bubbles: true }));
+    container.dispatchEvent(
+      new CustomEvent("portfolio-list-rendered", { bubbles: true }),
+    );
   }
-
-  const typeOptions = types.map(t => `<option value="${escapeText(t)}">${escapeText(t)}</option>`).join('');
-  const yearOptions = years.map(y => `<option value="${y}">${y}</option>`).join('');
-
-  container.innerHTML = `
-    <div class="page-view certificates-page">
-      <span class="signature-heading">PORTFOLIO FOR CERTIFICATES &amp; TRAININGS</span>
-      <h2 class="tab-title">Certificates &amp; training</h2>
-      <p class="tab-summary">${escapeText(data?.summary || '')}</p>
-
-      <!-- Filter Controls Bar -->
-      <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-        <div>
-          <label style="font-size: 0.75rem; font-family: var(--font-display); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Training Type</label>
-          <select id="filter-type" class="form-select" style="padding: 0.35rem 0.65rem; font-size: 0.85rem;">
-            <option value="all">All Types</option>
-            ${typeOptions}
-          </select>
-        </div>
-
-        <div>
-          <label style="font-size: 0.75rem; font-family: var(--font-display); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Year</label>
-          <select id="filter-year" class="form-select" style="padding: 0.35rem 0.65rem; font-size: 0.85rem;">
-            <option value="all">All Years</option>
-            ${yearOptions}
-          </select>
-        </div>
-
-        <div>
-          <label style="font-size: 0.75rem; font-family: var(--font-display); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Sort By</label>
-          <select id="sort-order" class="form-select" style="padding: 0.35rem 0.65rem; font-size: 0.85rem;">
-            <option value="newest">Most Recent</option>
-            <option value="oldest">Oldest First</option>
-            <option value="hours">Training Hours (Highest)</option>
-          </select>
-        </div>
-      </div>
-
-      <div id="cert-list-container"></div>
-    </div>
-  `;
-
-  // Attach filter change listeners
-  container.querySelector('#filter-type')?.addEventListener('change', (e) => {
-    currentTypeFilter = e.target.value;
-    updateList();
-  });
-
-  container.querySelector('#filter-year')?.addEventListener('change', (e) => {
-    currentYearFilter = e.target.value;
-    updateList();
-  });
-
-  container.querySelector('#sort-order')?.addEventListener('change', (e) => {
-    currentSort = e.target.value;
-    updateList();
-  });
-
-  updateList();
+  $(".certificate-filters").onsubmit = (e) => e.preventDefault();
+  $(".certificate-filters").onreset = () => {
+    page = 1;
+    setTimeout(update, 0);
+  };
+  $("#cert-search").oninput = () => {
+    page = 1;
+    update();
+  };
+  container.querySelectorAll("select").forEach(
+    (s) =>
+      (s.onchange = () => {
+        page = 1;
+        update();
+      }),
+  );
+  $("#cert-prev").onclick = () => {
+    page--;
+    update();
+    $(".certificate-filters").scrollIntoView({ block: "start" });
+  };
+  $("#cert-next").onclick = () => {
+    page++;
+    update();
+    $(".certificate-filters").scrollIntoView({ block: "start" });
+  };
+  const cleanup = () => {
+    urls.forEach((u) => URL.revokeObjectURL(u));
+    urls = [];
+  };
+  window.addEventListener("hashchange", cleanup, { once: true });
+  update();
+}
+function formatDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  return new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(value + "T00:00:00Z"));
 }

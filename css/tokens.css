@@ -1,93 +1,57 @@
-/* ==========================================================================
-   DESIGN TOKENS & CSS VARIABLES
-   Configurable via Admin Theme Editor and saved in site.json
-   ========================================================================== */
-
 :root {
-  /* Color Palette - Default Dark Theme */
-  --bg-canvas: #0a0b0d;
-  --bg-binder: #121417;
-  --bg-surface: #181b20;
-  --bg-surface-elevated: #22262e;
-  --bg-sleeve: rgba(255, 255, 255, 0.03);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-color-focus: rgba(255, 255, 255, 0.25);
-  
-  --text-primary: #ededea;
-  --text-secondary: #9ea3ac;
-  --text-muted: #626772;
-  --text-on-accent: #ffffff;
-
-  /* Accent Color (Default: Subtle Desaturated Cyan / Teal) */
-  --color-accent: #3b8296;
-  --color-accent-hover: #489eb6;
-  --color-accent-subtle: rgba(59, 130, 150, 0.15);
-  --color-accent-border: rgba(59, 130, 150, 0.4);
-
-  /* Status / Alerts */
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --color-danger: #f87171;
-
-  /* Typography */
-  --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, "Courier New", monospace;
-
-  /* Tracking (Letter Spacing) */
-  --tracking-tight: -0.015em;
-  --tracking-normal: 0em;
-  --tracking-wide: 0.15em;
-  --tracking-display: 0.35em;
-  --tracking-signature: 0.45em;
-
-  /* Elevation & Shadows */
-  --binder-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.05);
-  --tab-shadow: 4px 2px 10px rgba(0, 0, 0, 0.4);
-  --sleeve-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-
-  /* Layout Dimensions */
-  --binder-max-width: 1040px;
-  --binder-min-height: 800px;
-  --tab-width: 170px;
-  --spine-width: 52px;
-  --page-padding: 3.5rem;
-
-  /* Transitions */
-  --transition-speed: 280ms;
-  --transition-ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 14px;
+  --font-display: "Libre Franklin", "Segoe UI", sans-serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --ground: #d8edf0;
+  --paper: #ffffff;
+  --paper-step: #eef5f5;
+  --ink: #103d48;
+  --soft-ink: #365a63;
+  --nav: #083744;
+  --nav-ink: #ffffff;
+  --accent: #28c0dd;
+  --accent-ink: #083744;
+  --footer: #b9dde3;
+  --bg-canvas: var(--ground);
+  --bg-binder: var(--paper);
+  --bg-surface: var(--paper);
+  --bg-surface-elevated: var(--paper-step);
+  --bg-sleeve: var(--paper-step);
+  --text-primary: var(--ink);
+  --text-secondary: var(--ink);
+  --text-muted: var(--soft-ink);
+  --text-on-accent: var(--accent-ink);
+  --color-accent: var(--ink);
+  --color-accent-hover: var(--ink);
+  --color-accent-subtle: var(--paper-step);
+  --color-success: #205e42;
+  --color-warning: #765000;
+  --color-danger: #a02c3c;
+  --border-color: #79949a;
+  --border-color-focus: var(--ink);
+  --tracking-display: -0.035em;
+  --tracking-wide: 0;
+  --tracking-tight: -0.035em;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --transition-speed: 300ms;
+  --page-margin: clamp(20px, 4vw, 64px);
+  --binder-max-width: 1320px;
+  --step-small: 16px;
+  --step-body: 18px;
+  --step-lead: clamp(21px, 2vw, 28px);
+  --step-head: clamp(32px, 4vw, 56px);
+  --step-display: clamp(36px, 4.6vw, 68px);
 }
-
-/* Light / Paper Theme */
-[data-theme="light"] {
-  --bg-canvas: #ebeae6;
-  --bg-binder: #f8f7f4;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f0eee9;
-  --bg-sleeve: rgba(0, 0, 0, 0.02);
-  --border-color: rgba(0, 0, 0, 0.09);
-  --border-color-focus: rgba(0, 0, 0, 0.3);
-
-  --text-primary: #15171a;
-  --text-secondary: #5a606a;
-  --text-muted: #8b929e;
-  --text-on-accent: #ffffff;
-
-  --color-accent: #1e5a6b;
-  --color-accent-hover: #154553;
-  --color-accent-subtle: rgba(30, 90, 107, 0.1);
-  --color-accent-border: rgba(30, 90, 107, 0.3);
-
-  --binder-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
-  --tab-shadow: 3px 2px 8px rgba(0, 0, 0, 0.08);
-  --sleeve-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root {
-    --transition-speed: 0ms !important;
-  }
+[data-theme="dark"] {
+  --ground: #082f3a;
+  --paper: #103f4b;
+  --paper-step: #1b505c;
+  --ink: #f3f8f8;
+  --soft-ink: #c2d9de;
+  --footer: #1e5663;
+  --border-color: #84a4ad;
+  --color-danger: #ffb6c2;
+  --color-success: #a3e6c3;
+  --color-warning: #ffe0a6;
 }

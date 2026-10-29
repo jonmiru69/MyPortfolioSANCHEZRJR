@@ -1,32 +1,51 @@
-import { store } from '../store.js';
-const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-export async function renderCover(container, siteData) {
-  const identity = siteData.identity || {};
-  const overview = siteData.overview || {};
-  const certificates = await store.getTabContent('certificates');
-  const portraitDraft = identity.avatar ? await store.loadDraft(identity.avatar) : null;
-  const portrait = portraitDraft instanceof Blob ? URL.createObjectURL(portraitDraft) : identity.avatar;
-  if (!location.hash.includes('cover') && location.hash !== '' && location.hash !== '#/') return;
-  const tabs = store.getVisibleTabs();
-  const relevant = tabs.filter(t => !['cover','contents'].includes(t.id));
-  const count = (certificates.items || []).filter(item => item.visibility !== 'hidden').length;
-  container.innerHTML = `
-    <div class="page-view cover-page overview">
-      <div class="overview-intro">
-        ${portrait ? `<img class="overview-portrait" src="${escape(portrait)}" alt="Portrait of ${escape(identity.name)}">` : ''}
-        <p class="overview-institution">${escape(identity.institution || '')}</p>
-        <h1 class="cover-name">${escape(identity.name || 'Portfolio')}</h1>
-        <p class="overview-title">${escape(identity.title)}${identity.credentials ? ` · ${escape(identity.credentials)}` : ''}</p>
-        <p class="cover-statement">${escape(identity.positioning_sentence)}</p>
-        ${identity.licensure_rating ? `<p class="overview-rating">Licensure GWA rating: ${escape(identity.licensure_rating)}</p>` : ''}
-        <p>${escape(overview.biography || '')}</p>
-        <a class="btn btn-primary cover-action" href="#/profile">${escape(overview.action_label || 'Read my profile')} <span aria-hidden="true">↗</span></a>
-      </div>
-      <section class="overview-content">
-        <div><h2>${escape(overview.heading || 'Explore the portfolio')}</h2><p>${escape(overview.description || 'Find my background, teaching experience and professional learning in one place.')}</p></div>
-        <div class="overview-list">${relevant.map(t => `<a href="#/${escape(t.slug || t.id)}"><span><strong>${escape(t.label)}</strong><small>${escape(t.summary || '')}</small></span><span aria-hidden="true">↗</span></a>`).join('')}</div>
-      </section>
-      ${tabs.some(t=>t.id==='certificates') ? `<section class="overview-learning"><h2>${escape(overview.learning_heading || 'Professional learning')}</h2><p>${count} certificate${count===1?'':'s'} available to explore.</p><a href="#/certificates">View certificates ↗</a></section>` : ''}
-    </div>`;
+import { store } from "../store.js";
+import { escapeHTML as safe } from "../utils.js";
+import { openLightbox } from "./lightbox.js";
+export async function renderCover(container, site) {
+  const identity = site.identity || {};
+  const overview = site.overview || {};
+  const certs =
+    (await store.getTabContent("certificates")).items?.filter(
+      (i) => i.visibility !== "hidden",
+    ) || [];
+  if (container.dataset.route !== "cover") return;
+  const portraitBlob = await store.loadDraft(identity.avatar || "");
+  const portrait =
+    portraitBlob instanceof Blob
+      ? URL.createObjectURL(portraitBlob)
+      : identity.avatar;
+  if (portraitBlob instanceof Blob)
+    window.addEventListener("hashchange", () => URL.revokeObjectURL(portrait), {
+      once: true,
+    });
+  const preferred = ["certificate-22", "certificate-17", "certificate-5"]
+    .map((id) => certs.find((i) => i.id === id))
+    .filter(Boolean);
+  const selected = [
+    ...new Set([
+      ...preferred,
+      ...certs.filter((i) => i.evidence?.[0]?.preview_images?.[0]),
+    ]),
+  ]
+    .filter((i) => i.evidence?.[0]?.preview_images?.[0])
+    .slice(0, 3);
+  container.innerHTML = `<div class="page-view cover-page overview"><section class="portfolio-card"><div class="hero-writing"><h1>${safe(identity.name)}</h1><p class="hero-role">${safe(identity.title)}${identity.credentials ? ", " + safe(identity.credentials) : ""}</p><p>${safe(identity.institution)}</p><a class="btn btn-primary" href="#/certificates">View certificates</a><a class="hero-secondary" href="#/resume">Read my résumé</a></div><div class="portrait-frame"><img src="${safe(portrait)}" alt="Portrait of ${safe(identity.name)}" width="700" height="700" fetchpriority="high"></div><div class="card-imprint"><span>Science education</span><span>Research & professional learning</span></div></section><section class="overview-about"><h2>${safe(overview.heading || "Teaching & inquiry")}</h2><div><p>${safe(overview.biography)}</p><a href="#/profile">Read my profile</a></div></section><section class="overview-learning"><div class="learning-heading"><h2>${safe(overview.learning_heading || "Learning, documented")}</h2><p>${certs.length} certificates, with the original documents available to read.</p><a href="#/certificates">Browse the certificate archive</a></div><div class="learning-documents">${selected.map((i) => `<article><button data-certificate="${safe(i.id)}" class="document-sheet" aria-label="View ${safe(i.title)}"><img src="${safe(i.evidence[0].preview_images[0])}" alt="${safe(i.title)} certificate" width="800" height="600" loading="lazy"></button><p>${safe(i.title)}</p></article>`).join("")}</div></section><section class="overview-index"><h2>Inside the portfolio</h2><div>${store
+    .getVisibleTabs()
+    .filter((t) => !["cover", "contents"].includes(t.id))
+    .map(
+      (t) =>
+        `<a href="#/${safe(t.slug || t.id)}"><strong>${safe(t.label)}</strong><span>${safe(t.summary)}</span></a>`,
+    )
+    .join(
+      "",
+    )}</div></section><section class="overview-contact"><h2>Start a conversation</h2><p>For teaching, research and professional inquiries.</p><a class="btn btn-primary" href="#/contact">Contact me</a></section></div>`;
+  container
+    .querySelectorAll("[data-certificate]")
+    .forEach(
+      (b) =>
+        (b.onclick = () =>
+          openLightbox(
+            certs.find((i) => i.id === b.dataset.certificate).evidence[0],
+          )),
+    );
 }

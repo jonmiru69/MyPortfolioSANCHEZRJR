@@ -1,4 +1,11 @@
 {
-  "summary": "This section is being prepared.",
-  "cv": {}
+  "summary": "My supplied résumé brings together my education, classroom experience, university service and professional skills. View the original document below, or open it at full size to read every detail.",
+  "document": {
+    "label": "Ramelito C. Sanchez, Jr. — résumé",
+    "original_name": "Ramelito-Sanchez-Resume.png",
+    "file": "assets/docs/resume/ramelito-sanchez-resume.png",
+    "type": "image",
+    "mime": "image/png",
+    "preview_images": ["assets/docs/resume/ramelito-sanchez-resume.png"]
+  }
 }

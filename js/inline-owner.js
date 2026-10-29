@@ -1,125 +1,238 @@
-import { github } from './github.js';
-import { store } from './store.js';
-import { renderSiteEditor } from './admin/site-editor.js';
-import { renderContentEditor } from './admin/content-editor.js';
-import { renderTabEditor } from './admin/tab-editor.js';
-import { renderPublish } from './admin/publish.js';
+import { github } from "./github.js";
+import { store } from "./store.js";
+import { renderPublish } from "./admin/publish.js";
+import { renderTabEditor } from "./admin/tab-editor.js";
+import { openItemEditor, openDetailsEditor } from "./admin/item-editor.js";
+import { editorDialog } from "./admin/dialog.js";
 
 export function setupInlineOwner(app) {
-  let enabled = false;
-  const closeMenus = () => document.querySelectorAll('.owner-menu-list:popover-open').forEach(list => list.hidePopover());
-  window.addEventListener('resize', closeMenus);
-  document.addEventListener('scroll', e => { if (!e.target.closest?.('.owner-menu-list')) closeMenus(); }, true);
-  const button = document.createElement('button');
-  button.type = 'button'; button.className = 'theme-toggle-btn'; button.textContent = 'Owner mode';
-  button.setAttribute('aria-pressed', 'false');
-  const sync = document.createElement('button');
-  sync.type = 'button'; sync.className = 'cloud-sync-status'; sync.hidden = true;
-  sync.setAttribute('aria-live', 'polite');
-  sync.title = 'Review and publish saved device drafts';
-  sync.addEventListener('click', () => openPanel('Sync portfolio', renderPublish));
-  const updateStatus = message => { sync.textContent = message || 'All changes saved online'; sync.hidden = !enabled; };
-  store.subscribe('cloud-status', updateStatus);
-  document.querySelector('.top-bar-controls')?.append(sync, button);
-
+  let enabled = store.isDraftMode;
+  const controls = document.querySelector(".top-bar-controls");
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "theme-toggle-btn";
+  button.textContent = "Owner mode";
+  button.setAttribute("aria-pressed", "false");
+  const shortcut = document.createElement("a");
+  shortcut.href = "#/certificates";
+  shortcut.className = "btn btn-primary owner-shortcut";
+  shortcut.textContent = "Manage certificates";
+  shortcut.hidden = true;
+  const sync = document.createElement("button");
+  sync.type = "button";
+  sync.className = "cloud-sync-status";
+  sync.hidden = true;
+  sync.onclick = () => {
+    const api = editorDialog("Sync portfolio");
+    if (api) renderPublish(api.body);
+  };
+  controls.append(shortcut, sync, button);
+  const update = () => {
+    enabled = store.isDraftMode;
+    document.body.classList.toggle("owner-mode", enabled);
+    button.textContent = enabled ? "Exit owner mode" : "Owner mode";
+    button.setAttribute("aria-pressed", String(enabled));
+    shortcut.hidden = !enabled;
+    sync.hidden = !enabled;
+    sync.textContent = store.cloudStatus || "Saved on this device";
+  };
+  store.subscribe("cloud-status", update);
   async function activate() {
     await store.setOwnerMode(true);
-    enabled = true; button.textContent = 'Exit owner mode'; button.setAttribute('aria-pressed','true');
-    updateStatus(store.cloudStatus);
-  }
-
-  function openPanel(title, render) {
-    const dialog = document.createElement('dialog'); dialog.className = 'owner-dialog';
-    const heading = document.createElement('h2'); heading.textContent = title;
-    const close = document.createElement('button'); close.type = 'button'; close.className = 'btn btn-secondary'; close.textContent = 'Close editor';
-    const body = document.createElement('div'); body.className = 'owner-dialog-body';
-    const header = document.createElement('div'); header.className = 'owner-dialog-header'; header.append(heading, close);
-    dialog.append(header, body); document.body.append(dialog);
-    close.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => { dialog.remove(); app.renderTabs(); app.handleRoute(app.currentRoute()); });
-    dialog.showModal(); render(body);
+    update();
+    app.renderTabs();
+    await app.handleRoute(app.currentRoute());
   }
   function authenticate() {
-    openPanel('Connect owner access', body => {
-      body.innerHTML = '<p>Enter your existing GitHub token to verify owner access. Changes and photos save through your Cloudflare API; the token is not stored in the database.</p><form><label for="inline-token">GitHub token</label><input id="inline-token" type="password" autocomplete="off" required class="form-input"><button type="submit" class="btn btn-primary">Connect</button><p role="status"></p></form>';
-      body.querySelector('form').addEventListener('submit', async e => {
-        e.preventDefault(); const form = e.currentTarget; const status = form.querySelector('[role="status"]');
-        const token = form.querySelector('input').value; status.textContent = 'Checking access…';
-        github.setCredentials(token, github.owner || 'jonmiru69', github.repo || 'MyPortfolioSANCHEZRJR', github.branch || 'main', false);
+    const api = editorDialog("Connect owner access");
+    if (!api) return;
+    api.body.innerHTML =
+      '<p>Connect your GitHub owner access to edit this portfolio.</p><form><label for="inline-token">GitHub token</label><input id="inline-token" type="password" autocomplete="off" required class="form-input"><button type="submit" class="btn btn-primary">Connect</button><p role="status"></p></form>';
+    api.body.querySelector("form").onsubmit = async (e) => {
+      e.preventDefault();
+      if (api.busy) return;
+      api.busy = true;
+      const form = e.currentTarget;
+      const status = form.querySelector('[role="status"]');
+      const submit = form.querySelector("button");
+      submit.disabled = true;
+      status.textContent = "Checking owner access…";
+      try {
+        github.setCredentials(
+          form.querySelector("input").value,
+          "jonmiru69",
+          "MyPortfolioSANCHEZRJR",
+          "main",
+          false,
+        );
         const result = await github.testConnection();
-        if (!result.ok) { github.disconnect(); status.textContent = result.error || 'Could not verify access.'; return; }
+        if (!result.ok) {
+          github.disconnect();
+          throw new Error(result.error || "Could not verify owner access.");
+        }
         await activate();
-        body.closest('dialog').close();
-      });
-    });
+        api.dirty = false;
+        api.close();
+      } catch (error) {
+        status.textContent = error.message;
+        submit.disabled = false;
+      } finally {
+        api.busy = false;
+      }
+    };
   }
-  button.addEventListener('click', async () => {
+  button.onclick = async () => {
     if (enabled) {
       button.disabled = true;
-      if (store.changedFiles.size && !store.cloudNeedsReview) { try { await store.publishCloud(); } catch {} }
-      await store.setOwnerMode(false);
-      enabled = false; button.disabled = false; button.textContent = 'Owner mode'; button.setAttribute('aria-pressed','false');
-      updateStatus(''); await app.handleRoute(app.currentRoute()); return;
+      try {
+        if (store.cloudSaving) await store.cloudSaving;
+        if (store.changedFiles.size && !store.cloudNeedsReview) {
+          try {
+            await store.publishCloud();
+          } catch {}
+        }
+        await store.setOwnerMode(false);
+        update();
+        await app.handleRoute(app.currentRoute());
+      } finally {
+        button.disabled = false;
+      }
+      return;
     }
-    if (!github.isAuthenticated()) { authenticate(); return; }
+    if (!github.isAuthenticated()) {
+      authenticate();
+      return;
+    }
     button.disabled = true;
-    const result = await github.testConnection(); button.disabled = false;
-    if (!result.ok) { authenticate(); return; }
-    await activate(); await app.handleRoute(app.currentRoute());
-  });
-  function menu(label, actions) {
-    const details = document.createElement('div'); details.className = 'owner-menu';
-    const summary = document.createElement('button'); summary.type='button'; summary.className='owner-menu-trigger'; summary.textContent = '⋮'; summary.setAttribute('aria-label', label); summary.setAttribute('aria-haspopup','menu'); summary.setAttribute('aria-expanded','false'); details.append(summary);
-    const list = document.createElement('div'); list.className = 'owner-menu-list'; list.setAttribute('popover','auto'); list.setAttribute('role','menu');
-    summary.addEventListener('click', () => {
-      if (list.matches(':popover-open')) { list.hidePopover(); return; }
-      list.showPopover();
-      const rect=summary.getBoundingClientRect(), box=list.getBoundingClientRect(), gap=8;
-      list.style.left=Math.max(gap,Math.min(rect.right-box.width,innerWidth-box.width-gap))+'px';
-      list.style.top=Math.max(gap,Math.min(rect.bottom+gap,innerHeight-box.height-gap))+'px';
-    });
-    list.addEventListener('toggle', () => summary.setAttribute('aria-expanded', String(list.matches(':popover-open'))));
-    list.addEventListener('keydown', e => {
-      const buttons=[...list.querySelectorAll('button')], index=buttons.indexOf(document.activeElement);
-      if(e.key==='ArrowDown'||e.key==='ArrowUp') { e.preventDefault(); buttons[(index+(e.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length]?.focus(); }
-    });
-    for (const [name, handler] of actions) { const b = document.createElement('button'); b.type='button'; b.setAttribute('role','menuitem'); b.textContent=name; b.addEventListener('click', () => { list.hidePopover(); handler(); }); list.append(b); }
-    details.append(list); return details;
+    try {
+      const result = await github.testConnection();
+      if (!result.ok) {
+        authenticate();
+        return;
+      }
+      await activate();
+    } finally {
+      button.disabled = false;
+    }
+  };
+  function action(label, handler, primary = false) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn " + (primary ? "btn-primary" : "btn-secondary");
+    b.textContent = label;
+    b.onclick = handler;
+    return b;
   }
   function decorate() {
-    document.querySelectorAll('.owner-inline-control').forEach(el => el.remove());
-    if (!enabled || app.currentRoute() === 'admin') return;
-    const route = app.currentRoute(); const page = app.pageContainer.querySelector('.page-view');
+    document
+      .querySelectorAll(".owner-inline-control")
+      .forEach((el) => el.remove());
+    update();
+    if (!enabled || app.currentRoute() === "admin") return;
+    const route = app.currentRoute();
+    const page = app.pageContainer.querySelector(".page-view");
     if (!page) return;
-    const group = document.createElement('div'); group.className = 'owner-inline-control owner-page-actions';
-    group.append(menu('Edit this section', [
-      ['Edit page', () => openPanel('Edit page', body => route === 'cover' || route === 'profile' || route === 'contact' ? renderSiteEditor(body) : renderContentEditor(body, route))],
-      ...(['profile','contact'].includes(route) ? [['Edit section data', () => openPanel('Edit section data', body => renderContentEditor(body, route))]] : []),
-      ['Manage sections', () => openPanel('Manage sections', renderTabEditor)],
-      ['Review and publish', () => openPanel('Review and publish', renderPublish)]
-    ]));
-    page.prepend(group);
-    if (['cover','profile','contact'].includes(route)) {
-      page.querySelectorAll('.overview-intro > :not(a), .overview-content h2, .overview-content p, .overview-learning h2, .profile-page h3, .profile-page h4, .profile-page p, .contact-details h3, .contact-details p').forEach(target => {
-        const wrap = document.createElement('span'); wrap.className='owner-inline-control owner-detail-control';
-        wrap.append(menu('Edit this detail', [['Edit details', () => openPanel('Edit details', renderSiteEditor)]]));
-        target.after(wrap);
-      });
+    const bar = document.createElement("div");
+    bar.className = "owner-inline-control owner-page-actions";
+    bar.dataset.ui = "";
+    bar.setAttribute("aria-label", "Owner editing actions");
+    if (route === "cover") {
+      bar.append(
+        action("Edit introduction", () =>
+          openDetailsEditor("Edit introduction", "site.json", ["overview"]),
+        ),
+        action("Edit identity & photo", () =>
+          openDetailsEditor("Edit identity & photo", "site.json", ["identity"]),
+        ),
+      );
+    } else if (route === "profile") {
+      bar.append(
+        action("Edit profile", () =>
+          openDetailsEditor("Edit profile", "profile"),
+        ),
+        action("Edit identity & photo", () =>
+          openDetailsEditor("Edit identity & photo", "site.json", ["identity"]),
+        ),
+      );
+    } else if (route === "contact") {
+      bar.append(
+        action("Edit contact", () =>
+          openDetailsEditor("Edit contact", "contact"),
+        ),
+        action("Edit inquiry settings", () =>
+          openDetailsEditor("Edit inquiry settings", "site.json", ["contact"]),
+        ),
+      );
+    } else if (route === "resume") {
+      bar.append(
+        action("Edit résumé & file", () =>
+          openDetailsEditor("Edit résumé & file", "resume"),
+        ),
+      );
+    } else {
+      bar.append(
+        action(
+          route === "certificates" ? "Add certificate" : "Add item",
+          () => openItemEditor(route),
+          true,
+        ),
+      );
+      if (route !== "certificates")
+        bar.append(
+          action("Edit section details", () =>
+            openDetailsEditor("Edit section details", route),
+          ),
+        );
     }
-    if (!['cover','contents','profile','contact'].includes(route)) {
-      page.querySelectorAll('[data-owner-item]').forEach(card => {
-        const id = card.dataset.ownerItem;
-        const wrap = document.createElement('div'); wrap.className = 'owner-inline-control';
-        wrap.append(menu('Item options', [['Edit, hide or delete', () => openPanel('Edit item', body => renderContentEditor(body, route, id))], ['Add an item', () => openPanel('Add an item', body => renderContentEditor(body, route))]]));
-        card.prepend(wrap);
-      });
-    }
-    document.querySelectorAll('.binder-tab').forEach(link => {
-      const wrap = document.createElement('span'); wrap.className='owner-inline-control owner-tab-control';
-      wrap.append(menu('Section options', [['Manage sections', () => openPanel('Manage sections', renderTabEditor)]]));
-      link.after(wrap);
+    bar.append(
+      action("Manage sections", () => {
+        const api = editorDialog("Manage sections");
+        if (api) renderTabEditor(api.body);
+      }),
+    );
+    page.prepend(bar);
+    page.querySelectorAll("[data-owner-item]").forEach((card) => {
+      const wrap = document.createElement("div");
+      wrap.className = "owner-inline-control owner-item-actions";
+      wrap.dataset.ui = "";
+      wrap.append(
+        action(
+          route === "certificates" ? "Edit certificate" : "Edit item",
+          () =>
+            openItemEditor(route, card.dataset.ownerItem, [
+              card.dataset.ownerCollection || "items",
+            ]),
+        ),
+      );
+      card.prepend(wrap);
     });
+    page.querySelectorAll("[data-owner-collection-add]").forEach((target) => {
+      const wrap = document.createElement("div");
+      wrap.className = "owner-inline-control";
+      wrap.append(
+        action("Add item", () =>
+          openItemEditor(route, null, [target.dataset.ownerCollectionAdd]),
+        ),
+      );
+      target.append(wrap);
+    });
+    const footer = document.querySelector(".site-footer");
+    const edit = action("Edit footer", () =>
+      openDetailsEditor("Edit footer", "site.json", ["identity"], {}, [
+        "footer_text",
+      ]),
+    );
+    edit.classList.add("owner-inline-control");
+    footer.append(edit);
   }
-  app.pageContainer.addEventListener('portfolio-list-rendered', () => queueMicrotask(decorate));
+  app.pageContainer.addEventListener("portfolio-list-rendered", () =>
+    queueMicrotask(decorate),
+  );
+  document.addEventListener("portfolio-content-saved", () => {
+    app.setupFooter();
+    app.renderTabs();
+    app.handleRoute(app.currentRoute());
+  });
+  update();
   return { decorate, isEnabled: () => enabled };
 }

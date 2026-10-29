@@ -1,6 +1,6 @@
-
 cloudflare/.wrangler/
 cloudflare/.dev.vars
 cloudflare/node_modules/
 .wrangler/
 .taste-skill/
+.test-results/

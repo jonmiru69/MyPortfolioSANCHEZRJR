@@ -1,4 +1,24 @@
 {
-  "summary": "This section is being prepared.",
-  "items": []
+  "summary": "Undergraduate research completed at Central Philippines State University in June 2025.",
+  "items": [
+    {
+      "id": "research-biofuel",
+      "title": "Agricultural residues as biofuel",
+      "subtitle": "Comparative Study of Sugarcane Bagasse and Corn Stalks as Biofuel",
+      "organization": "Central Philippines State University – San Carlos Campus",
+      "date_start": "2025-06",
+      "date_end": "",
+      "description": "An undergraduate thesis submitted for the Bachelor of Secondary Education (Sciences), co-authored by Ramelito Jr. C. Sanchez, Estefanie M. Tanghal and Leonesa L. Leones.",
+      "authors": [
+        "Ramelito Jr. C. Sanchez",
+        "Estefanie M. Tanghal",
+        "Leonesa L. Leones"
+      ],
+      "tags": ["Biofuel", "Science education"],
+      "evidence": [],
+      "links": [],
+      "visibility": "public",
+      "order": 1
+    }
+  ]
 }
