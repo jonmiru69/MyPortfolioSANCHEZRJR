@@ -1,3 +1,4 @@
+import { createRevealMotion } from "./motion.js";
 import { store } from "./store.js";
 import { router } from "./router.js";
 import { setupInlineOwner } from "./inline-owner.js";
@@ -18,6 +19,7 @@ class App {
   async init() {
     this.pageContainer = document.getElementById("binder-page-content");
     this.tabsContainer = document.getElementById("binder-tabs-nav");
+    this.motion = createRevealMotion(this.pageContainer);
     await store.init();
     store.setTheme(
       localStorage.getItem("portfolio-theme") ||
@@ -94,7 +96,6 @@ class App {
     if (/^#[a-f0-9]{6}$/i.test(accent || ""))
       document.documentElement.style.setProperty("--accent", accent);
     const generation = ++this.generation;
-    this.observer?.disconnect();
     document.body.classList.toggle("is-admin", route === "admin");
     this.renderTabs();
     const section = store.getTabMeta(route)?.id || route;
@@ -145,26 +146,7 @@ class App {
     }
   }
   animate() {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    this.observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries)
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            this.observer.unobserve(entry.target);
-          }
-      },
-      { threshold: 0.08 },
-    );
-    this.pageContainer
-      .querySelectorAll(
-        ".hero-writing > *, .portrait-frame, .card-imprint, .overview-about > *, .learning-heading > *, .learning-documents article, .overview-index h2, .overview-index a, .overview-contact > *, .hero-name, .inquiry-feature > *, .section-intro > *, .certificate-art, .certificate-information dl > div, .portfolio-record",
-      )
-      .forEach((el, i) => {
-        el.classList.add("reveal");
-        el.style.setProperty("--delay", `${(i % 4) * 70}ms`);
-        this.observer.observe(el);
-      });
+    this.motion.refresh();
   }
   currentRoute() {
     return store.getTabMeta(router.currentRoute)?.id || router.currentRoute;

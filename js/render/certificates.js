@@ -8,7 +8,7 @@ export function renderCertificates(container, data) {
   const date = (i) => i.issue_date || i.date_start || "";
   const type = (i) => i.certificate_kind || "";
   let page = 1;
-  const pageSize = 6;
+  const pageSize = 1;
   let urls = [];
   let generation = 0;
   const types = [...new Set(items.map(type).filter(Boolean))].sort();
@@ -118,12 +118,12 @@ export function renderCertificates(container, data) {
   $("#cert-prev").onclick = () => {
     page--;
     update();
-    $(".certificate-filters").scrollIntoView({ block: "start" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
   $("#cert-next").onclick = () => {
     page++;
     update();
-    $(".certificate-filters").scrollIntoView({ block: "start" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   };
   const cleanup = () => {
     urls.forEach((u) => URL.revokeObjectURL(u));

@@ -186,7 +186,7 @@ try {
   await page.getByRole("heading", { name: "No matches" }).waitFor();
   await page.getByRole("button", { name: "Reset filters" }).click();
   await page.waitForFunction(
-    () => document.querySelectorAll(".certificate-record").length === 6,
+    () => document.querySelectorAll(".certificate-record").length === 1,
   );
   await page.locator("#filter-year").selectOption("2025");
   assert.equal(
@@ -195,10 +195,10 @@ try {
   );
   await page.getByRole("button", { name: "Reset filters" }).click();
   await page.waitForFunction(
-    () => document.querySelectorAll(".certificate-record").length === 6,
+    () => document.querySelectorAll(".certificate-record").length === 1,
   );
   await page.getByRole("button", { name: "Next", exact: true }).click();
-  assert.equal(await page.locator("#cert-page").innerText(), "Page 2 of 4");
+  assert.equal(await page.locator("#cert-page").innerText(), `Page 2 of ${publicCount}`);
   check("search, empty state, reset, year filter and pagination work");
   await page.locator(".certificate-record button[data-view]").first().click();
   await page.locator(".document-viewer[open]").waitFor();

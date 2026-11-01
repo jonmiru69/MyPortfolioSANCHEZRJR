@@ -70,13 +70,21 @@ export async function openLightbox(evidenceItem, options = {}) {
     sheets.className = "document-pages";
     viewport.append(sheets);
     let zoom = 1;
+    let pageIndex = 0;
     const controls = document.createElement("div");
     controls.className = "viewer-zoom";
     const setZoom = (value) => {
+      dialog.classList.remove("is-fit-page");
       zoom = Math.max(0.5, Math.min(8, value));
       sheets.style.width = `${zoom * 100}%`;
     };
+    const fitPage = () => {
+      zoom = 1;
+      sheets.style.width = "100%";
+      dialog.classList.add("is-fit-page");
+    };
     for (const [label, action] of [
+      ["Fit page", fitPage],
       ["Zoom out", () => setZoom(zoom - 0.25)],
       ["Zoom in", () => setZoom(zoom + 0.25)],
       ["Fit width", () => setZoom(1)],
@@ -93,6 +101,8 @@ export async function openLightbox(evidenceItem, options = {}) {
       const src = await getURL(pages[i]);
       if (!dialog.isConnected) return;
       const img = document.createElement("img");
+      img.className = "document-page";
+      img.hidden = i !== pageIndex;
       img.src = src;
       img.alt = `${evidenceItem.label || "Certificate"}, page ${i + 1}`;
       img.loading = i ? "lazy" : "eager";
@@ -102,6 +112,29 @@ export async function openLightbox(evidenceItem, options = {}) {
         if (dialog.isConnected)
           setZoom(img.naturalWidth / Math.max(1, sheets.clientWidth));
       }
+    }
+    if (!options.actualSize) fitPage();
+    if (pages.length > 1) {
+      const previousPage = document.createElement("button");
+      const nextPage = document.createElement("button");
+      const count = document.createElement("span");
+      count.className = "viewer-page-count";
+      count.setAttribute("role", "status");
+      const showPage = () => {
+        [...sheets.children].forEach((img, index) => { img.hidden = index !== pageIndex; });
+        previousPage.disabled = pageIndex === 0;
+        nextPage.disabled = pageIndex === pages.length - 1;
+        count.textContent = `Document page ${pageIndex + 1} of ${pages.length}`;
+        fitPage();
+      };
+      for (const [button, label, step] of [[previousPage, "Previous document page", -1], [nextPage, "Next document page", 1]]) {
+        button.type = "button";
+        button.className = "btn btn-secondary";
+        button.textContent = label;
+        button.onclick = () => { pageIndex += step; showPage(); };
+      }
+      controls.append(previousPage, count, nextPage);
+      showPage();
     }
   } else if (evidenceItem.mime === "application/pdf" || /\.pdf$/i.test(file)) {
     const frame = document.createElement("iframe");
