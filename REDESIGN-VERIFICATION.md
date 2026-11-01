@@ -24,5 +24,9 @@ After: first glance 8, signature 8, typography 8.5, composition 8, colour 8.5, m
 
 The research feature uses text because no original thesis imagery is supplied. No imagery or factual proof was invented. Future original classroom photographs could enrich the presentation.
 
-## Release status
-The original public website and production cloud records have not been replaced. A separate private Sites upload was blocked by automatic approval review because the new external destination needs explicit user authorization. Repository delivery and local ZIP/patch are prepared separately. Browser editing tests used isolated local data and mocked authentication/publishing; production records were not changed.
+## Global release
+The user authorized applying the redesign to the live main repository and creating a separate owner-private Sites preview. The shared styles now cover every route, form labels and fields, certificate metadata, owner/admin controls, document viewers and print output. GitHub Pages serves main at its root. Production cloud records are not edited by this source release. Browser editing tests use isolated local data and mocked authentication/publishing.
+
+The separate private preview uses the bundled content snapshot and leaves its production cloud connection disabled, so preview edits cannot publish into the live cloud workspace. The original repository retains its existing production cloud connection.
+
+Global verification: the 30 Node tests and 47 browser checks passed again. Additional checks confirmed the featured filters, 320–1440px overview geometry, light mode, reduced motion and light print ink tokens.

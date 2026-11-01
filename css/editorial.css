@@ -788,3 +788,56 @@ a:focus-visible,button:focus-visible,summary:focus-visible {
     white-space:nowrap;
   }
 }
+/* Shared typography for every route, document viewer and owner editor. */
+.form-input,
+.form-select,
+.form-textarea,
+label,
+.form-label,
+.certificate-information dt,
+.profile-facts dt,
+.document-cover span,
+.editor-array legend,
+.owner-inline-control,
+.owner-page-actions,
+.cloud-sync-status,
+.portfolio-record h3,
+.contact-details h2 {
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+.form-input,
+.form-select,
+.form-textarea {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.certificate-information dt,
+.profile-facts dt,
+label,
+.form-label {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.contact-details h2,
+.portfolio-record h3 {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.owner-dialog-header h2 {
+  font: 400 34px/1.1 var(--font-display);
+}
+.owner-dialog::backdrop,
+.document-viewer::backdrop {
+  background: #000b;
+}
+.admin-nav-btn,
+.additional-group dt {
+  font-family: var(--font-body);
+}
+.admin-nav-btn.active {
+  background: var(--ink);
+  color: var(--ground);
+}

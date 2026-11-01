@@ -48,3 +48,22 @@
     transform: none !important;
   }
 }
+
+/* Print uses a light token set even when the screen is in dark mode. */
+@media print {
+  :root,
+  [data-theme="dark"] {
+    --ground: #ffffff;
+    --paper: #ffffff;
+    --paper-step: #f0f0f0;
+    --ink: #111111;
+    --soft-ink: #444444;
+    --nav: #ffffff;
+    --nav-ink: #111111;
+    --footer: #ffffff;
+  }
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1 !important;
+  }
+}
