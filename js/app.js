@@ -22,7 +22,7 @@ class App {
     store.setTheme(
       localStorage.getItem("portfolio-theme") ||
         store.site?.theme?.default_mode ||
-        "light",
+        "dark",
     );
     const toggle = document.getElementById("btn-toggle-theme");
     const syncTheme = (mode) => {
@@ -57,7 +57,7 @@ class App {
     const primary = ["cover", "profile", "resume", "certificates", "contact"];
     const active = router.currentRoute;
     const link = (t) =>
-      `<a href="#/${safe(t.slug || t.id)}" class="binder-tab ${active === t.id || active === t.slug ? "active" : ""}" ${active === t.id || active === t.slug ? 'aria-current="page"' : ""}>${safe(t.label)}</a>`;
+      `<a href="#/${safe(t.slug || t.id)}" class="binder-tab ${active === t.id || active === t.slug ? "active" : ""}" ${active === t.id || active === t.slug ? 'aria-current="page"' : ""}>${safe(t.id === "resume" ? "Résumé" : t.label)}</a>`;
     this.tabsContainer.innerHTML = visible
       .filter((t) => primary.includes(t.id))
       .map(link)
@@ -67,7 +67,7 @@ class App {
       const details = document.createElement("details");
       details.className = "more-sections";
       const summary = document.createElement("summary");
-      summary.textContent = "More sections";
+      summary.textContent = "More";
       const panel = document.createElement("div");
       panel.className = "more-sections-panel";
       panel.innerHTML =
@@ -158,7 +158,7 @@ class App {
     );
     this.pageContainer
       .querySelectorAll(
-        ".hero-writing > *, .portrait-frame, .card-imprint, .overview-about > *, .learning-heading > *, .learning-documents article, .overview-index h2, .overview-index a, .overview-contact > *, .section-intro > *, .certificate-art, .certificate-information dl > div, .portfolio-record",
+        ".hero-writing > *, .portrait-frame, .card-imprint, .overview-about > *, .learning-heading > *, .learning-documents article, .overview-index h2, .overview-index a, .overview-contact > *, .hero-name, .inquiry-feature > *, .section-intro > *, .certificate-art, .certificate-information dl > div, .portfolio-record",
       )
       .forEach((el, i) => {
         el.classList.add("reveal");

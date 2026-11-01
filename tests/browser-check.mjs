@@ -116,13 +116,13 @@ const shot = async (path, fullPage = true) => {
 try {
   await go("cover");
   assert.equal(
-    await page.locator(".cover-page h1").innerText(),
+    (await page.locator(".cover-page h1").innerText()).replace(/\s+/g, " "),
     "Ramelito Jr. C. Sanchez",
   );
-  assert.equal(await page.locator(".cover-page img").count(), 4);
-  check("overview loads real portrait and three original certificate images");
+  assert.equal(await page.locator(".cover-page img").count(), 5);
+  check("overview loads real portrait and four original certificate images");
   assert.match(
-    await page.locator(".hero-role").innerText(),
+    await page.locator(".hero-greeting").innerText(),
     /Licensed Professional Teacher/,
   );
   assert.doesNotMatch(await page.locator(".hero-role").innerText(), /\bLPT\b/);
@@ -579,7 +579,7 @@ try {
   await page.screenshot({ path: out + "/certificate-editor-mobile.png" });
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
   check("phone editor stays within the screen and scrolls internally");
-  await page.getByRole("button", { name: "Dark mode", exact: true }).click();
+  if (await page.getByRole("button", { name: "Dark mode", exact: true }).count()) await page.getByRole("button", { name: "Dark mode", exact: true }).click();
   assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
   await shot(out + "/certificates-dark-mobile.png");
   const colors = await page.evaluate(() => ({
@@ -587,9 +587,9 @@ try {
     footer: getComputedStyle(document.querySelector(".site-footer"))
       .backgroundColor,
   }));
-  assert.notEqual(colors.nav, colors.footer);
+  assert.equal(colors.nav, colors.footer);
   check(
-    "dark theme works and the compact footer differs from the navigation color",
+    "dark theme works and the footer and navigation share the gallery ground",
   );
   await page.goto(`${base}/#/contact`);
   await page.locator(".inquiry-form").waitFor();

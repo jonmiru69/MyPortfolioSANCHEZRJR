@@ -19,7 +19,7 @@
     "licensure_rating": "92.60"
   },
   "theme": {
-    "default_mode": "light",
+    "default_mode": "dark",
     "color_accent": "#28c0dd",
     "bg_canvas": "#083744",
     "tracking_display": "-0.035em",
