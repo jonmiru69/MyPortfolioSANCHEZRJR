@@ -280,11 +280,15 @@
   width: 100%;
   margin-bottom: 24px;
 }
-.document-viewport iframe {
-  border: 0;
-  width: 100%;
-  min-height: 70dvh;
-  background: white;
+.document-viewport.has-document-preview {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.document-preview-surface {
+  flex: 1;
+  min-height: 0;
 }
 .resume-tools {
   display: flex;

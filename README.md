@@ -25,7 +25,9 @@ Choose **Owner mode** and connect a GitHub token with write access to this repos
 
 Saved records and files are first committed together to this device's IndexedDB. The configured Cloudflare service then saves them online. Check the sync message before leaving. Failed saves retain local drafts for retry; recovered drafts require review before publishing. Ordinary visitors see published content, not another visitor's device drafts.
 
-The updated Worker accepts all supported formats. If an older Worker returns “unsupported format,” the client stores that file through the existing GitHub connection and saves an immutable document URL in the cloud record. Certificates open as image previews without download controls. For a PDF or Office certificate, attach preview images to make its pages readable in the portfolio. Other sections can still offer downloads in the original format.
+The updated Worker accepts all supported formats. If an older Worker returns “unsupported format,” the client stores that file through the existing GitHub connection and saves an immutable document URL in the cloud record. Certificates open in the browser without download controls. Images display directly, and PDFs and supported Word and PowerPoint files render with page and zoom controls. Attached image previews are optional. Other sections can still offer downloads in the original format.
+
+The preview engine is self-hosted under `assets/vendor` and loads only when a document needs it. The vendored releases are Zrimo 0.1.2, Silurus OOXML 0.72.2, and PDF.js 6.2.108. License and attribution files are stored alongside the corresponding assets. Office documents may render differently from Microsoft Office where their original fonts or legacy features are unavailable.
 
 The release migration adds the supplied résumé and newly supplied certificate to older cloud snapshots without overwriting owner-authored details or visibility choices. Two existing hidden certificate records remain hidden from public view and can be edited in owner mode.
 

@@ -12,6 +12,8 @@ await mkdir(out, { recursive: true });
 const mime = {
   ".html": "text/html",
   ".js": "text/javascript",
+  ".mjs": "text/javascript",
+  ".wasm": "application/wasm",
   ".json": "application/json",
   ".css": "text/css",
   ".png": "image/png",
@@ -339,10 +341,11 @@ try {
   );
   await page.locator("#cert-search").fill("Browser-tested certificate");
   await page.locator(".certificate-record button[data-view]").first().click();
-  await page.getByText("An online preview is unavailable for this certificate.").waitFor();
+  await page.locator(".document-preview-surface canvas").first().waitFor();
+  await page.getByRole("button", { name: "Fit width", exact: true }).waitFor();
   assert.equal(await page.locator(".document-viewer a, .document-viewer iframe").count(), 0);
   await page.keyboard.press("Escape");
-  check("Office certificates have no public download or embedded viewer");
+  check("PowerPoint drafts render inside the viewer without download controls");
   await page.reload();
   await page.locator(".certificates-page").waitFor();
   assert.equal((await state()).mode, false);
@@ -361,7 +364,7 @@ try {
   await page.locator("dialog").waitFor({ state: "detached" });
   assert.equal((await state()).items.length, 22);
   check("two-step deletion removes only the selected certificate");
-  for (const ext of ["png", "jpg", "pdf"]) {
+  for (const ext of ["png", "jpg", "pdf", "docx"]) {
     await page
       .getByRole("button", { name: "Add certificate", exact: true })
       .click();
@@ -384,8 +387,9 @@ try {
     await page.locator("#cert-search").fill("Test " + ext + " upload");
     await page.locator(".certificate-record button[data-view]").first().click();
     await page.locator(".document-viewer").waitFor();
-    if (ext === "pdf") {
-      await page.getByText("An online preview is unavailable for this certificate.").waitFor();
+    if (ext === "pdf" || ext === "docx") {
+      await page.locator(".document-preview-surface canvas").first().waitFor();
+      await page.getByRole("button", { name: "Fit width", exact: true }).waitFor();
       assert.equal(await page.locator(".document-viewer iframe, .document-viewer a[download]").count(), 0);
     } else {
       await page.waitForFunction(

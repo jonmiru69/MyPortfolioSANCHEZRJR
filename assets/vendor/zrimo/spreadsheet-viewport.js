@@ -1,0 +1,1035 @@
+import { normalizeCellRange } from "./interaction.js";
+const DEFAULT_COLUMN_WIDTH = 64;
+const DEFAULT_ROW_HEIGHT = 20;
+const DEFAULT_ROW_HEADER_WIDTH = 50;
+const DEFAULT_COLUMN_HEADER_HEIGHT = 22;
+const OVERSCAN = 2;
+const TRAILING_COLUMNS = 2;
+const TRAILING_ROWS = 2;
+const COLUMN_RESIZE_GRAB_PX = 5;
+const MIN_COLUMN_WIDTH = 24;
+const MAX_COLUMN_WIDTH = 2_000;
+export class AxisGeometry {
+    #count;
+    #defaultSize;
+    #indices;
+    #sizes;
+    #prefixDeltas;
+    constructor(count, defaultSize, overrides = {}) {
+        this.#count = Math.max(0, Math.trunc(count));
+        this.#defaultSize = nonNegative(defaultSize, 1);
+        const entries = Object.entries(overrides)
+            .map(([rawIndex, rawSize]) => [Number(rawIndex), Number(rawSize)])
+            .filter(([index, size]) => Number.isInteger(index) &&
+            index >= 1 &&
+            index <= this.#count &&
+            Number.isFinite(size) &&
+            size >= 0)
+            .sort(([left], [right]) => left - right);
+        this.#indices = entries.map(([index]) => index);
+        this.#sizes = entries.map(([, size]) => size);
+        const prefix = [0];
+        for (const size of this.#sizes)
+            prefix.push(prefix[prefix.length - 1] + size - this.#defaultSize);
+        this.#prefixDeltas = prefix;
+    }
+    get count() {
+        return this.#count;
+    }
+    get totalSize() {
+        return this.offsetOf(this.#count + 1);
+    }
+    sizeOf(index) {
+        const normalized = Math.max(1, Math.min(this.#count, Math.trunc(index)));
+        const position = lowerBound(this.#indices, normalized);
+        return this.#indices[position] === normalized
+            ? this.#sizes[position]
+            : this.#defaultSize;
+    }
+    /** Offset of a 1-based band; count + 1 returns the full extent. */
+    offsetOf(index) {
+        const normalized = Math.max(1, Math.min(this.#count + 1, Math.trunc(index)));
+        const overridesBefore = lowerBound(this.#indices, normalized);
+        return ((normalized - 1) * this.#defaultSize +
+            this.#prefixDeltas[overridesBefore]);
+    }
+    /** Band containing an unscaled logical offset. Hidden zero-sized bands skip. */
+    indexAt(offset) {
+        if (this.#count <= 0)
+            return 1;
+        const target = Math.max(0, Math.min(this.totalSize, offset));
+        let low = 1;
+        let high = this.#count;
+        while (low < high) {
+            const middle = Math.ceil((low + high) / 2);
+            if (this.offsetOf(middle) <= target)
+                low = middle;
+            else
+                high = middle - 1;
+        }
+        while (low < this.#count && this.sizeOf(low) === 0)
+            low += 1;
+        return low;
+    }
+}
+export class SpreadsheetViewport {
+    #host;
+    #container;
+    #root;
+    #spacer;
+    #canvas;
+    #selectionLayer;
+    #searchLayer;
+    #searchBoxes = [];
+    #selectionBoxes = [];
+    #onScroll = () => this.#handleScroll();
+    #onWheel = (event) => this.#handleWheel(event);
+    #onPointerDown = (event) => this.#handlePointerDown(event);
+    #onPointerMove = (event) => this.#handlePointerMove(event);
+    #onPointerUp = (event) => this.#handlePointerUp(event);
+    #onKeyDown = (event) => this.#handleKeyDown(event);
+    #onCopy = (event) => this.#handleCopy(event);
+    #sheetScroll = new Map();
+    #columnWidthOverrides = new Map();
+    #info;
+    #columns = new AxisGeometry(0, DEFAULT_COLUMN_WIDTH);
+    #rows = new AxisGeometry(0, DEFAULT_ROW_HEIGHT);
+    #sheet;
+    #sheetIndex = 0;
+    #frame = 0;
+    #generation = 0;
+    #controller;
+    #resizeObserver;
+    #destroyed = false;
+    #renderKey;
+    #appliedZoom;
+    #zoomAnchor;
+    #panPointer;
+    #cellPointerId;
+    #cellAnchor;
+    #cellFocus;
+    #cellBaseRanges = [];
+    #columnResizeDrag;
+    #searchCells = [];
+    #searchKey = "";
+    #searchGeneration = 0;
+    constructor(container, host) {
+        this.#container = container;
+        this.#host = host;
+        this.#appliedZoom = host.state.zoom;
+        this.#root = document.createElement("div");
+        this.#root.dataset.zrimo = "spreadsheet-viewport";
+        this.#root.tabIndex = 0;
+        this.#root.setAttribute("role", "application");
+        this.#root.setAttribute("aria-label", "Spreadsheet viewport");
+        Object.assign(this.#root.style, {
+            position: "relative",
+            overflow: "auto",
+            width: "100%",
+            height: "100%",
+            minHeight: "160px",
+            background: "var(--zrimo-background, #e9edf2)",
+            touchAction: "none",
+            contain: "strict",
+        });
+        this.#spacer = document.createElement("div");
+        Object.assign(this.#spacer.style, {
+            position: "relative",
+            width: "1px",
+            height: "1px",
+        });
+        this.#canvas = document.createElement("canvas");
+        this.#canvas.dataset.zrimoLayer = "spreadsheet-canvas";
+        Object.assign(this.#canvas.style, {
+            position: "absolute",
+            left: "0",
+            top: "0",
+            display: "block",
+            pointerEvents: "none",
+            background: "white",
+        });
+        this.#selectionLayer = document.createElement("div");
+        this.#selectionLayer.dataset.zrimoLayer = "cell-selection";
+        Object.assign(this.#selectionLayer.style, {
+            position: "sticky",
+            left: "0",
+            top: "0",
+            width: "0",
+            height: "0",
+            cursor: "cell",
+            userSelect: "none",
+            overflow: "hidden",
+        });
+        this.#searchLayer = document.createElement("div");
+        this.#searchLayer.dataset.zrimoLayer = "spreadsheet-search";
+        Object.assign(this.#searchLayer.style, {
+            position: "absolute",
+            left: "0",
+            top: "0",
+            pointerEvents: "none",
+            overflow: "hidden",
+        });
+        this.#selectionLayer.append(this.#canvas, this.#searchLayer);
+        this.#selectionBoxes.push(this.#createSelectionBox());
+        this.#spacer.append(this.#selectionLayer);
+        this.#root.append(this.#spacer);
+        this.#container.append(this.#root);
+        this.#root.addEventListener("scroll", this.#onScroll, { passive: true });
+        this.#root.addEventListener("wheel", this.#onWheel, { passive: false });
+        this.#selectionLayer.addEventListener("pointerdown", this.#onPointerDown);
+        this.#selectionLayer.addEventListener("pointermove", this.#onPointerMove);
+        this.#selectionLayer.addEventListener("pointerup", this.#onPointerUp);
+        this.#selectionLayer.addEventListener("pointercancel", this.#onPointerUp);
+        this.#root.addEventListener("keydown", this.#onKeyDown);
+        document.addEventListener("copy", this.#onCopy);
+        if (typeof ResizeObserver !== "undefined") {
+            this.#resizeObserver = new ResizeObserver(() => this.schedule());
+            this.#resizeObserver.observe(this.#root);
+        }
+    }
+    setDocument(info) {
+        this.#controller?.abort();
+        this.#generation += 1;
+        this.#info = info?.unit === "sheet" ? info : undefined;
+        this.#sheetScroll.clear();
+        this.#columnWidthOverrides.clear();
+        this.#columnResizeDrag = undefined;
+        this.#resetSearchHighlights();
+        this.#resetCellSelection();
+        this.#sheetIndex = this.#host.state.pageIndex;
+        this.#appliedZoom = this.#host.state.zoom;
+        this.#renderKey = undefined;
+        this.#setSheetGeometry();
+        this.#root.scrollTo({ left: 0, top: 0 });
+        this.schedule();
+    }
+    update() {
+        if (!this.#info)
+            return;
+        const nextSheet = this.#host.state.pageIndex;
+        if (nextSheet !== this.#sheetIndex) {
+            this.#sheetScroll.set(this.#sheetIndex, {
+                left: this.#root.scrollLeft,
+                top: this.#root.scrollTop,
+            });
+            this.#sheetIndex = nextSheet;
+            this.#renderKey = undefined;
+            this.#resetCellSelection();
+            this.#host.onCellSelection(null);
+            this.#setSheetGeometry();
+            const saved = this.#sheetScroll.get(nextSheet);
+            this.#root.scrollTo({ left: saved?.left ?? 0, top: saved?.top ?? 0 });
+        }
+        const zoom = this.#host.state.zoom;
+        if (zoom !== this.#appliedZoom) {
+            const anchor = this.#zoomAnchor ?? { x: 0, y: 0 };
+            const logicalX = (this.#root.scrollLeft + anchor.x) / this.#appliedZoom;
+            const logicalY = (this.#root.scrollTop + anchor.y) / this.#appliedZoom;
+            this.#appliedZoom = zoom;
+            this.#ensureViewportGeometry();
+            this.#updateExtent();
+            this.#root.scrollLeft = logicalX * zoom - anchor.x;
+            this.#root.scrollTop = logicalY * zoom - anchor.y;
+            this.#zoomAnchor = undefined;
+            this.#renderKey = undefined;
+        }
+        this.schedule();
+    }
+    panBy(deltaX, deltaY) {
+        this.#root.scrollLeft += deltaX;
+        this.#root.scrollTop += deltaY;
+        this.#reportPan();
+        this.schedule();
+    }
+    goToPage(pageIndex) {
+        if (pageIndex === this.#sheetIndex)
+            return;
+        this.update();
+    }
+    fitWidth() {
+        const usedColumns = this.#usedColumns();
+        const naturalWidth = this.#rowHeaderWidth() + Math.max(1, usedColumns.totalSize);
+        const zoom = clampZoom((this.#root.clientWidth - 2) / naturalWidth);
+        if (zoom !== this.#appliedZoom)
+            this.#zoomAnchor = { x: 0, y: 0 };
+        return zoom;
+    }
+    fitPage() {
+        const usedColumns = this.#usedColumns();
+        const usedRows = this.#usedRows();
+        const naturalWidth = this.#rowHeaderWidth() + Math.max(1, usedColumns.totalSize);
+        const naturalHeight = this.#columnHeaderHeight() + Math.max(1, usedRows.totalSize);
+        const zoom = clampZoom(Math.min((this.#root.clientWidth - 2) / naturalWidth, (this.#root.clientHeight - 2) / naturalHeight));
+        if (zoom !== this.#appliedZoom)
+            this.#zoomAnchor = { x: 0, y: 0 };
+        return zoom;
+    }
+    schedule() {
+        if (this.#destroyed || this.#frame)
+            return;
+        this.#frame = requestAnimationFrame(() => {
+            this.#frame = 0;
+            void this.#renderVisible();
+        });
+    }
+    destroy() {
+        if (this.#destroyed)
+            return;
+        this.#destroyed = true;
+        this.#searchGeneration += 1;
+        this.#controller?.abort();
+        if (this.#frame)
+            cancelAnimationFrame(this.#frame);
+        this.#resizeObserver?.disconnect();
+        this.#root.removeEventListener("scroll", this.#onScroll);
+        this.#root.removeEventListener("wheel", this.#onWheel);
+        this.#selectionLayer.removeEventListener("pointerdown", this.#onPointerDown);
+        this.#selectionLayer.removeEventListener("pointermove", this.#onPointerMove);
+        this.#selectionLayer.removeEventListener("pointerup", this.#onPointerUp);
+        this.#selectionLayer.removeEventListener("pointercancel", this.#onPointerUp);
+        this.#root.removeEventListener("keydown", this.#onKeyDown);
+        document.removeEventListener("copy", this.#onCopy);
+        this.#root.remove();
+    }
+    async #renderVisible() {
+        const info = this.#info;
+        const sheet = this.#sheet;
+        if (!info ||
+            !sheet ||
+            this.#host.state.status !== "ready" ||
+            this.#root.clientWidth <= 0 ||
+            this.#root.clientHeight <= 0)
+            return;
+        this.#ensureViewportGeometry();
+        this.#updateExtent();
+        await this.#syncSearchHighlights();
+        if (this.#destroyed || this.#sheetIndex !== this.#host.state.pageIndex)
+            return;
+        const render = this.#visibleRange();
+        const width = this.#root.clientWidth;
+        const height = this.#root.clientHeight;
+        const zoom = this.#host.state.zoom;
+        const dpr = window.devicePixelRatio || 1;
+        const key = [
+            this.#sheetIndex,
+            render.range.row,
+            render.range.column,
+            render.range.rowCount,
+            render.range.columnCount,
+            render.offsetX.toFixed(3),
+            render.offsetY.toFixed(3),
+            width,
+            height,
+            zoom,
+            dpr,
+        ].join(":");
+        this.#sizeLayers(width, height);
+        this.#paintSearchHighlights();
+        this.#paintSelection();
+        if (key === this.#renderKey)
+            return;
+        this.#renderKey = key;
+        this.#controller?.abort();
+        const controller = new AbortController();
+        this.#controller = controller;
+        const generation = ++this.#generation;
+        const frame = document.createElement("canvas");
+        try {
+            await this.#host.renderSheetViewport(this.#sheetIndex, frame, render.range, {
+                width,
+                height,
+                zoom,
+                devicePixelRatio: dpr,
+                scrollOffsetX: render.offsetX,
+                scrollOffsetY: render.offsetY,
+                columnWidths: this.#currentColumnWidthOverrides(),
+                priority: "visible",
+                signal: controller.signal,
+            });
+            if (controller.signal.aborted ||
+                generation !== this.#generation ||
+                this.#destroyed)
+                return;
+            this.#canvas.width = frame.width;
+            this.#canvas.height = frame.height;
+            const context = this.#canvas.getContext("2d");
+            context?.clearRect(0, 0, frame.width, frame.height);
+            context?.drawImage(frame, 0, 0);
+            delete this.#root.dataset.renderError;
+        }
+        catch (error) {
+            if (!controller.signal.aborted && generation === this.#generation)
+                this.#root.dataset.renderError =
+                    error instanceof Error ? error.message : String(error);
+        }
+    }
+    #visibleRange() {
+        const zoom = this.#host.state.zoom;
+        const freezeColumns = Math.min(this.#columns.count, Math.max(0, this.#sheet?.frozenColumns ?? 0));
+        const freezeRows = Math.min(this.#rows.count, Math.max(0, this.#sheet?.frozenRows ?? 0));
+        const frozenWidth = this.#columns.offsetOf(freezeColumns + 1);
+        const frozenHeight = this.#rows.offsetOf(freezeRows + 1);
+        const logicalLeft = this.#root.scrollLeft / zoom;
+        const logicalTop = this.#root.scrollTop / zoom;
+        const startColumn = Math.max(freezeColumns + 1, this.#columns.indexAt(logicalLeft + frozenWidth));
+        const startRow = Math.max(freezeRows + 1, this.#rows.indexAt(logicalTop + frozenHeight));
+        const offsetX = Math.max(0, logicalLeft + frozenWidth - this.#columns.offsetOf(startColumn));
+        const offsetY = Math.max(0, logicalTop + frozenHeight - this.#rows.offsetOf(startRow));
+        const naturalWidth = this.#root.clientWidth / zoom - this.#rowHeaderWidth() - frozenWidth;
+        const naturalHeight = this.#root.clientHeight / zoom -
+            this.#columnHeaderHeight() -
+            frozenHeight;
+        const endColumn = this.#columns.indexAt(this.#columns.offsetOf(startColumn) + offsetX + Math.max(0, naturalWidth));
+        const endRow = this.#rows.indexAt(this.#rows.offsetOf(startRow) + offsetY + Math.max(0, naturalHeight));
+        return {
+            range: {
+                row: startRow,
+                column: startColumn,
+                rowCount: Math.max(1, Math.min(this.#rows.count - startRow + 1, endRow - startRow + 1 + OVERSCAN)),
+                columnCount: Math.max(1, Math.min(this.#columns.count - startColumn + 1, endColumn - startColumn + 1 + OVERSCAN)),
+            },
+            offsetX,
+            offsetY,
+        };
+    }
+    #setSheetGeometry() {
+        this.#sheet = this.#info?.sheets?.[this.#sheetIndex];
+        this.#columns = new AxisGeometry(0, DEFAULT_COLUMN_WIDTH);
+        this.#rows = new AxisGeometry(0, DEFAULT_ROW_HEIGHT);
+        this.#ensureViewportGeometry();
+        this.#updateExtent();
+    }
+    #ensureViewportGeometry() {
+        const sheet = this.#sheet;
+        const zoom = Math.max(0.1, this.#host.state.zoom);
+        const defaultColumnWidth = sheet?.defaultColumnWidth ?? DEFAULT_COLUMN_WIDTH;
+        const defaultRowHeight = sheet?.defaultRowHeight ?? DEFAULT_ROW_HEIGHT;
+        const viewportColumns = Math.ceil(Math.max(0, this.#root.clientWidth / zoom - this.#rowHeaderWidth()) /
+            Math.max(1, defaultColumnWidth));
+        const viewportRows = Math.ceil(Math.max(0, this.#root.clientHeight / zoom - this.#columnHeaderHeight()) /
+            Math.max(1, defaultRowHeight));
+        const columnCount = Math.max(1, sheet?.maxColumn ?? 1, viewportColumns + TRAILING_COLUMNS);
+        const rowCount = Math.max(1, sheet?.maxRow ?? 1, viewportRows + TRAILING_ROWS);
+        if (this.#columns.count !== columnCount)
+            this.#columns = new AxisGeometry(columnCount, defaultColumnWidth, this.#effectiveColumnWidths());
+        if (this.#rows.count !== rowCount)
+            this.#rows = new AxisGeometry(rowCount, defaultRowHeight, sheet?.rowHeights);
+    }
+    #usedColumns() {
+        return new AxisGeometry(Math.max(1, this.#sheet?.maxColumn ?? 1), this.#sheet?.defaultColumnWidth ?? DEFAULT_COLUMN_WIDTH, this.#effectiveColumnWidths());
+    }
+    #usedRows() {
+        return new AxisGeometry(Math.max(1, this.#sheet?.maxRow ?? 1), this.#sheet?.defaultRowHeight ?? DEFAULT_ROW_HEIGHT, this.#sheet?.rowHeights);
+    }
+    #updateExtent() {
+        const zoom = this.#host.state.zoom;
+        this.#spacer.style.width = `${Math.max(1, (this.#rowHeaderWidth() + this.#columns.totalSize) * zoom)}px`;
+        this.#spacer.style.height = `${Math.max(1, (this.#columnHeaderHeight() + this.#rows.totalSize) * zoom)}px`;
+    }
+    #sizeLayers(width, height) {
+        for (const layer of [
+            this.#canvas,
+            this.#selectionLayer,
+            this.#searchLayer,
+        ]) {
+            layer.style.width = `${width}px`;
+            layer.style.height = `${height}px`;
+        }
+    }
+    #handleScroll() {
+        this.#reportPan();
+        this.#paintSearchHighlights();
+        this.#paintSelection();
+        this.schedule();
+    }
+    #handleWheel(event) {
+        if (!event.ctrlKey && !event.metaKey)
+            return;
+        event.preventDefault();
+        const bounds = this.#root.getBoundingClientRect();
+        this.#zoomAnchor = {
+            x: event.clientX - bounds.left,
+            y: event.clientY - bounds.top,
+        };
+        this.#host.onZoom(this.#host.state.zoom * Math.exp(-event.deltaY * 0.002));
+    }
+    #handlePointerDown(event) {
+        if (event.button !== 0)
+            return;
+        this.#root.focus({ preventScroll: true });
+        const resizeTarget = this.#columnResizeTargetAt(event.clientX, event.clientY);
+        if (resizeTarget) {
+            event.preventDefault();
+            this.#columnResizeDrag = {
+                ...resizeTarget,
+                pointerId: event.pointerId,
+                startClientX: event.clientX,
+            };
+            this.#selectionLayer.style.cursor = "col-resize";
+            this.#capturePointer(event.pointerId);
+            return;
+        }
+        const cell = this.#cellAt(event.clientX, event.clientY);
+        if (cell) {
+            event.preventDefault();
+            const additive = event.ctrlKey || event.metaKey;
+            if (event.shiftKey && this.#cellAnchor) {
+                this.#cellFocus = cell;
+                this.#cellPointerId = event.pointerId;
+            }
+            else if (additive) {
+                const current = this.#selectionRanges();
+                if (current.some((range) => cellInRange(cell, range))) {
+                    this.#cellBaseRanges = current.flatMap((range) => subtractCell(range, cell));
+                    this.#cellAnchor = undefined;
+                    this.#cellFocus = undefined;
+                    this.#cellPointerId = undefined;
+                }
+                else {
+                    this.#cellBaseRanges = current;
+                    this.#cellAnchor = cell;
+                    this.#cellFocus = cell;
+                    this.#cellPointerId = event.pointerId;
+                }
+            }
+            else {
+                this.#cellBaseRanges = [];
+                this.#cellAnchor = cell;
+                this.#cellFocus = cell;
+                this.#cellPointerId = event.pointerId;
+            }
+            this.#emitSelection();
+        }
+        else {
+            this.#panPointer = {
+                id: event.pointerId,
+                x: event.clientX,
+                y: event.clientY,
+            };
+        }
+        this.#capturePointer(event.pointerId);
+    }
+    #handlePointerMove(event) {
+        const resize = this.#columnResizeDrag;
+        if (resize?.pointerId === event.pointerId) {
+            event.preventDefault();
+            const width = Math.max(MIN_COLUMN_WIDTH, Math.min(MAX_COLUMN_WIDTH, resize.width +
+                (event.clientX - resize.startClientX) / this.#host.state.zoom));
+            this.#resizeColumn(resize.column, width);
+            return;
+        }
+        if (this.#cellPointerId === event.pointerId && this.#cellAnchor) {
+            const cell = this.#cellAt(event.clientX, event.clientY);
+            if (cell) {
+                this.#cellFocus = cell;
+                this.#emitSelection();
+            }
+            return;
+        }
+        if (!this.#panPointer) {
+            this.#selectionLayer.style.cursor = this.#columnResizeTargetAt(event.clientX, event.clientY)
+                ? "col-resize"
+                : "cell";
+        }
+        const pointer = this.#panPointer;
+        if (!pointer || pointer.id !== event.pointerId)
+            return;
+        this.panBy(pointer.x - event.clientX, pointer.y - event.clientY);
+        this.#panPointer = { id: pointer.id, x: event.clientX, y: event.clientY };
+    }
+    #handlePointerUp(event) {
+        if (this.#columnResizeDrag?.pointerId === event.pointerId) {
+            this.#columnResizeDrag = undefined;
+            this.#selectionLayer.style.cursor = "cell";
+        }
+        if (this.#cellPointerId === event.pointerId)
+            this.#cellPointerId = undefined;
+        if (this.#panPointer?.id === event.pointerId)
+            this.#panPointer = undefined;
+        this.#releasePointer(event.pointerId);
+    }
+    #handleKeyDown(event) {
+        const delta = cellKeyDelta(event.key);
+        if (delta && this.#cellFocus) {
+            event.preventDefault();
+            const focus = {
+                row: Math.max(1, Math.min(this.#rows.count, this.#cellFocus.row + delta.row)),
+                column: Math.max(1, Math.min(this.#columns.count, this.#cellFocus.column + delta.column)),
+            };
+            if (!event.shiftKey) {
+                this.#cellBaseRanges = [];
+                this.#cellAnchor = focus;
+            }
+            this.#cellFocus = focus;
+            this.#scrollCellIntoView(focus);
+            this.#emitSelection();
+            return;
+        }
+        const step = Math.max(48, this.#root.clientHeight * 0.9);
+        switch (event.key) {
+            case "PageDown":
+                event.preventDefault();
+                this.panBy(0, step);
+                break;
+            case "PageUp":
+                event.preventDefault();
+                this.panBy(0, -step);
+                break;
+            case "ArrowDown":
+                event.preventDefault();
+                this.panBy(0, 48);
+                break;
+            case "ArrowUp":
+                event.preventDefault();
+                this.panBy(0, -48);
+                break;
+            case "ArrowRight":
+                event.preventDefault();
+                this.panBy(48, 0);
+                break;
+            case "ArrowLeft":
+                event.preventDefault();
+                this.panBy(-48, 0);
+                break;
+        }
+    }
+    #handleCopy(event) {
+        if (document.activeElement !== this.#root &&
+            !this.#root.contains(document.activeElement))
+            return;
+        const text = this.#host.getSelectionText();
+        if (text === undefined)
+            return;
+        if (event.clipboardData) {
+            event.preventDefault();
+            event.clipboardData.setData("text/plain", text);
+            return;
+        }
+        void globalThis.navigator?.clipboard?.writeText(text).catch(() => { });
+    }
+    #cellAt(clientX, clientY) {
+        const bounds = this.#root.getBoundingClientRect();
+        const zoom = this.#host.state.zoom;
+        const x = clientX - bounds.left - this.#rowHeaderWidth() * zoom;
+        const y = clientY - bounds.top - this.#columnHeaderHeight() * zoom;
+        if (x < 0 || y < 0)
+            return undefined;
+        const freezeColumns = Math.max(0, this.#sheet?.frozenColumns ?? 0);
+        const freezeRows = Math.max(0, this.#sheet?.frozenRows ?? 0);
+        const frozenWidth = this.#columns.offsetOf(freezeColumns + 1);
+        const frozenHeight = this.#rows.offsetOf(freezeRows + 1);
+        const logicalX = x / zoom < frozenWidth
+            ? x / zoom
+            : this.#root.scrollLeft / zoom + x / zoom;
+        const logicalY = y / zoom < frozenHeight
+            ? y / zoom
+            : this.#root.scrollTop / zoom + y / zoom;
+        return {
+            row: this.#rows.indexAt(logicalY),
+            column: this.#columns.indexAt(logicalX),
+        };
+    }
+    #columnResizeTargetAt(clientX, clientY) {
+        if (!this.#sheet || this.#columns.count === 0)
+            return undefined;
+        const bounds = this.#root.getBoundingClientRect();
+        const zoom = this.#host.state.zoom;
+        const localY = clientY - bounds.top;
+        if (localY < 0 || localY > this.#columnHeaderHeight() * zoom)
+            return undefined;
+        const gridX = clientX - bounds.left - this.#rowHeaderWidth() * zoom;
+        if (gridX <= 0)
+            return undefined;
+        const freezeColumns = Math.max(0, this.#sheet.frozenColumns);
+        const frozenWidth = this.#columns.offsetOf(freezeColumns + 1);
+        const logicalX = gridX / zoom < frozenWidth
+            ? gridX / zoom
+            : this.#root.scrollLeft / zoom + gridX / zoom;
+        const hitColumn = this.#columns.indexAt(logicalX);
+        for (const column of [hitColumn - 1, hitColumn]) {
+            if (column < 1 || column > this.#columns.count)
+                continue;
+            const naturalEdge = this.#columns.offsetOf(column + 1);
+            const scrollOffset = column <= freezeColumns ? 0 : this.#root.scrollLeft / zoom;
+            const edge = this.#rowHeaderWidth() * zoom + (naturalEdge - scrollOffset) * zoom;
+            if (Math.abs(clientX - bounds.left - edge) <= COLUMN_RESIZE_GRAB_PX)
+                return { column, width: this.#columns.sizeOf(column) };
+        }
+        return undefined;
+    }
+    #resizeColumn(column, width) {
+        const overrides = this.#currentColumnWidthOverrides(true);
+        overrides[column] = Math.round(width * 10) / 10;
+        this.#columns = new AxisGeometry(this.#columns.count, this.#sheet?.defaultColumnWidth ?? DEFAULT_COLUMN_WIDTH, this.#effectiveColumnWidths());
+        this.#controller?.abort();
+        this.#renderKey = undefined;
+        this.#updateExtent();
+        this.#paintSearchHighlights();
+        this.#paintSelection();
+        this.schedule();
+    }
+    #effectiveColumnWidths() {
+        return {
+            ...(this.#sheet?.columnWidths ?? {}),
+            ...this.#currentColumnWidthOverrides(),
+        };
+    }
+    #currentColumnWidthOverrides(create = false) {
+        const current = this.#columnWidthOverrides.get(this.#sheetIndex);
+        if (current || !create)
+            return current ?? {};
+        const overrides = {};
+        this.#columnWidthOverrides.set(this.#sheetIndex, overrides);
+        return overrides;
+    }
+    #capturePointer(pointerId) {
+        try {
+            this.#selectionLayer.setPointerCapture(pointerId);
+        }
+        catch {
+            // Synthetic events may not expose an active pointer.
+        }
+    }
+    #releasePointer(pointerId) {
+        try {
+            if (this.#selectionLayer.hasPointerCapture(pointerId))
+                this.#selectionLayer.releasePointerCapture(pointerId);
+        }
+        catch {
+            // Pointer may already have been released.
+        }
+    }
+    #emitSelection() {
+        const ranges = this.#selectionRanges();
+        const selection = ranges.length === 0
+            ? null
+            : ranges.length === 1
+                ? ranges[0]
+                : { sheetIndex: this.#sheetIndex, ranges };
+        this.#host.onCellSelection(selection);
+        this.#paintSelection();
+    }
+    #paintSelection() {
+        const ranges = this.#selectionRanges();
+        while (this.#selectionBoxes.length < ranges.length)
+            this.#selectionBoxes.push(this.#createSelectionBox());
+        this.#selectionBoxes.forEach((box, index) => {
+            const range = ranges[index];
+            if (!range) {
+                box.style.display = "none";
+                return;
+            }
+            const topLeft = this.#cellPosition(range.startRow, range.startColumn);
+            const bottomRight = this.#cellPosition(range.endRow + 1, range.endColumn + 1);
+            Object.assign(box.style, {
+                display: "block",
+                left: `${topLeft.x}px`,
+                top: `${topLeft.y}px`,
+                width: `${Math.max(1, bottomRight.x - topLeft.x)}px`,
+                height: `${Math.max(1, bottomRight.y - topLeft.y)}px`,
+            });
+        });
+    }
+    async #syncSearchHighlights() {
+        const sheetIndex = this.#sheetIndex;
+        const matches = this.#host.getSearchMatches(sheetIndex);
+        const currentActive = this.#host.getActiveSearchMatch();
+        const active = currentActive?.pageIndex === sheetIndex ? currentActive : undefined;
+        const key = spreadsheetSearchKey(matches, active);
+        if (key === this.#searchKey)
+            return;
+        const generation = ++this.#searchGeneration;
+        if (matches.length === 0) {
+            this.#searchKey = key;
+            this.#searchCells = [];
+            this.#paintSearchHighlights();
+            return;
+        }
+        const runs = await this.#host.getTextRuns(sheetIndex);
+        const latestActive = this.#host.getActiveSearchMatch();
+        if (this.#destroyed ||
+            generation !== this.#searchGeneration ||
+            sheetIndex !== this.#sheetIndex ||
+            key !==
+                spreadsheetSearchKey(this.#host.getSearchMatches(sheetIndex), latestActive?.pageIndex === sheetIndex ? latestActive : undefined))
+            return;
+        this.#searchKey = key;
+        this.#searchCells = spreadsheetSearchCells(runs, matches, active);
+        const activeCell = this.#searchCells.find((cell) => cell.active);
+        if (activeCell)
+            this.#scrollCellIntoView(activeCell);
+        this.#paintSearchHighlights();
+    }
+    #paintSearchHighlights() {
+        const width = this.#root.clientWidth;
+        const height = this.#root.clientHeight;
+        const zoom = this.#host.state.zoom;
+        const gridLeft = this.#rowHeaderWidth() * zoom;
+        const gridTop = this.#columnHeaderHeight() * zoom;
+        const visible = this.#searchCells.flatMap((cell) => {
+            const range = this.#searchRange(cell);
+            const start = this.#cellPosition(range.startRow, range.startColumn);
+            const end = this.#cellPosition(range.endRow + 1, range.endColumn + 1);
+            const left = Math.max(gridLeft, start.x);
+            const top = Math.max(gridTop, start.y);
+            const right = Math.min(width, end.x);
+            const bottom = Math.min(height, end.y);
+            return right > left && bottom > top
+                ? [{ cell, left, top, width: right - left, height: bottom - top }]
+                : [];
+        });
+        while (this.#searchBoxes.length < visible.length)
+            this.#searchBoxes.push(this.#createSearchBox());
+        this.#searchBoxes.forEach((box, index) => {
+            const highlight = visible[index];
+            if (!highlight) {
+                box.style.display = "none";
+                delete box.dataset.row;
+                delete box.dataset.column;
+                delete box.dataset.active;
+                return;
+            }
+            box.dataset.row = String(highlight.cell.row);
+            box.dataset.column = String(highlight.cell.column);
+            box.dataset.active = String(highlight.cell.active);
+            Object.assign(box.style, {
+                display: "block",
+                left: `${highlight.left}px`,
+                top: `${highlight.top}px`,
+                width: `${Math.max(1, highlight.width)}px`,
+                height: `${Math.max(1, highlight.height)}px`,
+                background: "var(--zrimo-highlight, rgb(255 215 0 / 45%))",
+                boxShadow: highlight.cell.active
+                    ? "inset 0 0 0 2px var(--zrimo-primary, #175cd3)"
+                    : "none",
+            });
+        });
+    }
+    #searchRange(cell) {
+        const merged = this.#sheet?.mergedRanges.find((range) => cellInRange(cell, { ...range, sheetIndex: this.#sheetIndex }));
+        return merged
+            ? { ...merged, sheetIndex: this.#sheetIndex }
+            : {
+                sheetIndex: this.#sheetIndex,
+                startRow: cell.row,
+                startColumn: cell.column,
+                endRow: cell.row,
+                endColumn: cell.column,
+            };
+    }
+    #createSearchBox() {
+        const box = document.createElement("div");
+        Object.assign(box.style, {
+            position: "absolute",
+            display: "none",
+            boxSizing: "border-box",
+            pointerEvents: "none",
+        });
+        this.#searchLayer.append(box);
+        return box;
+    }
+    #resetSearchHighlights() {
+        this.#searchGeneration += 1;
+        this.#searchCells = [];
+        this.#searchKey = "";
+        for (const box of this.#searchBoxes)
+            box.style.display = "none";
+    }
+    #selectionRanges() {
+        const anchor = this.#cellAnchor;
+        const focus = this.#cellFocus;
+        if (!anchor || !focus)
+            return [...this.#cellBaseRanges];
+        const active = normalizeCellRange({
+            sheetIndex: this.#sheetIndex,
+            startRow: anchor.row,
+            startColumn: anchor.column,
+            endRow: focus.row,
+            endColumn: focus.column,
+        });
+        return [
+            ...this.#cellBaseRanges.flatMap((range) => subtractRange(range, active)),
+            active,
+        ];
+    }
+    #createSelectionBox() {
+        const box = document.createElement("div");
+        Object.assign(box.style, {
+            position: "absolute",
+            display: "none",
+            boxSizing: "border-box",
+            border: "2px solid var(--zrimo-selection, #2563eb)",
+            background: "rgb(37 99 235 / 10%)",
+            pointerEvents: "none",
+        });
+        this.#selectionLayer.append(box);
+        return box;
+    }
+    #resetCellSelection() {
+        this.#cellPointerId = undefined;
+        this.#cellAnchor = undefined;
+        this.#cellFocus = undefined;
+        this.#cellBaseRanges = [];
+        for (const box of this.#selectionBoxes)
+            box.style.display = "none";
+    }
+    #cellPosition(row, column) {
+        const zoom = this.#host.state.zoom;
+        const freezeColumns = Math.max(0, this.#sheet?.frozenColumns ?? 0);
+        const freezeRows = Math.max(0, this.#sheet?.frozenRows ?? 0);
+        const naturalX = this.#columns.offsetOf(column);
+        const naturalY = this.#rows.offsetOf(row);
+        return {
+            x: this.#rowHeaderWidth() * zoom +
+                (naturalX -
+                    (column <= freezeColumns + 1 ? 0 : this.#root.scrollLeft / zoom)) *
+                    zoom,
+            y: this.#columnHeaderHeight() * zoom +
+                (naturalY - (row <= freezeRows + 1 ? 0 : this.#root.scrollTop / zoom)) *
+                    zoom,
+        };
+    }
+    #scrollCellIntoView(cell) {
+        const zoom = this.#host.state.zoom;
+        const left = (this.#rowHeaderWidth() + this.#columns.offsetOf(cell.column)) * zoom;
+        const right = left + this.#columns.sizeOf(cell.column) * zoom;
+        const top = (this.#columnHeaderHeight() + this.#rows.offsetOf(cell.row)) * zoom;
+        const bottom = top + this.#rows.sizeOf(cell.row) * zoom;
+        if (left < this.#root.scrollLeft)
+            this.#root.scrollLeft = left;
+        else if (right > this.#root.scrollLeft + this.#root.clientWidth)
+            this.#root.scrollLeft = right - this.#root.clientWidth;
+        if (top < this.#root.scrollTop)
+            this.#root.scrollTop = top;
+        else if (bottom > this.#root.scrollTop + this.#root.clientHeight)
+            this.#root.scrollTop = bottom - this.#root.clientHeight;
+        this.#reportPan();
+        this.schedule();
+    }
+    #rowHeaderWidth() {
+        return this.#sheet?.rowHeaderWidth ?? DEFAULT_ROW_HEADER_WIDTH;
+    }
+    #columnHeaderHeight() {
+        return this.#sheet?.columnHeaderHeight ?? DEFAULT_COLUMN_HEADER_HEIGHT;
+    }
+    #reportPan() {
+        this.#host.onPan(this.#root.scrollLeft, this.#root.scrollTop);
+    }
+}
+export function spreadsheetSearchCells(runs, matches, activeMatch) {
+    const cells = new Map();
+    let logicalOffset = 0;
+    let firstPossibleMatch = 0;
+    for (const run of runs) {
+        const start = run.logicalStart ?? logicalOffset;
+        const end = run.logicalEnd ?? start + run.text.length;
+        while (firstPossibleMatch < matches.length &&
+            matches[firstPossibleMatch].end <= start)
+            firstPossibleMatch += 1;
+        if (run.row !== undefined && run.column !== undefined) {
+            for (let index = firstPossibleMatch; index < matches.length && matches[index].start < end; index += 1) {
+                const match = matches[index];
+                if (match.end <= start)
+                    continue;
+                const key = `${run.row}:${run.column}`;
+                const active = sameSearchMatch(match, activeMatch);
+                const existing = cells.get(key);
+                if (!existing || (active && !existing.active))
+                    cells.set(key, {
+                        row: run.row,
+                        column: run.column,
+                        active,
+                    });
+            }
+        }
+        logicalOffset = end;
+    }
+    return Array.from(cells.values());
+}
+function spreadsheetSearchKey(matches, activeMatch) {
+    return `${matches
+        .map((match) => `${match.pageIndex}:${match.start}:${match.end}`)
+        .join(",")}|${activeMatch
+        ? `${activeMatch.pageIndex}:${activeMatch.start}:${activeMatch.end}`
+        : ""}`;
+}
+function sameSearchMatch(left, right) {
+    return (right !== undefined &&
+        left.pageIndex === right.pageIndex &&
+        left.start === right.start &&
+        left.end === right.end);
+}
+function lowerBound(values, target) {
+    let low = 0;
+    let high = values.length;
+    while (low < high) {
+        const middle = Math.floor((low + high) / 2);
+        if (values[middle] < target)
+            low = middle + 1;
+        else
+            high = middle;
+    }
+    return low;
+}
+function nonNegative(value, fallback) {
+    return Number.isFinite(value) && value >= 0 ? value : fallback;
+}
+function clampZoom(value) {
+    return Math.max(0.1, Math.min(8, Number.isFinite(value) ? value : 1));
+}
+function cellInRange(cell, rawRange) {
+    const range = normalizeCellRange(rawRange);
+    return (cell.row >= range.startRow &&
+        cell.row <= range.endRow &&
+        cell.column >= range.startColumn &&
+        cell.column <= range.endColumn);
+}
+function subtractCell(range, cell) {
+    return subtractRange(range, {
+        sheetIndex: range.sheetIndex,
+        startRow: cell.row,
+        startColumn: cell.column,
+        endRow: cell.row,
+        endColumn: cell.column,
+    });
+}
+function subtractRange(rawSource, rawRemoved) {
+    const source = normalizeCellRange(rawSource);
+    const removed = normalizeCellRange(rawRemoved);
+    const top = Math.max(source.startRow, removed.startRow);
+    const bottom = Math.min(source.endRow, removed.endRow);
+    const left = Math.max(source.startColumn, removed.startColumn);
+    const right = Math.min(source.endColumn, removed.endColumn);
+    if (top > bottom || left > right)
+        return [source];
+    const result = [];
+    const add = (startRow, startColumn, endRow, endColumn) => {
+        if (startRow <= endRow && startColumn <= endColumn)
+            result.push({
+                sheetIndex: source.sheetIndex,
+                startRow,
+                startColumn,
+                endRow,
+                endColumn,
+            });
+    };
+    add(source.startRow, source.startColumn, top - 1, source.endColumn);
+    add(bottom + 1, source.startColumn, source.endRow, source.endColumn);
+    add(top, source.startColumn, bottom, left - 1);
+    add(top, right + 1, bottom, source.endColumn);
+    return result;
+}
+function cellKeyDelta(key) {
+    switch (key) {
+        case "ArrowUp":
+            return { row: -1, column: 0 };
+        case "ArrowDown":
+            return { row: 1, column: 0 };
+        case "ArrowLeft":
+            return { row: 0, column: -1 };
+        case "ArrowRight":
+            return { row: 0, column: 1 };
+        default:
+            return undefined;
+    }
+}

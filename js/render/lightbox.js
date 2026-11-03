@@ -1,9 +1,12 @@
 import { store } from "../store.js";
+import { FILE_TYPES } from "../upload-policy.js";
 import { safeURL } from "../utils.js";
+import { renderDocumentPreview } from "./document-preview.js";
 export async function openLightbox(evidenceItem, options = {}) {
   if (document.querySelector("dialog[open]")) return;
   const previous = document.activeElement;
   const urls = [];
+  const preview = new AbortController();
   const dialog = document.createElement("dialog");
   dialog.className = "document-viewer";
   dialog.setAttribute("aria-labelledby", "viewer-title");
@@ -18,6 +21,7 @@ export async function openLightbox(evidenceItem, options = {}) {
   close.type = "button";
   close.className = "btn btn-secondary";
   close.textContent = "Close";
+  close.autofocus = true;
   close.onclick = () => dialog.close();
   const file = safeURL(evidenceItem.file);
   if (!file) return;
@@ -49,6 +53,7 @@ export async function openLightbox(evidenceItem, options = {}) {
     return safeURL(path);
   };
   const cleanup = () => {
+    preview.abort();
     window.removeEventListener("hashchange", routeClose);
     urls.forEach((u) => URL.revokeObjectURL(u));
     dialog.remove();
@@ -60,13 +65,17 @@ export async function openLightbox(evidenceItem, options = {}) {
   const routeClose = () => dialog.close();
   window.addEventListener("hashchange", routeClose);
   dialog.addEventListener("close", cleanup, { once: true });
-  const resolved = download ? await getURL(file) : null;
-  if (!dialog.isConnected) return;
-  if (download) download.href = resolved;
+  if (download) {
+    download.href = await getURL(file);
+    if (!dialog.isConnected) return;
+  }
+  const fileName = evidenceItem.original_name ||
+    new URL(file, location.href).pathname.split("/").pop();
+  const extension = fileName.split(".").pop().toLowerCase();
+  const mime = evidenceItem.mime || FILE_TYPES[extension];
   const pages = evidenceItem.preview_images?.length
     ? evidenceItem.preview_images
-    : evidenceItem.type === "image" ||
-        /\.(png|jpe?g|webp|gif|avif|bmp)$/i.test(file)
+    : evidenceItem.type === "image" || mime?.startsWith("image/")
       ? [file]
       : [];
   if (pages.length) {
@@ -140,24 +149,14 @@ export async function openLightbox(evidenceItem, options = {}) {
       controls.append(previousPage, count, nextPage);
       showPage();
     }
-  } else if (options.previewOnly) {
-    const message = document.createElement("p");
-    message.textContent = "An online preview is unavailable for this certificate.";
-    viewport.append(message);
-  } else if (evidenceItem.mime === "application/pdf" || /\.pdf$/i.test(file)) {
-    const frame = document.createElement("iframe");
-    frame.src = resolved;
-    frame.title = evidenceItem.label || "PDF document";
-    viewport.append(frame);
-    const hint = document.createElement("p");
-    hint.textContent =
-      "If the PDF does not display on your device, use Download file to open it.";
-    viewport.append(hint);
   } else {
-    const message = document.createElement("p");
-    message.textContent =
-      "This Word or PowerPoint document is ready to download. Open it in Word, PowerPoint or a compatible app.";
-    viewport.append(message);
+    await renderDocumentPreview({
+      header,
+      viewport,
+      file,
+      fileName,
+      mime,
+      signal: preview.signal,
+    });
   }
-  close.focus();
 }

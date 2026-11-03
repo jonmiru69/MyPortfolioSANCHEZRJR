@@ -18,3 +18,4 @@
 *.gif binary
 *.avif binary
 *.bmp binary
+assets/vendor/** -text -whitespace

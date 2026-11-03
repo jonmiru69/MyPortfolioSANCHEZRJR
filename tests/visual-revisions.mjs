@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 const { chromium } = createRequire(import.meta.url)(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = resolve(import.meta.dirname, '..');
 const out = resolve(root, '.test-results/revisions'); await mkdir(out, {recursive:true});
-const mime = {'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.pdf':'application/pdf'};
+const mime = {'.html':'text/html','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.wasm':'application/wasm','.json':'application/json','.png':'image/png','.webp':'image/webp','.svg':'image/svg+xml','.pdf':'application/pdf'};
 const server = createServer(async(req,res)=>{try{
  const pathname = new URL(req.url,'http://localhost').pathname;
  if(pathname==='/data/cloud.json'){res.setHeader('Content-Type','application/json');res.end('{"api_url":""}');return;}
@@ -49,6 +49,37 @@ try{
  await page.evaluate(async()=>{const {openLightbox}=await import('/js/render/lightbox.js');await openLightbox({file:'assets/docs/certificates/ai-class-asean.pdf',label:'AI Class ASEAN',preview_images:['assets/images/certificate-pages/ai-class-asean-1.webp','assets/images/certificate-pages/ai-class-asean-2.webp']});});
  await page.getByRole('button',{name:'Next document page',exact:true}).click();
  assert.equal(await page.locator('.document-page:not([hidden])').count(),1);assert.match(await page.locator('.viewer-page-count').innerText(),/2 of 2/);await page.keyboard.press('Escape');
+ for(const extension of ['pdf','docx','pptx']){
+  await page.evaluate(async extension=>{
+   const {openLightbox}=await import('/js/render/lightbox.js');
+   await openLightbox({file:`tests/fixtures/certificate.${extension}`},{previewOnly:true});
+  },extension);
+  await page.getByRole('button',{name:'Fit width',exact:true}).waitFor();
+  await page.waitForFunction(extension=>{
+   const canvas=document.querySelector('.document-preview-surface canvas');
+   if(!canvas?.width || !canvas.height)return false;
+   const pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+   for(let i=0;i<pixels.length;i+=4){
+    if(pixels[i+3]===255 && (extension==='pptx' || Math.min(pixels[i],pixels[i+1],pixels[i+2])<220))return true;
+   }
+   return false;
+  },extension);
+  assert.equal(await page.locator('.document-viewer [download], .document-viewer iframe').count(),0);
+  await page.keyboard.press('Escape');
+  await page.locator('.document-viewer').waitFor({state:'detached'});
+ }
+ await page.setViewportSize({width:390,height:844});
+ await page.evaluate(async()=>{
+  const {openLightbox}=await import('/js/render/lightbox.js');
+  await openLightbox({file:'assets/docs/certificates/ai-class-asean.pdf'},{previewOnly:true});
+ });
+ await page.getByRole('button',{name:'Next page',exact:true}).click();
+ assert.equal(await page.locator('.viewer-page-count').innerText(),'Page 2 of 2');
+ await page.getByRole('button',{name:'Previous page',exact:true}).click();
+ assert.equal(await page.locator('.viewer-page-count').innerText(),'Page 1 of 2');
+ assert.equal(await page.locator('.document-viewer').evaluate(el=>el.scrollWidth>el.clientWidth+1),false);
+ await page.keyboard.press('Escape');
+ await page.locator('.document-viewer').waitFor({state:'detached'});
  for(const width of [320,390,768]){
   await page.setViewportSize({width,height:900});
   for(const route of ['cover','certificates','profile','research','contact']){
@@ -86,5 +117,5 @@ try{
  },duringBounce);
  assert.deepEqual(reveal,{centered:true,coversViewport:true,oldViewVisible:true,newViewClipped:true});
  await page.locator('.is-revealing-theme').waitFor({state:'detached'});
- assert.deepEqual(errors,[]);console.log('PASS scroll reveals, preview-only certificate viewer, responsive routes, theme bounce and ripple, reduced motion and no uncaught errors');
+ assert.deepEqual(errors,[]);console.log('PASS PDF, DOCX and PPTX rendering, mobile PDF navigation, scroll reveals, theme reveal and reduced motion');
 }finally{await browser.close();await new Promise(r=>server.close(r));}
