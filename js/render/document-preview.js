@@ -3,6 +3,40 @@ import { MAX_UPLOAD_BYTES } from "../upload-policy.js";
 
 const assetBaseUrl = new URL("../../assets/vendor/zrimo/", import.meta.url);
 
+async function createDocumentClient() {
+  const { ViewerClient } = await import("../../assets/vendor/zrimo/index.js");
+  return ViewerClient.create({
+    assetBaseUrl,
+    limits: { maxInputBytes: MAX_UPLOAD_BYTES },
+  });
+}
+
+async function loadDocument(viewer, file, fileName, mime, signal) {
+  const draft = await store.loadDraft(file);
+  await viewer.load(draft instanceof Blob ? draft : new URL(file, location.href), {
+    fileName,
+    contentType: mime,
+    signal,
+  });
+}
+
+export async function renderDocumentThumbnail(evidence, canvas, signal) {
+  const client = await createDocumentClient();
+  try {
+    signal.throwIfAborted();
+    const viewer = client.createViewer();
+    await loadDocument(viewer, evidence.file, evidence.original_name, evidence.mime, signal);
+    await viewer.renderThumbnail(0, canvas, {
+      maxWidth: 600,
+      maxHeight: 450,
+      devicePixelRatio: 1,
+      signal,
+    });
+  } finally {
+    await client.destroy();
+  }
+}
+
 export async function renderDocumentPreview({
   header, viewport, file, fileName, mime, signal,
 }) {
@@ -15,15 +49,11 @@ export async function renderDocumentPreview({
   signal.addEventListener("abort", destroy, { once: true });
 
   try {
-    const [{ ViewerClient }, draft] = await Promise.all([
-      import("../../assets/vendor/zrimo/index.js"),
-      store.loadDraft(file),
-    ]);
-    if (signal.aborted) return;
-    client = ViewerClient.create({
-      assetBaseUrl,
-      limits: { maxInputBytes: MAX_UPLOAD_BYTES },
-    });
+    client = await createDocumentClient();
+    if (signal.aborted) {
+      await destroy();
+      return;
+    }
     const surface = document.createElement("div");
     surface.className = "document-preview-surface";
     viewport.append(surface);
@@ -34,11 +64,7 @@ export async function renderDocumentPreview({
       layout: "single",
       ui: false,
     });
-    await viewer.load(draft instanceof Blob ? draft : new URL(file, location.href), {
-      fileName,
-      contentType: mime,
-      signal,
-    });
+    await loadDocument(viewer, file, fileName, mime, signal);
     if (signal.aborted) return;
 
     const controls = document.createElement("div");

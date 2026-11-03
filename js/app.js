@@ -148,6 +148,8 @@ class App {
     stage.dataset.route = section;
     try {
       if (route === "admin") {
+        this.disposePage?.();
+        this.disposePage = undefined;
         this.pageContainer.replaceChildren(stage);
         await renderAdmin(stage);
         this.ownerTools.decorate();
@@ -155,14 +157,17 @@ class App {
       }
       const data = await store.getTabContent(section);
       if (generation !== this.generation) return;
+      let disposePage;
       if (section === "cover") await renderCover(stage, store.site);
       else if (section === "profile")
         await renderProfile(stage, data, store.site);
       else if (section === "resume") await renderResume(stage, data);
-      else if (section === "certificates") renderCertificates(stage, data);
+      else if (section === "certificates") disposePage = renderCertificates(stage, data);
       else if (section === "contact") renderContact(stage, data, store.site);
       else renderRecords(stage, data, section);
       if (generation !== this.generation) return;
+      this.disposePage?.();
+      this.disposePage = disposePage;
       this.pageContainer.replaceChildren(stage);
       this.pageContainer.dataset.route = route;
       document.title = `${store.getTabMeta(route)?.label || "Portfolio"} · ${store.site.identity.name}`;
@@ -185,6 +190,9 @@ class App {
         this.lastRoute = route;
       }
     } catch (error) {
+      if (generation !== this.generation) return;
+      this.disposePage?.();
+      this.disposePage = undefined;
       console.error("Could not load portfolio section", error);
       this.pageContainer.innerHTML =
         '<div class="page-view"><h1>Unable to load</h1><p>Please reload the page and try again.</p><a class="btn btn-primary" href="#/cover">Return to overview</a></div>';

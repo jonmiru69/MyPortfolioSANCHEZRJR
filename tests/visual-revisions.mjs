@@ -34,6 +34,12 @@ try{
  await lastArtwork.scrollIntoViewIfNeeded();
  await records.last().locator('.certificate-art.reveal.is-visible').waitFor();
  assert.match(await lastArtwork.evaluate(el=>getComputedStyle(el).animationName),/editorial-rise/);
+ for(const id of ['certificate-23','certificate-24','certificate-25']){
+  const record=page.locator(`[data-owner-item="${id}"]`);
+  await record.scrollIntoViewIfNeeded();
+  await record.locator('.certificate-thumbnail:visible').waitFor();
+  assert.ok(await record.locator('canvas').evaluate(canvas=>canvas.width>0 && canvas.height>0));
+ }
  await page.evaluate(()=>window.scrollTo(0,0));
  await page.screenshot({path:out+'/certificates-desktop.png'});
  await page.setViewportSize({width:1366,height:768});

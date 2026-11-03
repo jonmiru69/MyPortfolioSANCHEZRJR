@@ -159,7 +159,9 @@ try {
     check(`section ${route} renders`);
   }
   await go("certificates");
-  const publicCount = (await state()).items.filter(
+  const bundledItems = (await state()).items;
+  const bundledCount = bundledItems.length;
+  const publicCount = bundledItems.filter(
     (i) => i.visibility !== "hidden",
   ).length;
   assert.equal(
@@ -245,7 +247,7 @@ try {
   await page
     .getByRole("button", { name: "Discard changes", exact: true })
     .click();
-  assert.equal((await state()).items.length, 22);
+  assert.equal((await state()).items.length, bundledCount);
   check(
     "Cancel discards an unsaved certificate and its file without creating a draft",
   );
@@ -333,7 +335,7 @@ try {
   await page.getByRole("button", { name: "Save changes", exact: true }).click();
   await page.locator("dialog").waitFor({ state: "detached" });
   const replaced = (await state()).items.find((i) => i.id === saved.id);
-  assert.equal((await state()).items.length, 23);
+  assert.equal((await state()).items.length, bundledCount + 1);
   assert.notEqual(replaced.evidence[0].file, saved.evidence[0].file);
   assert.match(replaced.evidence[0].file, /\.pptx$/);
   check(
@@ -349,9 +351,9 @@ try {
   await page.reload();
   await page.locator(".certificates-page").waitFor();
   assert.equal((await state()).mode, false);
-  assert.equal((await state()).items.length, 22);
+  assert.equal((await state()).items.length, bundledCount);
   await owner();
-  assert.equal((await state()).items.length, 23);
+  assert.equal((await state()).items.length, bundledCount + 1);
   check(
     "reload keeps private drafts out of public mode and restores them after owner authentication",
   );
@@ -362,7 +364,7 @@ try {
     .getByRole("button", { name: "Confirm delete", exact: true })
     .click();
   await page.locator("dialog").waitFor({ state: "detached" });
-  assert.equal((await state()).items.length, 22);
+  assert.equal((await state()).items.length, bundledCount);
   check("two-step deletion removes only the selected certificate");
   for (const ext of ["png", "jpg", "pdf", "docx"]) {
     await page
@@ -385,6 +387,9 @@ try {
       .click();
     await page.locator("dialog").waitFor({ state: "detached" });
     await page.locator("#cert-search").fill("Test " + ext + " upload");
+    if (ext === "pdf" || ext === "docx") {
+      await page.locator(".certificate-thumbnail:visible").waitFor();
+    }
     await page.locator(".certificate-record button[data-view]").first().click();
     await page.locator(".document-viewer").waitFor();
     if (ext === "pdf" || ext === "docx") {

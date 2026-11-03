@@ -216,7 +216,7 @@
           ]
         }
       ],
-      "visibility": "hidden",
+      "visibility": "public",
       "featured": false,
       "order": 6,
       "certificate_kind": "Participation",
@@ -601,13 +601,13 @@
       "subtitle": "",
       "organization": "DepEd NEAP and GBF STEM Collab",
       "date_start": "2026-09-10",
-      "date_end": "",
+      "date_end": "2026-09-12",
       "year": 2026,
       "hours": 24,
       "type": "Teaching",
       "issue_date": "2026-10-02",
       "valid_until": "",
-      "credential_id": "",
+      "credential_id": "GBFSC-2026-4P-118938",
       "verification_url": "",
       "delivery_mode": "Online",
       "description": "Webinar held September 10–12, 2026; certificate states 24 training hours.",
@@ -617,12 +617,13 @@
         {
           "label": "View certificate",
           "file": "assets/docs/certificates/ilaw-in-action.pdf",
+          "mime": "application/pdf",
           "type": "document",
           "preview_images": ["assets/images/certificate-previews/ilaw.png"],
           "context": "Certificate supplied by the portfolio owner."
         }
       ],
-      "visibility": "hidden",
+      "visibility": "public",
       "featured": false,
       "order": 17,
       "preview_image": "assets/images/certificate-previews/ilaw.png",
@@ -800,6 +801,90 @@
           "preview_images": [
             "assets/images/certificate-pages/harnessing-technology-1.webp"
           ]
+        }
+      ]
+    },
+    {
+      "id": "certificate-23",
+      "title": "From Motivation and Psychology to Proactive Language Learning: A Learner-Centered Approach to SLA",
+      "organization": "Asian Association of Teachers of English as a Foreign Language (AsiaTEFL)",
+      "date_start": "2026-09-19",
+      "issue_date": "2026-09-19",
+      "year": 2026,
+      "hours": null,
+      "type": "Teaching",
+      "certificate_kind": "Participation",
+      "delivery_mode": "Online webinar",
+      "seminar_topic": "Motivation, psychology and learner-centered second-language acquisition",
+      "description": "Certificate of participation in the AsiaTEFL webinar on September 19, 2026.",
+      "training_code": "",
+      "cpd_points": null,
+      "visibility": "public",
+      "featured": false,
+      "order": 23,
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/asiatefl-proactive-language-learning.pdf",
+          "type": "document",
+          "mime": "application/pdf",
+          "original_name": "19Sep2026_AsiaTEFL Webinar certificate (1).pdf"
+        }
+      ]
+    },
+    {
+      "id": "certificate-24",
+      "title": "Introduction to the Common European Framework of Reference for Languages",
+      "organization": "British Council Philippines",
+      "date_start": "2026-09-15",
+      "issue_date": "2026-09-15",
+      "year": 2026,
+      "hours": 1.5,
+      "type": "Teaching",
+      "certificate_kind": "Attendance",
+      "delivery_mode": "Online via Zoom",
+      "seminar_topic": "Common European Framework of Reference for Languages (CEFR)",
+      "description": "Webinar held from 3:00 p.m. to 4:30 p.m. on September 15, 2026.",
+      "training_code": "",
+      "cpd_points": null,
+      "visibility": "public",
+      "featured": false,
+      "order": 24,
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/british-council-introduction-to-cefr.pdf",
+          "type": "document",
+          "mime": "application/pdf",
+          "original_name": "Certificate - BC NTM Webinar - Intro to Cefr - 54 Sanchez.pdf"
+        }
+      ]
+    },
+    {
+      "id": "certificate-25",
+      "title": "PAFTE Free Webinar Series 7",
+      "organization": "Philippine Association for Teachers and Educators (PAFTE), Inc.",
+      "date_start": "2026-09-26",
+      "issue_date": "2026-09-26",
+      "year": 2026,
+      "hours": 4,
+      "type": "Teaching",
+      "certificate_kind": "Participation",
+      "delivery_mode": "Online via Microsoft Live",
+      "seminar_topic": "Oral and written communication, action research for teachers, and AI and emerging technologies in learning resource development",
+      "description": "Learning sessions 16–18, totaling four training hours.",
+      "training_code": "",
+      "cpd_points": null,
+      "visibility": "public",
+      "featured": false,
+      "order": 25,
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/pafte-webinar-series-7-sessions-16-18.pdf",
+          "type": "document",
+          "mime": "application/pdf",
+          "original_name": "RQ FWS 7 26 Sept 2026.pdf"
         }
       ]
     }

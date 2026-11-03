@@ -1,4 +1,7 @@
-const IMPORT_VERSION = 2;
+const IMPORT_VERSION = 3;
+const NOVEMBER_CERTIFICATES = new Set([
+  "certificate-6", "certificate-17", "certificate-23", "certificate-24", "certificate-25",
+]);
 const normalizedTitle = (item) =>
   String(item.title || "")
     .normalize("NFKD")
@@ -113,7 +116,10 @@ export async function releaseMigration(bundledSite) {
       return snapshot;
     const result = structuredClone(snapshot);
     result.content ||= {};
-    const source = bundled.certificates.items;
+    const november = bundled.certificates.items.filter(item => NOVEMBER_CERTIFICATES.has(item.id));
+    const alreadyReconciled = snapshot.site?.content_release === bundledSite.content_release &&
+      snapshot.site?.certificate_import_version === 2;
+    const source = alreadyReconciled ? november : bundled.certificates.items;
     if (!result.content.certificates)
       result.content.certificates = structuredClone(bundled.certificates);
     else
@@ -121,6 +127,17 @@ export async function releaseMigration(bundledSite) {
         result.content.certificates.items || [],
         source,
       );
+    for (const original of november) {
+      const match = result.content.certificates.items.find(item => sameCertificate(item, original));
+      if (!match) continue;
+      match.visibility = "public";
+      match.credential_id ||= original.credential_id || "";
+      match.date_end ||= original.date_end || "";
+    }
+    if (alreadyReconciled) {
+      result.site.certificate_import_version = IMPORT_VERSION;
+      return result;
+    }
     if (!result.content.resume?.document)
       result.content.resume = {
         ...result.content.resume,
