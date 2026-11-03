@@ -44,9 +44,20 @@
 #cert-count { margin-bottom: 12px; font-size: 16px; }
 .certificate-record { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 32px; padding: 12px 0; align-items: center; }
 .certificate-art { width: 100%; max-width: 460px; justify-self: center; }
-.certificate-image-button { padding: 10px; }
-.certificate-image-button :is(img, canvas) { max-height: 320px; aspect-ratio: auto; object-fit: contain; }
-.certificate-thumbnail { display: block; width: 100%; height: auto; }
+.certificate-image-button {
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  height: 320px;
+}
+.certificate-image-button :is(img, canvas) {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 9px 12px rgb(0 0 0 / .24));
+}
 .certificate-information dl { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; margin-bottom: 16px; }
 .certificate-information dl > div { display: block; min-width: 0; }
 .certificate-information dt { color: var(--soft-ink); margin-bottom: 3px; }
@@ -62,7 +73,7 @@
   .certificate-filters > div:first-child { grid-column: 1 / -1; }
   .certificate-record { grid-template-columns: 1fr; gap: 24px; }
   .certificate-art { max-width: 400px; }
-  .certificate-image-button :is(img, canvas) { max-height: 260px; }
+  .certificate-image-button { height: 260px; }
   .certificate-information dl { gap: 20px 16px; }
 }
 /* Content is registered before it enters the viewport. */
@@ -108,6 +119,6 @@
   .certificates-page .tab-title { margin: 0; }
   .certificate-filters { padding: 12px; }
   .certificate-information dl { gap: 10px 20px; }
-  .certificate-image-button img { max-height: 250px; }
+  .certificate-image-button { height: 250px; }
   .certificate-record { padding-block: 4px; }
 }

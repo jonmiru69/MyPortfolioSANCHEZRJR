@@ -40,6 +40,33 @@ try{
   await record.locator('.certificate-thumbnail:visible').waitFor();
   assert.ok(await record.locator('canvas').evaluate(canvas=>canvas.width>0 && canvas.height>0));
  }
+ for(const width of [320,390,1440]){
+  await page.setViewportSize({width,height:900});
+  for(const preview of [records.first().locator('img'),page.locator('[data-owner-item="certificate-24"] canvas')]){
+   await preview.scrollIntoViewIfNeeded();
+   const geometry=await preview.evaluate(el=>{
+    const frame=el.closest('button');
+    const {x,y,width,height}=el.getBoundingClientRect();
+    const box=frame.getBoundingClientRect();
+    const style=getComputedStyle(el);
+    return {
+     dx:Math.abs((x+width/2)-(box.x+box.width/2)),
+     dy:Math.abs((y+height/2)-(box.y+box.height/2)),
+     fit:style.objectFit,
+     position:style.objectPosition,
+     border:getComputedStyle(frame).borderTopWidth,
+     background:getComputedStyle(frame).backgroundColor,
+     shadow:style.filter,
+    };
+   });
+   assert.ok(geometry.dx<1 && geometry.dy<1,JSON.stringify(geometry));
+   assert.equal(geometry.fit,'contain');
+   assert.equal(geometry.position,'50% 50%');
+   assert.equal(geometry.border,'0px');
+   assert.equal(geometry.background,'rgba(0, 0, 0, 0)');
+   assert.notEqual(geometry.shadow,'none');
+  }
+ }
  await page.evaluate(()=>window.scrollTo(0,0));
  await page.screenshot({path:out+'/certificates-desktop.png'});
  await page.setViewportSize({width:1366,height:768});

@@ -181,17 +181,12 @@
   min-width: 0;
 }
 .certificate-image-button {
-  display: block;
+  display: grid;
+  place-items: center;
   width: 100%;
   border: 0;
-  padding: 16px;
-  background: var(--paper-step);
-}
-.certificate-image-button img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4/3;
-  object-fit: contain;
+  padding: 0;
+  background: transparent;
 }
 .certificate-image-button:hover {
   transform: translateY(-4px);

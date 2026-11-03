@@ -418,7 +418,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible {
 .certificate-record,.portfolio-record {
   border-color:transparent;
 }
-.certificate-image-button,.document-cover {
+.document-cover {
   background:#e9e7e1;
 }
 .certificate-information dt,.profile-facts dt {
