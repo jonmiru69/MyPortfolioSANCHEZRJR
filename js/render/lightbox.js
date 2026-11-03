@@ -19,18 +19,22 @@ export async function openLightbox(evidenceItem, options = {}) {
   close.className = "btn btn-secondary";
   close.textContent = "Close";
   close.onclick = () => dialog.close();
-  const download = document.createElement("a");
-  download.className = "btn btn-primary";
-  download.textContent = "Download file";
   const file = safeURL(evidenceItem.file);
   if (!file) return;
-  download.href = file;
-  download.target = "_blank";
-  download.rel = "noopener noreferrer";
-  download.download = evidenceItem.original_name || file.split("/").pop();
+  let download;
+  if (!options.previewOnly) {
+    download = document.createElement("a");
+    download.className = "btn btn-primary";
+    download.textContent = "Download file";
+    download.target = "_blank";
+    download.rel = "noopener noreferrer";
+    download.download = evidenceItem.original_name || file.split("/").pop();
+  }
   const viewport = document.createElement("div");
   viewport.className = "document-viewport";
-  header.append(title, download, close);
+  header.append(title);
+  if (download) header.append(download);
+  header.append(close);
   dialog.append(header, viewport);
   document.body.append(dialog);
   document.body.classList.add("editor-open");
@@ -56,9 +60,9 @@ export async function openLightbox(evidenceItem, options = {}) {
   const routeClose = () => dialog.close();
   window.addEventListener("hashchange", routeClose);
   dialog.addEventListener("close", cleanup, { once: true });
-  const resolved = await getURL(file);
+  const resolved = download ? await getURL(file) : null;
   if (!dialog.isConnected) return;
-  download.href = resolved;
+  if (download) download.href = resolved;
   const pages = evidenceItem.preview_images?.length
     ? evidenceItem.preview_images
     : evidenceItem.type === "image" ||
@@ -136,6 +140,10 @@ export async function openLightbox(evidenceItem, options = {}) {
       controls.append(previousPage, count, nextPage);
       showPage();
     }
+  } else if (options.previewOnly) {
+    const message = document.createElement("p");
+    message.textContent = "An online preview is unavailable for this certificate.";
+    viewport.append(message);
   } else if (evidenceItem.mime === "application/pdf" || /\.pdf$/i.test(file)) {
     const frame = document.createElement("iframe");
     frame.src = resolved;

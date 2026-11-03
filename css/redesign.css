@@ -232,14 +232,6 @@
 .hidden-item-note {
   margin-top: 12px;
 }
-.certificate-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-top: 40px;
-}
 .document-viewer {
   width: min(96vw, 1400px);
   height: 94dvh;

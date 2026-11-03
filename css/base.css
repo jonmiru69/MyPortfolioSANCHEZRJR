@@ -239,3 +239,21 @@ label,
     transition: none !important;
   }
 }
+
+#btn-toggle-theme {
+  position: relative;
+}
+.theme-toggle-ripple {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--theme-ripple-color, #705437);
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+}
+[data-theme="dark"] .theme-toggle-ripple {
+  --theme-ripple-color: #e6bf80;
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle-ripple { display: none; }
+}

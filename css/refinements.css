@@ -33,7 +33,7 @@
   .hero-writing .hero-greeting { margin: 0 0 24px; }
   .hero-writing .hero-actions { gap: 16px; }
 }
-/* Read one complete certificate per page, with full-size originals on demand. */
+/* Keep certificate records readable in the scrolling archive. */
 .certificates-page { padding-top: 8px !important; }
 .certificates-page .section-intro { margin-bottom: 20px; }
 .certificates-page .tab-title { font-size: clamp(44px, 4.5vw, 64px); margin-bottom: 10px; }
@@ -50,7 +50,6 @@
 .certificate-information dl > div { display: block; min-width: 0; }
 .certificate-information dt { color: var(--soft-ink); margin-bottom: 3px; }
 .certificate-information dd { font-size: 16px; line-height: 1.45; }
-.certificate-pagination { padding-top: 16px; }
 @media (max-width: 1000px) {
   .certificate-filters { grid-template-columns: 2fr 1fr 1fr; }
   .certificate-filters > div:first-child { grid-column: auto; }
@@ -65,7 +64,7 @@
   .certificate-image-button img { max-height: 260px; }
   .certificate-information dl { gap: 20px 16px; }
 }
-/* Content is registered before it enters; new pages receive the same wave. */
+/* Content is registered before it enters the viewport. */
 @media (prefers-reduced-motion: no-preference) {
   .reveal:not(.is-visible) { opacity: 1; transform: none; }
 }
@@ -110,5 +109,4 @@
   .certificate-information dl { gap: 10px 20px; }
   .certificate-image-button img { max-height: 250px; }
   .certificate-record { padding-block: 4px; }
-  .certificate-pagination { padding-top: 8px; }
 }

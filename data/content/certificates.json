@@ -618,6 +618,7 @@
           "label": "View certificate",
           "file": "assets/docs/certificates/ilaw-in-action.pdf",
           "type": "document",
+          "preview_images": ["assets/images/certificate-previews/ilaw.png"],
           "context": "Certificate supplied by the portfolio owner."
         }
       ],

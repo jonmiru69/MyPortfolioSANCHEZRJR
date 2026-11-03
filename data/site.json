@@ -10,7 +10,7 @@
     "date_range": "2026 - Present",
     "avatar": "assets/images/owner-portrait.png",
     "cover_image": "",
-    "email": "rsanchez.faculty@cstr.edu.ph",
+    "email": "sanchezramil2202@gmail.com",
     "location": "Philippines",
     "footer_text": "Ramelito Jr. C. Sanchez, LPT",
     "label_template": "Portfolio for {name}",
@@ -91,7 +91,7 @@
   ],
   "contact": {
     "method": "mailto",
-    "mailto_address": "rsanchez.faculty@cstr.edu.ph",
+    "mailto_address": "sanchezramil2202@gmail.com",
     "endpoint_url": "",
     "success_message": "Inquiry received! Thank you for reaching out. I will be in touch shortly."
   },

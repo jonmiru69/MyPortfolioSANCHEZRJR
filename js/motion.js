@@ -1,4 +1,4 @@
-/** One reveal controller for route changes, pagination, filters and owner edits. */
+/** One reveal controller for route changes, filters and owner edits. */
 export function createRevealMotion(root) {
   const selector = [
     '.hero-writing > *', '.portrait-frame', '.hero-name', '.hero-actions',

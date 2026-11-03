@@ -186,7 +186,8 @@ try {
   await page.getByRole("heading", { name: "No matches" }).waitFor();
   await page.getByRole("button", { name: "Reset filters" }).click();
   await page.waitForFunction(
-    () => document.querySelectorAll(".certificate-record").length === 1,
+    (count) => document.querySelectorAll(".certificate-record").length === count,
+    publicCount,
   );
   await page.locator("#filter-year").selectOption("2025");
   assert.equal(
@@ -195,13 +196,14 @@ try {
   );
   await page.getByRole("button", { name: "Reset filters" }).click();
   await page.waitForFunction(
-    () => document.querySelectorAll(".certificate-record").length === 1,
+    (count) => document.querySelectorAll(".certificate-record").length === count,
+    publicCount,
   );
-  await page.getByRole("button", { name: "Next", exact: true }).click();
-  assert.equal(await page.locator("#cert-page").innerText(), `Page 2 of ${publicCount}`);
-  check("search, empty state, reset, year filter and pagination work");
+  assert.equal(await page.locator("#cert-next").count(), 0);
+  check("search, empty state, reset and year filter work on one page");
   await page.locator(".certificate-record button[data-view]").first().click();
   await page.locator(".document-viewer[open]").waitFor();
+  assert.equal(await page.locator(".document-viewer a[download]").count(), 0);
   assert.equal(await page.locator("dialog[open]").count(), 1);
   await page.keyboard.press("Escape");
   assert.equal(await page.locator("dialog[open]").count(), 0);
@@ -337,23 +339,10 @@ try {
   );
   await page.locator("#cert-search").fill("Browser-tested certificate");
   await page.locator(".certificate-record button[data-view]").first().click();
-  await page
-    .getByText("This Word or PowerPoint document is ready to download.", {
-      exact: false,
-    })
-    .waitFor();
-  assert.equal(
-    await page.locator(".document-viewer a").getAttribute("download"),
-    "replacement.pptx",
-  );
-  assert.match(
-    await page.locator(".document-viewer a").getAttribute("href"),
-    /^blob:/,
-  );
+  await page.getByText("An online preview is unavailable for this certificate.").waitFor();
+  assert.equal(await page.locator(".document-viewer a, .document-viewer iframe").count(), 0);
   await page.keyboard.press("Escape");
-  check(
-    "Office documents use a working download link without a broken embedded preview",
-  );
+  check("Office certificates have no public download or embedded viewer");
   await page.reload();
   await page.locator(".certificates-page").waitFor();
   assert.equal((await state()).mode, false);
@@ -396,9 +385,8 @@ try {
     await page.locator(".certificate-record button[data-view]").first().click();
     await page.locator(".document-viewer").waitFor();
     if (ext === "pdf") {
-      // Draft blobs resolve after the dialog opens; wait for the viewer content.
-      await page.locator(".document-viewer iframe").waitFor();
-      assert.equal(await page.locator(".document-viewer iframe").count(), 1);
+      await page.getByText("An online preview is unavailable for this certificate.").waitFor();
+      assert.equal(await page.locator(".document-viewer iframe, .document-viewer a[download]").count(), 0);
     } else {
       await page.waitForFunction(
         () => document.querySelector(".document-viewer img")?.naturalWidth > 0,
@@ -412,7 +400,7 @@ try {
     }
     await page.keyboard.press("Escape");
     check(
-      `real ${ext.toUpperCase()} file uploads, saves and previews correctly`,
+      `real ${ext.toUpperCase()} file uploads and follows the certificate preview policy`,
     );
   }
   await page
@@ -602,7 +590,13 @@ try {
     await page.getByRole("button", { name: "Compose email" }).count(),
     1,
   );
-  check("contact inquiry fields validate before composing a real email draft");
+  const contactLink = page.getByRole("link", { name: "sanchezramil2202@gmail.com" });
+  const compose = new URL(await contactLink.getAttribute("href"));
+  assert.equal(compose.hostname, "mail.google.com");
+  assert.equal(compose.searchParams.get("view"), "cm");
+  assert.equal(compose.searchParams.get("to"), "sanchezramil2202@gmail.com");
+  assert.equal(await page.getByRole("link", { name: "0927 650 1400" }).getAttribute("href"), "tel:+639276501400");
+  check("contact uses the same Gmail recipient for email and inquiries and shows a callable number");
   await page.goto(`${base}/#/admin`);
   await page.locator(".admin-panel").waitFor();
   for (const label of [

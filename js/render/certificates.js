@@ -7,8 +7,6 @@ export function renderCertificates(container, data) {
   );
   const date = (i) => i.issue_date || i.date_start || "";
   const type = (i) => i.certificate_kind || "";
-  let page = 1;
-  const pageSize = 1;
   let urls = [];
   let generation = 0;
   const types = [...new Set(items.map(type).filter(Boolean))].sort();
@@ -19,7 +17,7 @@ export function renderCertificates(container, data) {
   ]
     .sort()
     .reverse();
-  container.innerHTML = `<div class="page-view certificates-page"><header class="section-intro"><h1 class="tab-title">Certificates</h1><p class="tab-summary">${safe(data.summary || "A record of professional learning in science, research and education.")}</p></header><form class="certificate-filters" data-ui role="search"><div><label for="cert-search">Find a certificate</label><input class="form-input" id="cert-search" type="search" placeholder="Title, topic or provider"></div><div><label for="filter-type">Certificate type</label><select id="filter-type" class="form-select"><option value="">All types</option>${types.map((t) => `<option>${safe(t)}</option>`).join("")}</select></div><div><label for="filter-year">Date issued</label><select id="filter-year" class="form-select"><option value="">All years</option>${years.map((y) => `<option>${y}</option>`).join("")}</select></div><div><label for="sort-order">Sort by</label><select id="sort-order" class="form-select"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="cpd">CPD points</option></select></div><button type="reset" class="btn btn-secondary">Reset filters</button></form><p id="cert-count" role="status" aria-live="polite"></p><div id="cert-list-container"></div><nav class="certificate-pagination" aria-label="Certificate pages"><button class="btn btn-secondary" id="cert-prev">Previous</button><span id="cert-page"></span><button class="btn btn-secondary" id="cert-next">Next</button></nav></div>`;
+  container.innerHTML = `<div class="page-view certificates-page"><header class="section-intro"><h1 class="tab-title">Certificates</h1><p class="tab-summary">${safe(data.summary || "A record of professional learning in science, research and education.")}</p></header><form class="certificate-filters" data-ui role="search"><div><label for="cert-search">Find a certificate</label><input class="form-input" id="cert-search" type="search" placeholder="Title, topic or provider"></div><div><label for="filter-type">Certificate type</label><select id="filter-type" class="form-select"><option value="">All types</option>${types.map((t) => `<option>${safe(t)}</option>`).join("")}</select></div><div><label for="filter-year">Date issued</label><select id="filter-year" class="form-select"><option value="">All years</option>${years.map((y) => `<option>${y}</option>`).join("")}</select></div><div><label for="sort-order">Sort by</label><select id="sort-order" class="form-select"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="cpd">CPD points</option></select></div><button type="reset" class="btn btn-secondary">Reset filters</button></form><p id="cert-count" role="status" aria-live="polite"></p><div id="cert-list-container"></div></div>`;
   const $ = (selector) => container.querySelector(selector);
   function update() {
     generation++;
@@ -47,16 +45,10 @@ export function renderCertificates(container, data) {
           ? date(a).localeCompare(date(b))
           : date(b).localeCompare(date(a)),
     );
-    const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
-    page = Math.min(page, pages);
     $("#cert-count").textContent =
       `${filtered.length} of ${items.length} certificates`;
-    $("#cert-page").textContent = `Page ${page} of ${pages}`;
-    $("#cert-prev").disabled = page === 1;
-    $("#cert-next").disabled = page === pages;
     $("#cert-list-container").innerHTML =
       filtered
-        .slice((page - 1) * pageSize, page * pageSize)
         .map((item) => {
           const ev = item.evidence?.[0];
           const preview =
@@ -84,7 +76,7 @@ export function renderCertificates(container, data) {
       (b) =>
         (b.onclick = () => {
           const item = items.find((i) => i.id === b.dataset.view);
-          openLightbox(item.evidence[0]);
+          openLightbox(item.evidence[0], { previewOnly: true });
         }),
     );
     container.querySelectorAll(".certificate-art img").forEach(async (img) => {
@@ -100,31 +92,11 @@ export function renderCertificates(container, data) {
     );
   }
   $(".certificate-filters").onsubmit = (e) => e.preventDefault();
-  $(".certificate-filters").onreset = () => {
-    page = 1;
-    setTimeout(update, 0);
-  };
-  $("#cert-search").oninput = () => {
-    page = 1;
-    update();
-  };
-  container.querySelectorAll("select").forEach(
-    (s) =>
-      (s.onchange = () => {
-        page = 1;
-        update();
-      }),
-  );
-  $("#cert-prev").onclick = () => {
-    page--;
-    update();
-    window.scrollTo({ top: 0, behavior: "instant" });
-  };
-  $("#cert-next").onclick = () => {
-    page++;
-    update();
-    window.scrollTo({ top: 0, behavior: "instant" });
-  };
+  $(".certificate-filters").onreset = () => setTimeout(update, 0);
+  $("#cert-search").oninput = update;
+  container.querySelectorAll("select").forEach((select) => {
+    select.onchange = update;
+  });
   const cleanup = () => {
     urls.forEach((u) => URL.revokeObjectURL(u));
     urls = [];

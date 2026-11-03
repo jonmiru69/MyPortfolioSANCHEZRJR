@@ -27,11 +27,34 @@ class App {
         "dark",
     );
     const toggle = document.getElementById("btn-toggle-theme");
+    const ripple = document.createElement("span");
+    ripple.className = "theme-toggle-ripple";
+    ripple.setAttribute("aria-hidden", "true");
+    let bounceAnimation, rippleAnimation;
+    toggle.onclick = () => {
+      bounceAnimation?.cancel();
+      rippleAnimation?.cancel();
+      store.toggleTheme();
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches ||
+          typeof toggle.animate !== "function") return;
+
+      const rest = getComputedStyle(toggle).transform;
+      const easing = "cubic-bezier(0.23, 1, 0.32, 1)";
+      bounceAnimation = toggle.animate([
+        { transform: rest, easing },
+        { transform: "translateY(-8px)", offset: 0.38, easing: "ease-in-out" },
+        { transform: "translateY(1px) scale(1.03, 0.96)", offset: 0.82 },
+        { transform: rest },
+      ], { duration: 150 });
+      rippleAnimation = ripple.animate([
+        { opacity: 0.7, transform: "scale(0.95)" },
+        { opacity: 0, transform: "scale(1.2, 1.6)" },
+      ], { delay: 150, duration: 150, easing });
+    };
     const syncTheme = (mode) => {
-      toggle.textContent = mode === "dark" ? "Light mode" : "Dark mode";
+      toggle.replaceChildren(mode === "dark" ? "Light mode" : "Dark mode", ripple);
       localStorage.setItem("portfolio-theme", mode);
     };
-    toggle.onclick = () => store.toggleTheme();
     store.subscribe("theme-changed", syncTheme);
     syncTheme(store.themeMode);
     this.ownerTools = setupInlineOwner(this);

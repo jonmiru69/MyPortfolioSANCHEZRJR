@@ -25,19 +25,22 @@ try{
  assert.ok(geometry.portrait>=450);assert.ok(geometry.offset<2);assert.ok(geometry.share>.33);
  assert.equal(await page.locator('.inquiry-feature h2').innerText(),'Research and thesis authored');
  await page.waitForTimeout(1000);await page.screenshot({path:out+'/overview-desktop.png'});
- await page.goto(base+'/#/certificates');await page.locator('.certificate-record').waitFor();
- for(let n=1;n<=3;n++){
-  if(n>1)await page.locator('#cert-next').click();
-  await page.waitForFunction(()=>[...document.querySelectorAll('.certificate-information dl > div')].every(el=>el.classList.contains('is-visible')));
-  assert.equal(await page.locator('.certificate-record').count(),1);
-  assert.equal(await page.locator('.certificate-information dl > div.reveal.is-visible').count(),8);
-  assert.match(await page.locator('.certificate-information dl > div').first().evaluate(el=>getComputedStyle(el).animationName),/editorial-rise/);
-  const bottom=await page.locator('.certificate-pagination').evaluate(el=>el.getBoundingClientRect().bottom);
-  assert.ok(bottom<=900,`page ${n} controls below fold: ${bottom}`);
- }
- await page.waitForTimeout(1000);await page.screenshot({path:out+'/certificates-desktop.png'});
- await page.setViewportSize({width:1366,height:768});assert.ok(await page.locator('.certificate-pagination').evaluate(el=>el.getBoundingClientRect().bottom)<=768,'laptop pagination below fold');await page.screenshot({path:out+'/certificates-laptop.png'});await page.setViewportSize({width:1440,height:900});
- await page.locator('.certificate-image-button').click();await page.locator('.document-viewer.is-fit-page').waitFor();
+ await page.goto(base+'/#/certificates');await page.locator('.certificate-record').first().waitFor();
+ const records=page.locator('.certificate-record');
+ assert.ok(await records.count()>3);
+ assert.equal(await page.locator('#cert-next').count(),0);
+ const lastArtwork=records.last().locator('.certificate-art');
+ assert.equal(await lastArtwork.evaluate(el=>el.classList.contains('is-visible')),false);
+ await lastArtwork.scrollIntoViewIfNeeded();
+ await records.last().locator('.certificate-art.reveal.is-visible').waitFor();
+ assert.match(await lastArtwork.evaluate(el=>getComputedStyle(el).animationName),/editorial-rise/);
+ await page.evaluate(()=>window.scrollTo(0,0));
+ await page.screenshot({path:out+'/certificates-desktop.png'});
+ await page.setViewportSize({width:1366,height:768});
+ await page.screenshot({path:out+'/certificates-laptop.png'});
+ await page.setViewportSize({width:1440,height:900});
+ await page.locator('.certificate-image-button').first().click();await page.locator('.document-viewer.is-fit-page').waitFor();
+ assert.equal(await page.locator('.document-viewer [download]').count(),0);
  await page.waitForFunction(()=>document.querySelector('.document-page')?.complete);
  assert.equal(await page.locator('.document-viewport').evaluate(el=>el.scrollHeight>el.clientHeight+2),false);
  await page.screenshot({path:out+'/certificate-fit-page.png'});
@@ -54,6 +57,15 @@ try{
   }
  }
  await page.setViewportSize({width:390,height:844});await page.goto(base);await page.locator('.hero-name').waitFor();await page.waitForTimeout(1000);await page.screenshot({path:out+'/overview-mobile.png'});
- await page.emulateMedia({reducedMotion:'reduce'});await page.goto(base+'/#/certificates');await page.locator('.certificate-record').waitFor();await page.locator('#cert-next').click();assert.equal(await page.locator('.certificate-information dl > div').first().evaluate(el=>getComputedStyle(el).animationName),'none');
- assert.deepEqual(errors,[]);console.log('PASS balanced 480px portrait; all eight fields animate on certificate pages 1–3; desktop pagination fits 900px; fit-page viewer and multi-page navigation; responsive routes; reduced motion; no uncaught errors');
+ await page.emulateMedia({reducedMotion:'reduce'});await page.goto(base+'/#/certificates');await page.locator('.certificate-record').first().waitFor();assert.equal(await page.locator('.certificate-information dl > div').first().evaluate(el=>getComputedStyle(el).animationName),'none');
+ const theme=page.locator('#btn-toggle-theme');
+ await theme.click();
+ assert.equal(await theme.evaluate(el=>el.getAnimations({subtree:true}).length),0);
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ const motion=await theme.evaluate(el=>{
+  el.click();
+  return el.getAnimations({subtree:true}).map(a=>a.effect.getTiming().delay).sort((a,b)=>a-b);
+ });
+ assert.deepEqual(motion,[0,150]);
+ assert.deepEqual(errors,[]);console.log('PASS scroll reveals, preview-only certificate viewer, responsive routes, theme bounce and ripple, reduced motion and no uncaught errors');
 }finally{await browser.close();await new Promise(r=>server.close(r));}
