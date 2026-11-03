@@ -57,15 +57,29 @@ try{
   }
  }
  await page.setViewportSize({width:390,height:844});await page.goto(base);await page.locator('.hero-name').waitFor();await page.waitForTimeout(1000);await page.screenshot({path:out+'/overview-mobile.png'});
+ assert.equal(await page.locator('.overview-contact-links').evaluate(el=>getComputedStyle(el).columnGap),'24px');
  await page.emulateMedia({reducedMotion:'reduce'});await page.goto(base+'/#/certificates');await page.locator('.certificate-record').first().waitFor();assert.equal(await page.locator('.certificate-information dl > div').first().evaluate(el=>getComputedStyle(el).animationName),'none');
  const theme=page.locator('#btn-toggle-theme');
+ const ripple=page.locator('.theme-toggle-ripple');
  await theme.click();
- assert.equal(await theme.evaluate(el=>el.getAnimations({subtree:true}).length),0);
+ assert.equal(await theme.evaluate(el=>el.getAnimations().length),0);
+ assert.equal(await ripple.evaluate(el=>el.getAnimations().length),0);
  await page.emulateMedia({reducedMotion:'no-preference'});
  const motion=await theme.evaluate(el=>{
   el.click();
-  return el.getAnimations({subtree:true}).map(a=>a.effect.getTiming().delay).sort((a,b)=>a-b);
+  const [bounce]=el.getAnimations();
+  const wave=document.querySelector('.theme-toggle-ripple');
+  const [ripple]=wave.getAnimations();
+  const {left,top,width,height}=el.getBoundingClientRect();
+  const x=left+width/2,y=top+height/2;
+  const [,radius,originX,originY]=ripple.effect.getKeyframes().at(-1).clipPath.match(/circle\(([\d.]+)px at ([\d.]+)px ([\d.]+)px\)/);
+  return {
+   delay:ripple.effect.getTiming().delay,
+   bounce:bounce.effect.getTiming().duration,
+   centered:Math.abs(x-originX)<1 && Math.abs(y-originY)<1,
+   coversViewport:Number(radius)+1>=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y)),
+  };
  });
- assert.deepEqual(motion,[0,150]);
+ assert.deepEqual(motion,{delay:150,bounce:150,centered:true,coversViewport:true});
  assert.deepEqual(errors,[]);console.log('PASS scroll reveals, preview-only certificate viewer, responsive routes, theme bounce and ripple, reduced motion and no uncaught errors');
 }finally{await browser.close();await new Promise(r=>server.close(r));}

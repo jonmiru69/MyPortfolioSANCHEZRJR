@@ -378,6 +378,11 @@ a:focus-visible,button:focus-visible,summary:focus-visible {
   margin-bottom:28px;
   max-width:none;
 }
+.overview-contact-links {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 24px;
+}
 .contact-display {
   display:flex;
   align-items:center;

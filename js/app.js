@@ -30,6 +30,7 @@ class App {
     const ripple = document.createElement("span");
     ripple.className = "theme-toggle-ripple";
     ripple.setAttribute("aria-hidden", "true");
+    document.body.append(ripple);
     let bounceAnimation, rippleAnimation;
     toggle.onclick = () => {
       bounceAnimation?.cancel();
@@ -40,6 +41,14 @@ class App {
 
       const rest = getComputedStyle(toggle).transform;
       const easing = "cubic-bezier(0.23, 1, 0.32, 1)";
+      const rect = toggle.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      const radius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y),
+      );
+      const circle = (size) => `circle(${size}px at ${x}px ${y}px)`;
       bounceAnimation = toggle.animate([
         { transform: rest, easing },
         { transform: "translateY(-8px)", offset: 0.38, easing: "ease-in-out" },
@@ -47,12 +56,13 @@ class App {
         { transform: rest },
       ], { duration: 150 });
       rippleAnimation = ripple.animate([
-        { opacity: 0.7, transform: "scale(0.95)" },
-        { opacity: 0, transform: "scale(1.2, 1.6)" },
-      ], { delay: 150, duration: 150, easing });
+        { opacity: 0.36, clipPath: circle(8), easing: "ease-out" },
+        { opacity: 0.18, clipPath: circle(radius), offset: 0.8, easing },
+        { opacity: 0, clipPath: circle(radius) },
+      ], { delay: 150, duration: 560 });
     };
     const syncTheme = (mode) => {
-      toggle.replaceChildren(mode === "dark" ? "Light mode" : "Dark mode", ripple);
+      toggle.textContent = mode === "dark" ? "Light mode" : "Dark mode";
       localStorage.setItem("portfolio-theme", mode);
     };
     store.subscribe("theme-changed", syncTheme);
