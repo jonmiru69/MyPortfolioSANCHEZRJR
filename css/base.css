@@ -240,17 +240,22 @@ label,
   }
 }
 
-.theme-toggle-ripple {
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  background-color: #e6bf80;
-  opacity: 0;
-  pointer-events: none;
+/* Keep the old view beneath the new theme until the circle reaches it. */
+.is-revealing-theme::view-transition-group(root),
+.is-revealing-theme::view-transition-old(root),
+.is-revealing-theme::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
-[data-theme="dark"] .theme-toggle-ripple {
-  background-color: #252b42;
+.is-revealing-theme::view-transition-image-pair(root) {
+  isolation: auto;
 }
-@media (prefers-reduced-motion: reduce) {
-  .theme-toggle-ripple { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .is-revealing-theme::view-transition-new(root) {
+    animation: theme-reveal 500ms ease-out both;
+  }
+}
+@keyframes theme-reveal {
+  from { clip-path: circle(0px at var(--theme-reveal-origin)); }
+  to { clip-path: circle(var(--theme-reveal-radius) at var(--theme-reveal-origin)); }
 }

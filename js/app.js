@@ -27,39 +27,51 @@ class App {
         "dark",
     );
     const toggle = document.getElementById("btn-toggle-theme");
-    const ripple = document.createElement("span");
-    ripple.className = "theme-toggle-ripple";
-    ripple.setAttribute("aria-hidden", "true");
-    document.body.append(ripple);
-    let bounceAnimation, rippleAnimation;
-    toggle.onclick = () => {
-      bounceAnimation?.cancel();
-      rippleAnimation?.cancel();
-      store.toggleTheme();
-      if (matchMedia("(prefers-reduced-motion: reduce)").matches ||
-          typeof toggle.animate !== "function") return;
+    const root = document.documentElement;
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    let switchingTheme = false;
+    toggle.onclick = async () => {
+      if (switchingTheme) return;
+      if (reducedMotion.matches || typeof toggle.animate !== "function") {
+        store.toggleTheme();
+        return;
+      }
 
-      const rest = getComputedStyle(toggle).transform;
-      const easing = "cubic-bezier(0.23, 1, 0.32, 1)";
-      const rect = toggle.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      const radius = Math.hypot(
-        Math.max(x, window.innerWidth - x),
-        Math.max(y, window.innerHeight - y),
-      );
-      const circle = (size) => `circle(${size}px at ${x}px ${y}px)`;
-      bounceAnimation = toggle.animate([
-        { transform: rest, easing },
-        { transform: "translateY(-8px)", offset: 0.38, easing: "ease-in-out" },
-        { transform: "translateY(1px) scale(1.03, 0.96)", offset: 0.82 },
-        { transform: rest },
-      ], { duration: 150 });
-      rippleAnimation = ripple.animate([
-        { opacity: 0.36, clipPath: circle(8), easing: "ease-out" },
-        { opacity: 0.18, clipPath: circle(radius), offset: 0.8, easing },
-        { opacity: 0, clipPath: circle(radius) },
-      ], { delay: 150, duration: 560 });
+      switchingTheme = true;
+      try {
+        const rest = getComputedStyle(toggle).transform;
+        await toggle.animate([
+          { transform: rest, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+          { transform: "translateY(-8px)", offset: 0.38, easing: "ease-in-out" },
+          { transform: "translateY(1px) scale(1.03, 0.96)", offset: 0.82 },
+          { transform: rest },
+        ], { duration: 150 }).finished;
+
+        if (reducedMotion.matches || typeof document.startViewTransition !== "function") {
+          store.toggleTheme();
+          return;
+        }
+
+        const rect = toggle.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        const radius = Math.ceil(Math.hypot(
+          Math.max(x, window.innerWidth - x),
+          Math.max(y, window.innerHeight - y),
+        ));
+        root.style.setProperty("--theme-reveal-origin", `${x}px ${y}px`);
+        root.style.setProperty("--theme-reveal-radius", `${radius}px`);
+        root.classList.add("is-revealing-theme");
+        const transition = document.startViewTransition(() => store.toggleTheme());
+        // A skipped transition still runs the theme update.
+        transition.ready.catch(() => {});
+        await transition.finished;
+      } finally {
+        root.classList.remove("is-revealing-theme");
+        root.style.removeProperty("--theme-reveal-origin");
+        root.style.removeProperty("--theme-reveal-radius");
+        switchingTheme = false;
+      }
     };
     const syncTheme = (mode) => {
       toggle.textContent = mode === "dark" ? "Light mode" : "Dark mode";

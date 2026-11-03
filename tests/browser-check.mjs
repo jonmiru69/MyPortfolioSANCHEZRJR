@@ -568,7 +568,8 @@ try {
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
   check("phone editor stays within the screen and scrolls internally");
   if (await page.getByRole("button", { name: "Dark mode", exact: true }).count()) await page.getByRole("button", { name: "Dark mode", exact: true }).click();
-  assert.equal(await page.locator("html").getAttribute("data-theme"), "dark");
+  await page.waitForFunction(() => document.documentElement.dataset.theme === "dark" &&
+    !document.documentElement.classList.contains("is-revealing-theme"));
   await shot(out + "/certificates-dark-mobile.png");
   const colors = await page.evaluate(() => ({
     nav: getComputedStyle(document.querySelector(".top-bar")).backgroundColor,
