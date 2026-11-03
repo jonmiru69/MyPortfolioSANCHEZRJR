@@ -38,7 +38,10 @@ try{
   const record=page.locator(`[data-owner-item="${id}"]`);
   await record.scrollIntoViewIfNeeded();
   await record.locator('.certificate-thumbnail:visible').waitFor();
-  assert.ok(await record.locator('canvas').evaluate(canvas=>canvas.width>0 && canvas.height>0));
+  assert.ok(await record.locator('canvas').evaluate(canvas=>{
+   const {width,height}=canvas.getBoundingClientRect();
+   return width>0 && height>0 && canvas.width>=2*width-1 && canvas.height>=2*height-1;
+  }),'PDF thumbnail should render at twice its displayed pixel density');
  }
  for(const width of [320,390,1440]){
   await page.setViewportSize({width,height:900});

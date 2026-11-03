@@ -26,12 +26,25 @@ export async function renderDocumentThumbnail(evidence, canvas, signal) {
     signal.throwIfAborted();
     const viewer = client.createViewer();
     await loadDocument(viewer, evidence.file, evidence.original_name, evidence.mime, signal);
-    await viewer.renderThumbnail(0, canvas, {
-      maxWidth: 600,
-      maxHeight: 450,
-      devicePixelRatio: 1,
-      signal,
-    });
+    const { format, pageSizes } = viewer.getDocumentInfo();
+    if (format === "pdf" && pageSizes?.[0]) {
+      const { width, height } = pageSizes[0];
+      // Fit the largest archive slot so resizing the browser never upscales it.
+      const zoom = Math.min(460 / width, 320 / height);
+      await viewer.renderPage(0, canvas, {
+        zoom,
+        devicePixelRatio: Math.min(3, Math.max(2, window.devicePixelRatio)),
+        priority: "background",
+        signal,
+      });
+    } else {
+      await viewer.renderThumbnail(0, canvas, {
+        maxWidth: 600,
+        maxHeight: 450,
+        devicePixelRatio: 1,
+        signal,
+      });
+    }
   } finally {
     await client.destroy();
   }
