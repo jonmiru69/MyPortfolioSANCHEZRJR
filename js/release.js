@@ -1,4 +1,5 @@
-const IMPORT_VERSION = 3;
+const IMPORT_VERSION = 4;
+const FEEDBACK_CERTIFICATE_ID = "certificate-26";
 const NOVEMBER_CERTIFICATES = new Set([
   "certificate-6", "certificate-17", "certificate-23", "certificate-24", "certificate-25",
 ]);
@@ -117,9 +118,14 @@ export async function releaseMigration(bundledSite) {
     const result = structuredClone(snapshot);
     result.content ||= {};
     const november = bundled.certificates.items.filter(item => NOVEMBER_CERTIFICATES.has(item.id));
-    const alreadyReconciled = snapshot.site?.content_release === bundledSite.content_release &&
-      snapshot.site?.certificate_import_version === 2;
-    const source = alreadyReconciled ? november : bundled.certificates.items;
+    const previousVersion = snapshot.site?.content_release === bundledSite.content_release
+      ? snapshot.site?.certificate_import_version
+      : undefined;
+    const alreadyReconciled = previousVersion === 2 || previousVersion === 3;
+    const source = bundled.certificates.items.filter(item =>
+      !alreadyReconciled || item.id === FEEDBACK_CERTIFICATE_ID ||
+      (previousVersion === 2 && NOVEMBER_CERTIFICATES.has(item.id)),
+    );
     if (!result.content.certificates)
       result.content.certificates = structuredClone(bundled.certificates);
     else
@@ -127,7 +133,7 @@ export async function releaseMigration(bundledSite) {
         result.content.certificates.items || [],
         source,
       );
-    for (const original of november) {
+    for (const original of previousVersion === 3 ? [] : november) {
       const match = result.content.certificates.items.find(item => sameCertificate(item, original));
       if (!match) continue;
       match.visibility = "public";

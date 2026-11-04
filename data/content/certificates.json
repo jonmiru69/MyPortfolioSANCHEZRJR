@@ -887,6 +887,33 @@
           "original_name": "RQ FWS 7 26 Sept 2026.pdf"
         }
       ]
+    },
+    {
+      "id": "certificate-26",
+      "title": "TeachingEnglish: Feedback and error correction",
+      "organization": "British Council (TeachingEnglish)",
+      "issue_date": "2026-11-04",
+      "year": 2026,
+      "hours": 12,
+      "type": "Teaching",
+      "certificate_kind": "Completion",
+      "delivery_mode": "Online",
+      "seminar_topic": "Feedback and error correction in English language teaching",
+      "description": "Completed the 12-hour British Council TeachingEnglish training course on November 4, 2026.",
+      "training_code": "",
+      "cpd_points": null,
+      "visibility": "public",
+      "featured": false,
+      "order": 26,
+      "evidence": [
+        {
+          "label": "View certificate",
+          "file": "assets/docs/certificates/teachingenglish-feedback-and-error-correction.pdf",
+          "type": "document",
+          "mime": "application/pdf",
+          "original_name": "error correction certificate.pdf"
+        }
+      ]
     }
   ]
 }
