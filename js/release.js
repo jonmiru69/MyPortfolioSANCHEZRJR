@@ -1,4 +1,4 @@
-const IMPORT_VERSION = 4;
+const IMPORT_VERSION = 5;
 const FEEDBACK_CERTIFICATE_ID = "certificate-26";
 const NOVEMBER_CERTIFICATES = new Set([
   "certificate-6", "certificate-17", "certificate-23", "certificate-24", "certificate-25",
@@ -29,6 +29,7 @@ const emptyLegacyPlaceholder = (item) =>
     "issue_date",
     "delivery_mode",
     "certificate_kind",
+    "activity_type",
     "type",
   ].some((key) => String(item[key] || "").trim()) &&
   !["evidence", "links", "tags", "skills"].some((key) => item[key]?.length) &&
@@ -121,24 +122,30 @@ export async function releaseMigration(bundledSite) {
     const previousVersion = snapshot.site?.content_release === bundledSite.content_release
       ? snapshot.site?.certificate_import_version
       : undefined;
-    const alreadyReconciled = previousVersion === 2 || previousVersion === 3;
+    const alreadyReconciled = [2, 3, 4].includes(previousVersion);
     const source = bundled.certificates.items.filter(item =>
-      !alreadyReconciled || item.id === FEEDBACK_CERTIFICATE_ID ||
+      !alreadyReconciled || (previousVersion !== 4 && item.id === FEEDBACK_CERTIFICATE_ID) ||
       (previousVersion === 2 && NOVEMBER_CERTIFICATES.has(item.id)),
     );
     if (!result.content.certificates)
       result.content.certificates = structuredClone(bundled.certificates);
-    else
+    else if (source.length)
       result.content.certificates.items = reconcileCertificates(
         result.content.certificates.items || [],
         source,
       );
-    for (const original of previousVersion === 3 ? [] : november) {
+    for (const original of [3, 4].includes(previousVersion) ? [] : november) {
       const match = result.content.certificates.items.find(item => sameCertificate(item, original));
       if (!match) continue;
       match.visibility = "public";
       match.credential_id ||= original.credential_id || "";
       match.date_end ||= original.date_end || "";
+    }
+    for (const item of result.content.certificates.items || []) {
+      const original = bundled.certificates.items.find(candidate => sameCertificate(item, candidate));
+      if (!original) continue;
+      item.activity_type ??= original.activity_type;
+      item.hours ??= original.hours;
     }
     if (alreadyReconciled) {
       result.site.certificate_import_version = IMPORT_VERSION;

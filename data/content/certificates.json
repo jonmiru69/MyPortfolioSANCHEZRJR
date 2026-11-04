@@ -3,6 +3,7 @@
   "items": [
     {
       "id": "certificate-1",
+      "activity_type": "Training",
       "title": "AI learning modules for youth",
       "subtitle": "",
       "organization": "AI Class ASEAN",
@@ -41,6 +42,7 @@
     },
     {
       "id": "certificate-2",
+      "activity_type": "Training",
       "title": "AI Fluency: Framework & Foundations",
       "subtitle": "",
       "organization": "Anthropic",
@@ -78,6 +80,7 @@
     },
     {
       "id": "certificate-3",
+      "activity_type": "Service",
       "title": "Tutorial and Remedial Services Program",
       "subtitle": "",
       "organization": "College of Teacher Education – Extension Program",
@@ -115,6 +118,7 @@
     },
     {
       "id": "certificate-4",
+      "activity_type": "Webinar",
       "title": "AI Unlocked: Practical Tools for the Modern World",
       "subtitle": "",
       "organization": "DICT Bulacan / ICT Literacy and Competency Development Bureau",
@@ -152,6 +156,7 @@
     },
     {
       "id": "certificate-5",
+      "activity_type": "Webinar",
       "title": "Problem Solving and Decision Making in Research and Development Management",
       "subtitle": "",
       "organization": "DICT Region V – Catanduanes Provincial Office",
@@ -189,6 +194,7 @@
     },
     {
       "id": "certificate-6",
+      "activity_type": "Webinar",
       "title": "Duties and Responsibilities of Administrative Officer II in DepEd",
       "subtitle": "",
       "organization": "TeachTech Education Training and Assessment Center, Inc.",
@@ -226,6 +232,7 @@
     },
     {
       "id": "certificate-7",
+      "activity_type": "Webinar",
       "title": "Building Safe Spaces: Communication and Action under the Anti-Bullying IRR",
       "subtitle": "",
       "organization": "TeachTech Education Training and Assessment Center, Inc.",
@@ -263,6 +270,7 @@
     },
     {
       "id": "certificate-8",
+      "activity_type": "Webinar",
       "title": "Silent Cries: Recognizing Early Warning Signs of Student Distress",
       "subtitle": "",
       "organization": "TeachTech Education Training and Assessment Center, Inc.",
@@ -300,6 +308,7 @@
     },
     {
       "id": "certificate-9",
+      "activity_type": "Webinar",
       "title": "Mental Health Matters: Prioritizing Yourself to Better Serve Others",
       "subtitle": "",
       "organization": "TeachTech Education Training and Assessment Center, Inc.",
@@ -337,6 +346,7 @@
     },
     {
       "id": "certificate-10",
+      "activity_type": "Webinar",
       "title": "Discipline or Damage? The Lasting Impact of Corporal Punishment in Schools",
       "subtitle": "",
       "organization": "TeachTech Education Training and Assessment Center, Inc.",
@@ -374,6 +384,7 @@
     },
     {
       "id": "certificate-11",
+      "activity_type": "Webinar",
       "title": "Breaking the Stigma: Challenging Myths and Misconceptions about Suicide",
       "subtitle": "",
       "organization": "TeachTech Education Training and Assessment Center, Inc.",
@@ -411,6 +422,7 @@
     },
     {
       "id": "certificate-12",
+      "activity_type": "Webinar",
       "title": "Teaching Smarter, Not Harder: Empowering Filipino Educators with Ethical Use of Sayuna AI",
       "subtitle": "",
       "organization": "TeachTech Education Training and Assessment Center, Inc.",
@@ -446,6 +458,7 @@
     },
     {
       "id": "certificate-13",
+      "activity_type": "Webinar",
       "title": "Researching Responsibly: Ethical and Responsible Use of Artificial Intelligence in Language and Linguistic Research",
       "subtitle": "",
       "organization": "PNU Applied Linguistics Society and PNU Graduate Society of English Language Educators",
@@ -483,6 +496,7 @@
     },
     {
       "id": "certificate-14",
+      "activity_type": "Masterclass",
       "title": "Waves: Masterclass in Teaching Essential Science High School Content (Physics)",
       "subtitle": "",
       "organization": "Filipino Science Hub and Philippine Normal University",
@@ -521,6 +535,7 @@
     },
     {
       "id": "certificate-15",
+      "activity_type": "Masterclass",
       "title": "Work, Energy, and Power: Masterclass in Teaching Essential Science High School Content (Physics)",
       "subtitle": "",
       "organization": "Filipino Science Hub and Philippine Normal University",
@@ -559,6 +574,7 @@
     },
     {
       "id": "certificate-16",
+      "activity_type": "Masterclass",
       "title": "Electricity and Magnetism: Masterclass in Teaching Essential Science High School Content (Physics)",
       "subtitle": "",
       "organization": "Filipino Science Hub and Philippine Normal University",
@@ -597,6 +613,7 @@
     },
     {
       "id": "certificate-17",
+      "activity_type": "Webinar",
       "title": "ILAW in Action: Design and Deliver Effective Lessons through Explicit Instruction",
       "subtitle": "",
       "organization": "DepEd NEAP and GBF STEM Collab",
@@ -634,6 +651,7 @@
     },
     {
       "id": "certificate-18",
+      "activity_type": "Workshop",
       "title": "Artificial Intelligence for Communities Workshop",
       "subtitle": "",
       "organization": "VJAL Institute",
@@ -671,6 +689,7 @@
     },
     {
       "id": "certificate-19",
+      "activity_type": "Conference",
       "title": "3rd ISTREL International Transdisciplinary Research Conference 2026",
       "subtitle": "",
       "organization": "International Society of Transdisciplinary Researchers, Educators, and Leaders, Inc.",
@@ -706,6 +725,7 @@
     },
     {
       "id": "certificate-20",
+      "activity_type": "Conference",
       "title": "2nd Southeast Asian Conference on Indigenous Peoples 2026",
       "subtitle": "",
       "organization": "International Society of Transdisciplinary Researchers, Educators, and Leaders, Inc.",
@@ -743,6 +763,7 @@
     },
     {
       "id": "certificate-21",
+      "activity_type": "Webinar",
       "title": "PAFTE Free Webinar Series 7",
       "subtitle": "",
       "organization": "Philippine Association for Teachers and Educators, Inc.",
@@ -780,6 +801,7 @@
     },
     {
       "id": "certificate-22",
+      "activity_type": "Webinar",
       "issue_date": "2026-10-24",
       "date_start": "2026-10-24",
       "certificate_kind": "Participation",
@@ -806,6 +828,7 @@
     },
     {
       "id": "certificate-23",
+      "activity_type": "Webinar",
       "title": "From Motivation and Psychology to Proactive Language Learning: A Learner-Centered Approach to SLA",
       "organization": "Asian Association of Teachers of English as a Foreign Language (AsiaTEFL)",
       "date_start": "2026-09-19",
@@ -834,6 +857,7 @@
     },
     {
       "id": "certificate-24",
+      "activity_type": "Webinar",
       "title": "Introduction to the Common European Framework of Reference for Languages",
       "organization": "British Council Philippines",
       "date_start": "2026-09-15",
@@ -862,6 +886,7 @@
     },
     {
       "id": "certificate-25",
+      "activity_type": "Webinar",
       "title": "PAFTE Free Webinar Series 7",
       "organization": "Philippine Association for Teachers and Educators (PAFTE), Inc.",
       "date_start": "2026-09-26",
@@ -890,6 +915,7 @@
     },
     {
       "id": "certificate-26",
+      "activity_type": "Training",
       "title": "TeachingEnglish: Feedback and error correction",
       "organization": "British Council (TeachingEnglish)",
       "issue_date": "2026-11-04",

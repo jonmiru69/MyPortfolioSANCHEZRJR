@@ -2,16 +2,19 @@ import { store } from "../store.js";
 import { FILE_ACCEPT, prepareUpload } from "../upload-policy.js";
 import { escapeHTML as safe, labelFor } from "../utils.js";
 import { editorDialog, contentSaved } from "./dialog.js";
+import { ACTIVITY_TYPES } from "../certificate-details.js";
 
 export const CERTIFICATE_FIELDS = [
   ["issue_date", "Date issued", "date"],
   ["certificate_kind", "Certificate type"],
   ["delivery_mode", "Delivery mode"],
-  ["title", "Seminar title"],
-  ["seminar_topic", "Seminar topic", "textarea"],
-  ["organization", "Seminar provider"],
+  ["title", "Activity title"],
+  ["seminar_topic", "Activity topic", "textarea"],
+  ["organization", "Provider"],
   ["training_code", "Training code"],
   ["cpd_points", "CPD points", "number"],
+  ["activity_type", "Activity type"],
+  ["hours", "Hours", "number"],
 ];
 const OMIT = new Set([
   "id",
@@ -90,7 +93,9 @@ function field(parent, object, key, label = labelFor(key), type = null) {
       ? ["public", "hidden"]
       : key === "default_mode"
         ? ["light", "dark"]
-        : null;
+        : key === "activity_type"
+          ? ["", ...new Set([...ACTIVITY_TYPES, ...(value ? [value] : [])])]
+          : null;
   const control = document.createElement(
     choices ? "select" : type === "textarea" ? "textarea" : "input",
   );
@@ -101,7 +106,7 @@ function field(parent, object, key, label = labelFor(key), type = null) {
     for (const choice of choices) {
       const option = document.createElement("option");
       option.value = choice;
-      option.textContent = labelFor(choice);
+      option.textContent = choice ? labelFor(choice) : "—";
       control.append(option);
     }
   else if (type !== "textarea") control.type = type;
@@ -109,6 +114,7 @@ function field(parent, object, key, label = labelFor(key), type = null) {
   else control.value = value ?? "";
   if (type === "number") {
     control.step = "any";
+    if (key === "hours") control.min = "0";
     if (key === "cpd_points") {
       control.min = "0";
       control.max = "10000";
@@ -461,9 +467,9 @@ export async function openItemEditor(
       original ||
         (certificate
           ? Object.fromEntries(
-              CERTIFICATE_FIELDS.map(([key]) => [
+              CERTIFICATE_FIELDS.map(([key, , type]) => [
                 key,
-                key === "cpd_points" ? null : "",
+                type === "number" ? null : "",
               ]),
             )
           : templates[tabId] ||
@@ -488,7 +494,7 @@ export async function openItemEditor(
     if (certificate) {
       const help = document.createElement("p");
       help.textContent =
-        "Enter the details printed on the certificate. Leave unstated dates, training codes and CPD points blank.";
+        "Enter the details printed on the certificate. Leave unstated values blank.";
       form.append(help);
       for (const [key, label, type] of CERTIFICATE_FIELDS)
         field(form, working, key, label, type);

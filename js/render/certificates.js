@@ -1,3 +1,4 @@
+import { formatCertificateNumber, positiveNumber } from "../certificate-details.js";
 import { store } from "../store.js";
 import { renderDocumentThumbnail } from "./document-preview.js";
 import { openLightbox } from "./lightbox.js";
@@ -21,7 +22,7 @@ export function renderCertificates(container, data) {
   ]
     .sort()
     .reverse();
-  container.innerHTML = `<div class="page-view certificates-page"><header class="section-intro"><h1 class="tab-title">Certificates</h1><p class="tab-summary">${safe(data.summary || "A record of professional learning in science, research and education.")}</p></header><form class="certificate-filters" data-ui role="search"><div><label for="cert-search">Find a certificate</label><input class="form-input" id="cert-search" type="search" placeholder="Title, topic or provider"></div><div><label for="filter-type">Certificate type</label><select id="filter-type" class="form-select"><option value="">All types</option>${types.map((t) => `<option>${safe(t)}</option>`).join("")}</select></div><div><label for="filter-year">Date issued</label><select id="filter-year" class="form-select"><option value="">All years</option>${years.map((y) => `<option>${y}</option>`).join("")}</select></div><div><label for="sort-order">Sort by</label><select id="sort-order" class="form-select"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="cpd">CPD points</option></select></div><button type="reset" class="btn btn-secondary">Reset filters</button></form><p id="cert-count" role="status" aria-live="polite"></p><div id="cert-list-container"></div></div>`;
+  container.innerHTML = `<div class="page-view certificates-page"><header class="section-intro"><h1 class="tab-title">Certificates</h1><p class="tab-summary">${safe(data.summary || "A record of professional learning in science, research and education.")}</p></header><form class="certificate-filters" data-ui role="search"><div><label for="cert-search">Find a certificate</label><input class="form-input" id="cert-search" type="search" placeholder="Title, topic or provider"></div><div><label for="filter-type">Certificate type</label><select id="filter-type" class="form-select"><option value="">All types</option>${types.map((t) => `<option>${safe(t)}</option>`).join("")}</select></div><div><label for="filter-year">Date issued</label><select id="filter-year" class="form-select"><option value="">All years</option>${years.map((y) => `<option>${y}</option>`).join("")}</select></div><div><label for="sort-order">Sort by</label><select id="sort-order" class="form-select"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="cpd">CPD points</option></select></div><button type="reset" class="btn btn-secondary">Reset filters</button></form><p id="cert-count" role="status" aria-live="polite"></p><p id="cert-hours" role="status" aria-live="polite"></p><div id="cert-list-container"></div></div>`;
   const $ = (selector) => container.querySelector(selector);
   function update() {
     thumbnails?.abort();
@@ -37,7 +38,7 @@ export function renderCertificates(container, data) {
     const filtered = items.filter(
       (i) =>
         (!query ||
-          [i.title, i.seminar_topic, i.organization, i.training_code]
+          [i.title, i.seminar_topic, i.organization, i.training_code, i.activity_type]
             .join(" ")
             .toLocaleLowerCase()
             .includes(query)) &&
@@ -53,6 +54,18 @@ export function renderCertificates(container, data) {
     );
     $("#cert-count").textContent =
       `${filtered.length} of ${items.length} certificates`;
+    const hours = new Map([["Training", 0], ["Seminar", 0], ["Webinar", 0], ["Other", 0]]);
+    let total = 0;
+    for (const item of filtered) {
+      const duration = positiveNumber(item.hours);
+      const category = hours.has(item.activity_type) ? item.activity_type : "Other";
+      hours.set(category, hours.get(category) + duration);
+      total += duration;
+    }
+    $("#cert-hours").textContent = [
+      `Total hours shown: ${formatCertificateNumber(total)}`,
+      ...Array.from(hours, ([category, value]) => `${category}: ${formatCertificateNumber(value)}`),
+    ].join(" · ");
     $("#cert-list-container").innerHTML =
       filtered
         .map((item) => {
@@ -63,19 +76,16 @@ export function renderCertificates(container, data) {
             ? `<img src="${safe(preview)}" alt="Certificate for ${safe(item.title)}" loading="lazy" width="800" height="600">`
             : `<span class="document-cover">Preview loading…</span><canvas class="certificate-thumbnail" hidden></canvas>`;
           const fields = [
-            ["Date issued", date(item) ? formatDate(date(item)) : "Not stated"],
-            ["Certificate type", type(item) || "Not stated"],
-            ["Delivery mode", item.delivery_mode || "Not stated"],
-            ["Seminar title", item.title || "Untitled certificate"],
-            ["Seminar topic", item.seminar_topic || "Not stated"],
-            ["Seminar provider", item.organization || "Not stated"],
-            ["Training code", item.training_code || "Not stated"],
-            [
-              "CPD points",
-              item.cpd_points == null || item.cpd_points === ""
-                ? "Not stated"
-                : String(item.cpd_points),
-            ],
+            ["Date issued", date(item) ? formatDate(date(item)) : "—"],
+            ["Certificate type", type(item) || "—"],
+            ["Delivery mode", item.delivery_mode || "—"],
+            ["Activity title", item.title || "Untitled certificate"],
+            ["Activity topic", item.seminar_topic || "—"],
+            ["Provider", item.organization || "—"],
+            ["Training code", item.training_code || "—"],
+            ["CPD points", formatCertificateNumber(item.cpd_points)],
+            ["Activity type", item.activity_type || "—"],
+            ["Hours", formatCertificateNumber(item.hours)],
           ];
           return `<article class="certificate-record" data-owner-item="${safe(item.id)}"><div class="certificate-art">${ev ? `<button class="certificate-image-button" data-view="${safe(item.id)}" aria-label="View ${safe(item.title)}">${thumbnail}</button>` : ""}${item.visibility === "hidden" ? '<p class="hidden-item-note">Hidden from visitors</p>' : ""}</div><div class="certificate-information"><dl>${fields.map(([k, v]) => `<div><dt>${k}</dt><dd>${safe(v)}</dd></div>`).join("")}</dl>${ev ? `<button class="btn btn-primary" data-view="${safe(item.id)}">View certificate</button>` : "<p>No file attached</p>"}</div></article>`;
         })

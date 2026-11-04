@@ -27,6 +27,8 @@ try{
  await page.waitForTimeout(1000);await page.screenshot({path:out+'/overview-desktop.png'});
  await page.goto(base+'/#/certificates');await page.locator('.certificate-record').first().waitFor();
  const records=page.locator('.certificate-record');
+ assert.equal(await page.locator('#cert-hours').innerText(),
+  'Total hours shown: 76 · Training: 12 · Seminar: — · Webinar: 53.5 · Other: 10.5');
  assert.ok(await records.count()>3);
  assert.equal(await page.locator('#cert-next').count(),0);
  const lastArtwork=records.last().locator('.certificate-art');
@@ -45,7 +47,7 @@ try{
  }
  for(const width of [320,390,1440]){
   await page.setViewportSize({width,height:900});
-  for(const preview of [records.first().locator('img'),page.locator('[data-owner-item="certificate-24"] canvas')]){
+  for(const preview of [page.locator('.certificate-image-button img').first(),page.locator('[data-owner-item="certificate-24"] canvas')]){
    await preview.scrollIntoViewIfNeeded();
    const geometry=await preview.evaluate(el=>{
     const frame=el.closest('button');
@@ -75,7 +77,7 @@ try{
  await page.setViewportSize({width:1366,height:768});
  await page.screenshot({path:out+'/certificates-laptop.png'});
  await page.setViewportSize({width:1440,height:900});
- await page.locator('.certificate-image-button').first().click();await page.locator('.document-viewer.is-fit-page').waitFor();
+ await page.locator('.certificate-image-button:has(img)').first().click();await page.locator('.document-viewer.is-fit-page').waitFor();
  assert.equal(await page.locator('.document-viewer [download]').count(),0);
  await page.waitForFunction(()=>document.querySelector('.document-page')?.complete);
  assert.equal(await page.locator('.document-viewport').evaluate(el=>el.scrollHeight>el.clientHeight+2),false);

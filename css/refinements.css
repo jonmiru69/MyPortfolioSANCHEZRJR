@@ -42,6 +42,7 @@
 .certificate-filters > button { grid-column: auto; }
 .certificate-filters label { margin-bottom: 4px; }
 #cert-count { margin-bottom: 12px; font-size: 16px; }
+#cert-hours { margin: 0 0 20px; color: var(--soft-ink); font-size: 16px; }
 .certificate-record { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 32px; padding: 12px 0; align-items: center; }
 .certificate-art { width: 100%; max-width: 460px; justify-self: center; }
 .certificate-image-button {

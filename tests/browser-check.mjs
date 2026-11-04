@@ -177,17 +177,21 @@ try {
     "Date issued",
     "Certificate type",
     "Delivery mode",
-    "Seminar title",
-    "Seminar topic",
-    "Seminar provider",
+    "Activity title",
+    "Activity topic",
+    "Provider",
     "Training code",
     "CPD points",
+    "Activity type",
+    "Hours",
   ]);
   check(
-    "certificate details follow exactly the requested eight-field hierarchy",
+    "certificate details follow exactly the requested ten-field hierarchy",
   );
   await page.locator("#cert-search").fill("no-such-certificate");
   await page.getByRole("heading", { name: "No matches" }).waitFor();
+  assert.equal(await page.locator("#cert-hours").innerText(),
+    "Total hours shown: — · Training: — · Seminar: — · Webinar: — · Other: —");
   await page.getByRole("button", { name: "Reset filters" }).click();
   await page.waitForFunction(
     (count) => document.querySelectorAll(".certificate-record").length === count,
@@ -229,12 +233,12 @@ try {
       await page
         .locator(".item-editor-form > .editor-field > label")
         .allTextContents()
-    ).slice(0, 8),
+    ).slice(0, 10),
     labels,
   );
   await page
     .locator("dialog")
-    .getByLabel("Seminar title", { exact: true })
+    .getByLabel("Activity title", { exact: true })
     .fill("Cancelled certificate");
   await page.locator("dialog input[type=file]").setInputFiles(upload);
   await page
@@ -269,15 +273,15 @@ try {
     .fill("Online");
   await page
     .locator("dialog")
-    .getByLabel("Seminar title", { exact: true })
+    .getByLabel("Activity title", { exact: true })
     .fill("Browser-tested certificate");
   await page
     .locator("dialog")
-    .getByLabel("Seminar topic", { exact: true })
+    .getByLabel("Activity topic", { exact: true })
     .fill("Research and science");
   await page
     .locator("dialog")
-    .getByLabel("Seminar provider", { exact: true })
+    .getByLabel("Provider", { exact: true })
     .fill("Test provider");
   await page
     .locator("dialog")
@@ -287,6 +291,8 @@ try {
     .locator("dialog")
     .getByLabel("CPD points", { exact: true })
     .fill("2.5");
+  await page.locator("dialog").getByLabel("Activity type", { exact: true }).selectOption("Webinar");
+  await page.locator("dialog").getByLabel("Hours", { exact: true }).fill("1.5");
   await page.locator("dialog input[type=file]").setInputFiles(upload);
   await page
     .getByText("File selected. Save the certificate to upload it.", {
@@ -299,6 +305,8 @@ try {
     (i) => i.title === "Browser-tested certificate",
   );
   assert.equal(saved.cpd_points, 2.5);
+  assert.equal(saved.activity_type, "Webinar");
+  assert.equal(saved.hours, 1.5);
   assert.equal(saved.training_code, "TEST-2026");
   assert.equal((await state()).changed.length, 2);
   assert.equal(
@@ -308,15 +316,17 @@ try {
     }, saved.evidence[0].file),
     upload.buffer.length,
   );
-  check("Word upload saves its original bytes and all eight fields atomically");
+  check("Word upload saves its original bytes and certificate fields atomically");
   await page.locator("#cert-search").fill("Browser-tested certificate");
+  assert.equal(await page.locator("#cert-hours").innerText(),
+    "Total hours shown: 1.5 · Training: — · Seminar: — · Webinar: 1.5 · Other: —");
   await page.locator(".certificate-record .owner-item-actions button").click();
   await page.locator(".item-editor-form").waitFor();
   assert.equal(await page.locator("dialog[open]").count(), 1);
   assert.equal(
     await page
       .locator("dialog")
-      .getByLabel("Seminar title", { exact: true })
+      .getByLabel("Activity title", { exact: true })
       .inputValue(),
     saved.title,
   );
@@ -372,7 +382,7 @@ try {
       .click();
     await page
       .locator("dialog")
-      .getByLabel("Seminar title", { exact: true })
+      .getByLabel("Activity title", { exact: true })
       .fill("Test " + ext + " upload");
     await page
       .locator("dialog input[type=file]")
