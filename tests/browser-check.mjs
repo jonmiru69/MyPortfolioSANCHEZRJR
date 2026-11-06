@@ -699,6 +699,82 @@ try {
   check(
     "legacy online storage falls back to an immutable GitHub Office document and saves its URL",
   );
+  await go("certificates");
+  await page.getByRole("button", { name: "Add certificate", exact: true }).click();
+  const dialog = page.locator("dialog[open]");
+  await dialog.getByLabel("Delivery mode", { exact: true }).fill("Owner-entered mode");
+  const image = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1500;
+    canvas.height = 900;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "black";
+    ctx.font = "42px Arial";
+    [
+      "Certificate of Completion",
+      "Activity title: Designing Science Investigations",
+      "Provider: Example Science Institute",
+      "Delivery mode: Online",
+      "Activity type: Workshop",
+      "Date issued: 7 October 2026",
+      "Training code: SCI-2026-007",
+      "12 training hours",
+      "0 CPD units",
+      "Topic: Experimental design",
+    ].forEach((line, index) => ctx.fillText(line, 84, 110 + index * 65));
+    return canvas.toDataURL().split(",")[1];
+  });
+  await dialog.locator("input[type=file]").setInputFiles({
+    name: "science-workshop.png", mimeType: "image/png", buffer: Buffer.from(image, "base64"),
+  });
+  await dialog.getByText(/blank fields filled/).waitFor({ timeout: 60000 });
+  assert.equal(await dialog.getByLabel("Activity title", { exact: true }).inputValue(), "Designing Science Investigations");
+  assert.equal(await dialog.getByLabel("Date issued", { exact: true }).inputValue(), "2026-10-07");
+  assert.equal(await dialog.getByLabel("CPD points", { exact: true }).inputValue(), "0");
+  assert.equal(await dialog.getByLabel("Delivery mode", { exact: true }).inputValue(), "Owner-entered mode");
+  await dialog.getByText(/Review \d+ sourced suggestions/).click();
+  await dialog.getByRole("button", { name: "Use suggested delivery mode" }).click();
+  assert.equal(await dialog.getByLabel("Delivery mode", { exact: true }).inputValue(), "Online");
+  await dialog.getByRole("button", { name: "Save changes", exact: true }).click();
+  await dialog.waitFor({ state: "detached" });
+  const scanned = (await state()).items.find(({ title }) => title === "Designing Science Investigations");
+  assert.equal(scanned.training_code, "SCI-2026-007");
+  assert.equal(scanned.hours, 12);
+  assert.equal(scanned.cpd_points, 0);
+  assert.equal(scanned.evidence.length, 1);
+  check("on-device OCR fills sourced certificate values, preserves manual input and saves file plus metadata");
+  await go("profile");
+  await page.getByRole("button", { name: "Update my background", exact: true }).click();
+  await dialog.getByRole("button", { name: "Scan portfolio", exact: true }).click();
+  await dialog.getByText(/documents read · .* proposed updates/).waitFor({ timeout: 360000 });
+  const coverage = await dialog.locator(".assistant-status").innerText();
+  assert.match(coverage, /^[1-9]\d* of [1-9]\d* documents read/);
+  assert.ok(await dialog.getByLabel("Overview biography", { exact: true }).count());
+  assert.match(
+    await dialog.getByRole("textbox", { name: "Suggested skills and teaching subjects" }).inputValue(),
+    /Document Management & Microsoft Office Efficiency/i,
+  );
+  assert.equal(await dialog.getByRole("button", { name: "Save selected updates" }).isEnabled(), false);
+  await dialog.getByLabel("Areas of professional learning", { exact: true }).check();
+  const proposal = await dialog.getByRole("textbox", { name: "Suggested areas of professional learning" }).inputValue();
+  assert.ok(proposal.trim().length);
+  await page.screenshot({ path: out + "/assistant-review-mobile.png" });
+  assert.equal(await dialog.locator(".owner-dialog-body").evaluate(el => el.scrollWidth > el.clientWidth + 1), false);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: out + "/assistant-review-desktop.png" });
+  await dialog.getByRole("button", { name: "Save selected updates" }).click();
+  await dialog.getByText(/1 reviewed update saved/).waitFor();
+  await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+  await page.locator(".profile-learning").waitFor();
+  assert.match(await page.locator(".profile-learning").innerText(), /Areas of professional learning/);
+  await page.getByRole("button", { name: "Exit owner mode" }).click();
+  await page.getByRole("button", { name: "Owner mode", exact: true }).waitFor();
+  assert.equal(await page.getByRole("button", { name: "Update my background", exact: true }).count(), 0);
+  assert.equal(await page.locator(".profile-learning").count(), 0);
+  check("background scan reports coverage, saves only selected changes and stays out of public mode");
+  console.log(coverage);
   assert.deepEqual(errors, []);
   check("no uncaught JavaScript errors across the tested workflows");
   await writeFile(

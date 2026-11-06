@@ -4,6 +4,7 @@ import { renderPublish } from "./admin/publish.js";
 import { renderTabEditor } from "./admin/tab-editor.js";
 import { openItemEditor, openDetailsEditor } from "./admin/item-editor.js";
 import { editorDialog } from "./admin/dialog.js";
+import { openBackgroundAssistant } from "./admin/background-assistant.js";
 
 export function setupInlineOwner(app) {
   let enabled = store.isDraftMode;
@@ -138,6 +139,7 @@ export function setupInlineOwner(app) {
     bar.setAttribute("aria-label", "Owner editing actions");
     if (route === "cover") {
       bar.append(
+        action("Update my background", openBackgroundAssistant, true),
         action("Edit introduction", () =>
           openDetailsEditor("Edit introduction", "site.json", ["overview"]),
         ),
@@ -147,8 +149,12 @@ export function setupInlineOwner(app) {
       );
     } else if (route === "profile") {
       bar.append(
+        action("Update my background", openBackgroundAssistant, true),
         action("Edit profile", () =>
-          openDetailsEditor("Edit profile", "profile"),
+          openDetailsEditor("Edit profile", "profile", [], {
+            skills: [],
+            specialties: [],
+          }),
         ),
         action("Edit identity & photo", () =>
           openDetailsEditor("Edit identity & photo", "site.json", ["identity"]),

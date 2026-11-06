@@ -40,6 +40,108 @@
 .editor-field {
   min-width: 0;
 }
+.background-assistant,
+.assistant-results,
+.assistant-panel:not([hidden]) {
+  display: grid;
+  gap: 16px;
+}
+.assistant-panel {
+  padding: 20px;
+  background: var(--paper-step);
+}
+.assistant-panel h3 {
+  font: 600 1.125rem var(--font-body);
+}
+.assistant-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.assistant-review-footer:not([hidden]) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px clamp(16px, 4vw, 28px);
+  border-top: 1px solid var(--border-color);
+  background: var(--paper-step);
+}
+.assistant-status {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.background-assistant progress,
+.assistant-panel progress {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.assistant-sources summary,
+.assistant-transcript summary,
+.assistant-panel summary {
+  cursor: pointer;
+  padding-block: 8px;
+}
+.assistant-findings {
+  display: grid;
+  gap: 12px;
+  padding-inline-start: 0;
+  list-style: none;
+}
+.assistant-findings li,
+.assistant-proposal {
+  display: grid;
+  gap: 8px;
+  padding-block: 12px;
+  border-top: 1px solid var(--border-color);
+  overflow-wrap: anywhere;
+}
+.assistant-findings button,
+.assistant-proposal > button {
+  justify-self: start;
+}
+.assistant-choice {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  cursor: pointer;
+  padding-block: 6px;
+}
+.assistant-choice input {
+  accent-color: var(--accent);
+}
+.assistant-compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 16px;
+}
+.assistant-compare > div {
+  min-width: 0;
+}
+.assistant-compare h4 {
+  font: 600 1rem var(--font-body);
+  margin-bottom: 4px;
+}
+.assistant-compare textarea,
+.assistant-transcript textarea {
+  width: 100%;
+  resize: vertical;
+}
+.assistant-compare textarea {
+  field-sizing: content;
+  min-height: 7em;
+  max-height: 18em;
+}
+.profile-learning {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 24px;
+  margin-block: 44px;
+}
+.profile-learning ul {
+  padding-inline-start: 20px;
+}
 .editor-array {
   min-width: 0;
   margin: 0;

@@ -10,4 +10,16 @@ export async function renderProfile(container, data, site) {
       once: true,
     });
   container.innerHTML = `<div class="page-view profile-page"><header class="section-intro"><h1 class="tab-title">Profile</h1><p class="tab-summary">${safe(data.summary)}</p></header><section class="profile-layout"><img class="profile-portrait" src="${safe(url)}" alt="${safe(identity.name)}" width="700" height="700"><div><h2>${safe(identity.preferred_name || identity.name)}</h2><p>${safe(data.bio)}</p>${data.statement ? `<blockquote>${safe(data.statement)}</blockquote>` : ""}<dl class="profile-facts">${(data.key_facts || []).map((f) => `<div><dt>${safe(f.label)}</dt><dd>${safe(f.value)}</dd></div>`).join("")}</dl><a class="btn btn-primary" href="#/resume">Read my résumé</a></div></section></div>`;
+  const groups = [
+    ["Skills and teaching subjects", data.skills],
+    ["Areas of professional learning", data.specialties],
+  ].filter(([, values]) => Array.isArray(values) && values.length);
+  if (groups.length) {
+    const section = document.createElement("div");
+    section.className = "profile-learning";
+    section.innerHTML = groups.map(([label, values]) =>
+      `<section><h2>${safe(label)}</h2><ul>${values.map((value) => `<li>${safe(value)}</li>`).join("")}</ul></section>`,
+    ).join("");
+    container.querySelector(".profile-page").append(section);
+  }
 }

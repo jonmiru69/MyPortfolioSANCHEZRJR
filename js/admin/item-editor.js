@@ -3,6 +3,7 @@ import { FILE_ACCEPT, prepareUpload } from "../upload-policy.js";
 import { escapeHTML as safe, labelFor } from "../utils.js";
 import { editorDialog, contentSaved } from "./dialog.js";
 import { ACTIVITY_TYPES } from "../certificate-details.js";
+import { certificateAssistant } from "./certificate-assistant.js";
 
 export const CERTIFICATE_FIELDS = [
   ["issue_date", "Date issued", "date"],
@@ -138,7 +139,7 @@ function field(parent, object, key, label = labelFor(key), type = null) {
   return control;
 }
 
-function attachments(parent, object, key, api, pending, single = false) {
+function attachments(parent, object, key, api, pending, single = false, onChange) {
   object[key] ||= [];
   const section = document.createElement("section");
   section.className = "attachment-editor";
@@ -176,6 +177,7 @@ function attachments(parent, object, key, api, pending, single = false) {
         pending.delete(ev.file);
         api.dirty = true;
         draw();
+        onChange?.(null);
       });
       row.append(name, remove);
       list.append(row);
@@ -202,6 +204,7 @@ function attachments(parent, object, key, api, pending, single = false) {
         ? "File selected. Save the certificate to upload it."
         : "Files selected. Save this item to upload them.";
       draw();
+      if (single) onChange?.(uploads[0].evidence, uploads[0].blob);
     } catch (error) {
       status.textContent = error.message;
     } finally {
@@ -496,9 +499,13 @@ export async function openItemEditor(
       help.textContent =
         "Enter the details printed on the certificate. Leave unstated values blank.";
       form.append(help);
-      for (const [key, label, type] of CERTIFICATE_FIELDS)
-        field(form, working, key, label, type);
-      attachments(form, working, "evidence", api, pending, true);
+      const certificateFields = document.createDocumentFragment();
+      const controls = new Map(CERTIFICATE_FIELDS.map(([key, label, type]) =>
+        [key, field(certificateFields, working, key, label, type)]));
+      const assistant = certificateAssistant(api, CERTIFICATE_FIELDS, controls);
+      attachments(form, working, "evidence", api, pending, true, assistant.setAttachment);
+      assistant.setAttachment(working.evidence[0]);
+      form.append(assistant.panel, certificateFields);
     } else structured(form, working, api, pending);
     const persist = async (remove = false) => {
       if (certificate && !remove && !working.evidence.length)

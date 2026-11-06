@@ -83,7 +83,7 @@ export function renderCertificates(container, data) {
             ["Activity topic", item.seminar_topic || "—"],
             ["Provider", item.organization || "—"],
             ["Training code", item.training_code || "—"],
-            ["CPD points", formatCertificateNumber(item.cpd_points)],
+            ["CPD points", item.cpd_points === 0 || item.cpd_points === "0" ? "0" : formatCertificateNumber(item.cpd_points)],
             ["Activity type", item.activity_type || "—"],
             ["Hours", formatCertificateNumber(item.hours)],
           ];
