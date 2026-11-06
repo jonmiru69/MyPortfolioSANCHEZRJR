@@ -97,16 +97,16 @@
   },
   "seo": {
     "site_title": "Ramelito Jr. C. Sanchez | Science Educator",
-    "site_description": "Portfolio of Ramelito Jr. C. Sanchez, LPT, High School Science and Research Teacher at Colegio de Sto. Tomas-Recoletos, Incorporated.",
+    "site_description": "Portfolio of Ramelito Jr. C. Sanchez, Licensed Professional Teacher and high school science and research teacher. Explore classroom experience, undergraduate biofuel research, and professional learning in science education, technology, and AI.",
     "og_image": "assets/images/owner-portrait.png",
-    "keywords": "Ramelito Sanchez, science educator, Colegio de Sto. Tomas - Recoletos, teaching portfolio"
+    "keywords": "Ramelito Sanchez, science teaching, high school research, science education, biomass briquettes, educational technology, responsible AI"
   },
   "tabs": [
     {
       "id": "cover",
       "slug": "cover",
       "label": "Overview",
-      "summary": "An introduction to the portfolio.",
+      "summary": "Science teaching, research, and continuing professional learning.",
       "enabled": true,
       "order": 1
     },
@@ -122,7 +122,7 @@
       "id": "profile",
       "slug": "profile",
       "label": "Profile",
-      "summary": "Background and professional information.",
+      "summary": "Teaching experience, science education, and areas of professional learning.",
       "enabled": true,
       "order": 3
     },
@@ -130,7 +130,7 @@
       "id": "resume",
       "slug": "resume",
       "label": "Résumé / CV",
-      "summary": "Read the supplied résumé in a wide document viewer.",
+      "summary": "The original résumé, with academic preparation, classroom experience, and university service.",
       "enabled": true,
       "order": 4
     },
@@ -146,7 +146,7 @@
       "id": "education",
       "slug": "education",
       "label": "Education",
-      "summary": "Academic qualifications.",
+      "summary": "A Bachelor of Secondary Education, major in Science, from Central Philippines State University.",
       "enabled": true,
       "order": 6
     },
@@ -154,7 +154,7 @@
       "id": "licenses",
       "slug": "licenses",
       "label": "Eligibilities",
-      "summary": "Professional licensure.",
+      "summary": "Professional teaching eligibility and the Licensure Examination for Teachers rating.",
       "enabled": true,
       "order": 7
     },
@@ -162,7 +162,7 @@
       "id": "certificates",
       "slug": "certificates",
       "label": "Certificates",
-      "summary": "Certificates and professional learning.",
+      "summary": "Original certificates in teaching, science, research, educational technology, and AI.",
       "enabled": true,
       "order": 8
     },
@@ -170,7 +170,7 @@
       "id": "research",
       "slug": "research",
       "label": "Research",
-      "summary": "Undergraduate research on agricultural residues as biofuel.",
+      "summary": "An undergraduate study of sugarcane bagasse and corn stalks as biofuel.",
       "enabled": true,
       "order": 10
     },
@@ -178,7 +178,7 @@
       "id": "teaching",
       "slug": "teaching",
       "label": "Teaching",
-      "summary": "Teaching experience, subjects, and classroom practice.",
+      "summary": "High school science and research teaching, with supervised science classroom experience.",
       "enabled": true,
       "order": 9
     },
@@ -226,7 +226,7 @@
       "id": "development",
       "slug": "development",
       "label": "Growth Plan",
-      "summary": "Professional development.",
+      "summary": "Continuing professional learning in science instruction, research, educational technology, and responsible AI.",
       "enabled": false,
       "order": 16
     },
@@ -258,16 +258,17 @@
       "id": "contact",
       "slug": "contact",
       "label": "Contact",
-      "summary": "Contact information and professional inquiries.",
+      "summary": "Correspondence about science teaching, research, and professional collaboration.",
       "enabled": true,
       "order": 20
     }
   ],
   "overview": {
-    "heading": "Teaching & inquiry",
-    "description": "Science education, classroom experience and continuing professional learning, gathered in one portfolio.",
+    "heading": "Teaching, research, and professional learning",
+    "description": "Science teaching, an undergraduate biofuel study, and training in educational technology and responsible AI.",
     "action_label": "View certificates",
-    "learning_heading": "Learning, documented",
-    "biography": "A 2025 Bachelor of Secondary Education, major in Science graduate of Central Philippines State University – San Carlos Campus. Completed 360 hours as a pre-service science teacher at Julio Ledesma National High School, and served as a student assistant and student government officer at the university."
+    "learning_heading": "Professional learning",
+    "biography": "My work as a science teacher starts with helping students ask clear questions and use evidence to answer them. I completed 360 hours of supervised teaching at Julio Ledesma National High School, where I planned and delivered science lessons.\n\nI studied science education at Central Philippines State University and co-authored a thesis comparing briquettes made from sugarcane bagasse and corn stalks. My professional learning since then has included high school physics instruction, classroom feedback, environmental science, and responsible AI use in education and research.",
+    "learning_description": "Explore certificates in high school physics, explicit instruction, action research, environmental science, educational technology, and responsible AI."
   }
 }

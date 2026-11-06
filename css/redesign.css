@@ -355,6 +355,29 @@
 .record-details {
   margin-top: 28px;
 }
+.research-abstract {
+  margin-block: 1.5rem;
+  max-width: 72ch;
+}
+.research-abstract h3 {
+  margin-bottom: 0.65rem;
+}
+.research-abstract p + p,
+.profile-layout p + p {
+  margin-top: 0.9rem;
+}
+.research-keywords {
+  font-size: 0.95rem;
+}
+.profile-learning {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 24px;
+  margin-block: 44px;
+}
+.profile-learning ul {
+  padding-inline-start: 20px;
+}
 .record-details ul {
   padding-left: 22px;
 }

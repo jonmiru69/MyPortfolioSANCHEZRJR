@@ -1,5 +1,5 @@
 {
-  "summary": "Undergraduate research completed at Central Philippines State University in June 2025.",
+  "summary": "My undergraduate research compared four types of biomass briquettes to see how readily they ignited, boiled water, produced ash, and sustained combustion. The study was submitted at Central Philippines State University in June 2025.",
   "items": [
     {
       "id": "research-biofuel",
@@ -8,17 +8,28 @@
       "organization": "Central Philippines State University – San Carlos Campus",
       "date_start": "2025-06",
       "date_end": "",
-      "description": "An undergraduate thesis submitted for the Bachelor of Secondary Education (Sciences), co-authored by Ramelito Jr. C. Sanchez, Estefanie M. Tanghal and Leonesa L. Leones.",
+      "description": "This undergraduate thesis compared sugarcane bagasse, corn stalks, a blend of both, and commercial coconut shell briquettes. The study assessed ignition time, boiling time, ash content, and burning duration.",
       "authors": [
         "Ramelito Jr. C. Sanchez",
         "Estefanie M. Tanghal",
         "Leonesa L. Leones"
       ],
-      "tags": ["Biofuel", "Science education"],
+      "tags": [
+        "Biofuel",
+        "Science education"
+      ],
       "evidence": [],
       "links": [],
       "visibility": "public",
-      "order": 1
+      "order": 1,
+      "abstract": "This study investigated the comparative effectiveness of briquettes made from sugarcane bagasse, corn stalks, their combination, and commercially produced coconut shell briquettes. The aim was to identify significant differences in boiling time, ash content, ignition time, and burning longevity, and to establish the most efficient biofuel source. Four treatments were devised: Treatment A (500g of sugarcane bagasse compressed at 5 MPa), Treatment B (500g of corn stalks compressed at 8 MPa), Treatment C (a 50:50 mixture of sugarcane bagasse and corn stalks compressed at 6.5 MPa), and Treatment D (500g of commercially produced coconut shell briquettes). A consistent binder weighing 65g (composed of 50g corn starch and 15g water) was employed for all treatments, except for the commercial control. The results demonstrated that Treatment A ignited most swiftly, boiled water in the least amount of time, produced the lowest ash level, and displayed the shortest burning duration. Treatment B exhibited the longest ignition time, increased ash content, and a relatively extended combustion duration. Treatment C shown moderate efficacy across all parameters. Treatment D demonstrated the most prolonged boiling and burning durations, alongside the highest ash concentration, signifying its compact and solid structure. Analysis of variance (ANOVA) revealed statistically significant variations across all treatments for each parameter, hence validating the alternative hypotheses. The research established that both the type of biomass material and the quantity of compaction pressure significantly affected briquette performance, with sugarcane bagasse recognised as the optimal selection for efficient and rapid combustion.",
+      "keywords": [
+        "biofuel",
+        "briquette",
+        "sugarcane bagasse",
+        "corn stalks",
+        "burning longevity"
+      ]
     }
   ]
 }

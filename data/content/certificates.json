@@ -1,5 +1,5 @@
 {
-  "summary": "Professional learning in science, research, technology and student well-being. Open each certificate to read the original document.",
+  "summary": "My professional learning includes high school physics, explicit instruction, classroom feedback, action research, environmental science, educational technology, and responsible AI. Open each record to see the original certificate and the details it documents.",
   "items": [
     {
       "id": "certificate-1",
@@ -938,6 +938,38 @@
           "type": "document",
           "mime": "application/pdf",
           "original_name": "error correction certificate.pdf"
+        }
+      ]
+    },
+    {
+      "id": "certificates-110cebb1-d26e-45c2-baef-6ff88cf14cb4",
+      "title": "ENACT 2026: Advancing Environmental Science into Action: Nature-Based Solutions, Biodiversity, Innovation, and Green Enterprise",
+      "issue_date": "2026-10-28",
+      "date_start": "2026-10-28",
+      "year": 2026,
+      "activity_type": "Webinar",
+      "certificate_kind": "Participation",
+      "delivery_mode": "Online via Zoom",
+      "organization": "Nueva Ecija University of Science and Technology — University Training Department",
+      "seminar_topic": "Environmental science, nature-based solutions, biodiversity, innovation, and green enterprise",
+      "training_code": "",
+      "cpd_points": null,
+      "hours": null,
+      "type": "Science",
+      "description": "Certificate of participation in the ENACT 2026 webinar, held online via Zoom on October 28, 2026.",
+      "visibility": "public",
+      "featured": false,
+      "order": 27,
+      "evidence": [
+        {
+          "label": "View certificate",
+          "original_name": "18.jpg",
+          "file": "assets/docs/certificates/neust-enact-2026.jpg",
+          "mime": "image/jpeg",
+          "type": "image",
+          "preview_images": [
+            "assets/docs/certificates/neust-enact-2026.jpg"
+          ]
         }
       ]
     }

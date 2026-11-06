@@ -3,7 +3,7 @@ import { MAX_UPLOAD_BYTES } from "../upload-policy.js";
 
 const assetBaseUrl = new URL("../../assets/vendor/zrimo/", import.meta.url);
 
-export async function createDocumentClient() {
+async function createDocumentClient() {
   const { ViewerClient } = await import("../../assets/vendor/zrimo/index.js");
   return ViewerClient.create({
     assetBaseUrl,

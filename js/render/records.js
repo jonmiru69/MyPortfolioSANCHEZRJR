@@ -1,5 +1,5 @@
 import { store } from "../store.js";
-import { escapeHTML as safe, safeURL, labelFor } from "../utils.js";
+import { escapeHTML as safe, safeURL, labelFor, paragraphs } from "../utils.js";
 import { openLightbox } from "./lightbox.js";
 export function renderRecords(container, data, route) {
   const items = (data.items || []).filter(
@@ -16,6 +16,10 @@ export function renderRecords(container, data, route) {
     "Portfolio";
   const detail = (label, value) =>
     value ? `<div><dt>${safe(label)}</dt><dd>${safe(value)}</dd></div>` : "";
+  const abstract = (item) =>
+    route === "research" && typeof item.abstract === "string" && item.abstract.trim()
+      ? `<section class="research-abstract"><h3>Abstract</h3>${paragraphs(item.abstract)}${Array.isArray(item.keywords) && item.keywords.length ? `<p class="research-keywords"><strong>Keywords:</strong> ${safe(item.keywords.join(", "))}</p>` : ""}</section>`
+      : "";
   container.innerHTML = `<div class="page-view records-page ${safe(route)}-page"><header class="section-intro"><h1 class="tab-title">${safe(heading)}</h1><p class="tab-summary">${safe(data.summary)}</p></header><div class="records-list">${
     items
       .map(
@@ -31,7 +35,7 @@ export function renderRecords(container, data, route) {
               (k) =>
                 `<section class="record-details"><h3>${safe(labelFor(k))}</h3><ul>${i[k].map((v) => `<li>${safe(v)}</li>`).join("")}</ul></section>`,
             )
-            .join("")}<dl>${Object.entries(i)
+            .join("")}${abstract(i)}<dl>${Object.entries(i)
             .filter(
               ([k, v]) =>
                 ![
@@ -42,6 +46,8 @@ export function renderRecords(container, data, route) {
                   "date_start",
                   "date_end",
                   "description",
+                  "abstract",
+                  "keywords",
                   "subjects",
                   "responsibilities",
                   "authors",

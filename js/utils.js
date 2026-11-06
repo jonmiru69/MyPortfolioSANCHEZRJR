@@ -6,6 +6,12 @@ export const escapeHTML = (value) =>
         c
       ],
   );
+export const paragraphs = (value) =>
+  String(value ?? "").trim().split(/\r?\n\s*\r?\n/)
+    .filter(Boolean)
+    .map((paragraph) => `<p>${escapeHTML(paragraph)}</p>`)
+    .join("");
+
 export function safeURL(value) {
   const text = String(value || "").trim();
   if (!text || /[\u0000-\u001f]/.test(text)) return "";
