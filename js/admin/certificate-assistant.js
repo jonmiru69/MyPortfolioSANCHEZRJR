@@ -6,6 +6,7 @@ import {
   modelAvailability,
   withModel,
 } from "../assistant/model.js";
+import { localModelEnabled } from "../assistant/local-model.js";
 import { button, element, statusLine } from "./assistant-controls.js";
 
 export function certificateAssistant(api, fields, controls) {
@@ -43,31 +44,16 @@ export function certificateAssistant(api, fields, controls) {
     input,
     analyze,
   );
-  const modelButton = button("Find more fields with browser AI", async () => {
-    const controller = start("Starting browser AI…");
+  const modelButton = button("Find more fields with Qwen", async () => {
+    const controller = start("Starting the local Qwen model…");
     try {
-      const extra = await withModel(
-        controller.signal,
-        (progress) =>
-          setStatus(
-            controller,
-            `Preparing browser model · ${Math.round(progress * 100)}%`,
-          ),
-        (model) => enrichCertificate(model, pages, controller.signal),
-      );
-      if (!current(controller)) return;
-      const base = certificateSuggestions(pages);
-      for (const key of base.conflicts) delete extra[key];
-      display({
-        fields: { ...extra, ...base.fields },
-        conflicts: base.conflicts,
-      });
+      await augment(controller, certificateSuggestions(pages));
     } catch (error) {
       setStatus(
         controller,
         controller.signal.aborted
           ? "AI reading stopped."
-          : "Browser AI could not finish. The document suggestions are still available.",
+          : "Qwen could not finish on this device. Your scanned fields and file are still available.",
       );
     } finally {
       finish(controller);
@@ -104,8 +90,41 @@ export function certificateAssistant(api, fields, controls) {
     scanButton.hidden = !attachment || !!operation;
     textButton.hidden = !!operation || !attachment;
     modelButton.hidden = !!operation || !modelReady || !pages.length;
+    modelButton.textContent = localModelEnabled()
+      ? "Find more fields with Qwen"
+      : "Enable Qwen and find more fields (512 MB)";
     analyze.disabled = !!operation;
     input.readOnly = !!operation;
+  }
+
+  async function augment(controller, base) {
+    const extra = await withModel(
+      controller.signal,
+      (fraction) =>
+        setStatus(
+          controller,
+          `Preparing local Qwen · ${Math.round(fraction * 100)}%`,
+        ),
+      (model) => {
+        setStatus(
+          controller,
+          "Qwen is checking the transcript for additional fields…",
+        );
+        return enrichCertificate(
+          model,
+          pages,
+          controller.signal,
+          store.site.identity?.name,
+          base.fields,
+        );
+      },
+    );
+    if (!current(controller) || controller.signal.aborted) return;
+    for (const key of base.conflicts) delete extra[key];
+    display(
+      { fields: { ...extra, ...base.fields }, conflicts: base.conflicts },
+      true,
+    );
   }
 
   function current(controller) {
@@ -211,7 +230,7 @@ export function certificateAssistant(api, fields, controls) {
       const file =
         attachment.blob ||
         (await readAttachment(attachment, controller.signal));
-      const scanned = await reader.read(file, {
+      const options = {
         name: attachment.name,
         mime: attachment.mime,
         signal: controller.signal,
@@ -226,12 +245,57 @@ export function certificateAssistant(api, fields, controls) {
           if (current(controller) && phase === "recognizing text")
             progress.value = currentPage - 1 + fraction;
         },
-      });
+      };
+      let scanned = await reader.read(file, options);
+      if (!current(controller) || controller.signal.aborted) return;
+      let result = certificateSuggestions(scanned);
+      if (!result.fields.title && scanned.length <= 3) {
+        setStatus(controller, "Checking the certificate layout for a title…");
+        try {
+          const alternate = await reader.read(file, {
+            ...options,
+            sparse: true,
+          });
+          const alternateResult = certificateSuggestions(alternate);
+          if (
+            alternateResult.fields.title ||
+            Object.keys(alternateResult.fields).length >
+              Object.keys(result.fields).length
+          ) {
+            scanned = alternate;
+            result = {
+              fields: { ...alternateResult.fields, ...result.fields },
+              conflicts: [
+                ...new Set([...result.conflicts, ...alternateResult.conflicts]),
+              ],
+            };
+            for (const key of result.conflicts) delete result.fields[key];
+          }
+        } catch {
+          controller.signal.throwIfAborted();
+        }
+      }
       if (!current(controller) || controller.signal.aborted) return;
       pages = scanned;
       input.value = pages.map(({ text }) => text).join("\n\n");
-      const result = certificateSuggestions(pages);
       display(result, true);
+      if (
+        localModelEnabled() &&
+        ["title", "organization"].some(
+          (key) => !result.fields[key] && !result.conflicts.includes(key),
+        )
+      ) {
+        try {
+          await augment(controller, result);
+        } catch {
+          setStatus(
+            controller,
+            controller.signal.aborted
+              ? "AI reading stopped. Your scanned fields are still available."
+              : "Qwen could not finish. Your scanned fields are still available.",
+          );
+        }
+      }
     } catch (error) {
       if (current(controller)) {
         transcript.hidden = false;

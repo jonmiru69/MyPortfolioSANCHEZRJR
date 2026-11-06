@@ -79,30 +79,82 @@ test("flags contradictory explicit values and keeps the other grounded suggestio
   assert.equal(result.fields.training_code.value, "SCI-01");
 });
 
-test("rejects model results without literal evidence, wrong pages and sensitive fields", async () => {
+test("reads a printed activity title between a recipient and date without treating the date as issued", () => {
+  const { fields } = certificateSuggestions([
+    {
+      page: 1,
+      text: "CERTIFICATE OF COMPLETION\nCENTRAL PHILIPPINES STATE UNIVERSITY\nPresented to Maria Reyes\nScience Inquiry in the Classroom\n12 September 2026",
+    },
+  ]);
+  assert.equal(fields.title.value, "Science Inquiry in the Classroom");
+  assert.equal(fields.issue_date, undefined);
+});
+
+test("restricts the language model to sourced options and excludes the recipient", async () => {
   const model = {
-    prompt: async () =>
-      JSON.stringify([
-        {
-          field: "title",
-          value: "Real activity",
-          quote: "Activity title: Real activity",
-          page: 1,
-        },
-        {
-          field: "organization",
-          value: "Invented company",
-          quote: "Activity title: Real activity",
-          page: 1,
-        },
-        { field: "delivery_mode", value: "Online", quote: "Online", page: 3 },
-        { field: "cpd_points", value: "12", quote: "12 hours", page: 1 },
-      ]),
+    prompt: async (input, { choices }) => {
+      assert.ok(input.includes("A. Teaching Inquiry Through Physics"));
+      assert.ok(!input.includes("A. Maria Reyes"));
+      assert.deepEqual(choices, ["A", "B"]);
+      return "A";
+    },
   };
   const result = await enrichCertificate(model, [
-    { page: 1, text: "Activity title: Real activity\nOnline\n12 hours" },
+    {
+      page: 1,
+      text: "CERTIFICATE OF COMPLETION\nPresented to:\nMaria Reyes\nTeaching Inquiry Through Physics",
+    },
   ]);
   assert.deepEqual(Object.keys(result), ["title"]);
+  assert.equal(result.title.value, "Teaching Inquiry Through Physics");
+  const recipient = await enrichCertificate(
+    { prompt: async () => "Invented Activity" },
+    [
+      {
+        page: 1,
+        text: "Certificate of Completion\nPresented to:\nMaria Reyes\nPhysics in the Classroom",
+      },
+    ],
+  );
+  assert.deepEqual(recipient, {});
+});
+
+test("balances relevant evidence and gives the real thesis and science major a place in the draft", () => {
+  const result = buildBackground(
+    {
+      site: {
+        identity: { title: "Science teacher", institution: "Current School" },
+      },
+      content: {
+        education: {
+          items: [
+            {
+              title: "Bachelor of Secondary Education",
+              subtitle: "Major in Science",
+              organization: "University",
+            },
+          ],
+        },
+        research: { items: [{ title: "Agricultural residues as biofuel" }] },
+        certificates: {
+          items: [
+            { title: "Office filing webinar", issue_date: "2026-11-06" },
+            { title: "Generative AI Foundations", issue_date: "2026-11-05" },
+            { title: "AI Literacy", issue_date: "2026-11-04" },
+            { title: "Hands-on Physics", issue_date: "2026-10-01" },
+            { title: "Classroom Assessment", issue_date: "2026-09-01" },
+          ],
+        },
+      },
+    },
+    [],
+  );
+  const bio = result.find((item) => item.section === "cover").value;
+  assert.match(
+    bio,
+    /Major in Science.*Agricultural residues as biofuel.*Classroom Assessment.*Hands-on Physics.*Generative AI Foundations/,
+  );
+  assert.doesNotMatch(bio, /Office filing|AI Literacy/);
 });
 
 test("background proposals use current institution, résumé skills, and public evidence only", () => {

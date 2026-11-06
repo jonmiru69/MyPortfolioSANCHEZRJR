@@ -28,7 +28,7 @@ Leave details blank when they are not stated on the document. CPD points are not
 - In **Owner mode**, open **Overview** or **Profile**, choose **Update my background**, then **Scan portfolio**. Open **View scan coverage** to see which originals were read. Edit suggestions in place, check the updates you want, and choose **Save selected updates**.
 - In **Add certificate**, choosing a file starts the scan. Confirm the suggestions against the original. Use **Review or correct the transcript** for missed text, or fill the remaining fields by hand. Choose **Save changes** to save the reviewed details and file together.
 - Reading runs on this device and needs no AI account, key, or billing. The English reader scans up to 24 pages per file. If a scan is unreadable or exceeds that limit, try a clearer or shorter copy, paste the relevant text, or enter the details manually.
-- On devices with a compatible browser language model, you can find more certificate fields or polish suggested wording. First use may need a browser model download. Review any generated wording before saving.
+- Choose **Enable Qwen** in the certificate review or a background suggestion to download the local language model (about 512 MB). Once enabled, certificate scans use it automatically when there are missing fields. Qwen reads the transcript on your device. Check any additional values against the original, and review generated wording before saving.
 
 Accepted files: JPEG, PNG, WebP, GIF, AVIF, BMP, PDF, Word (.doc/.docx) and PowerPoint (.ppt/.pptx), up to 20 MB each. Keep the original extension. The app checks the file's format before saving.
 

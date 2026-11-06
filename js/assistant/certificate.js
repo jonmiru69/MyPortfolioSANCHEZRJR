@@ -48,16 +48,33 @@ const clean = (text) =>
     .replace(/^[“"']|[”"']$/gu, "")
     .trim();
 
+function cleanTitle(text) {
+  const quoted = text.trim().match(/^[“"]([^”"]+)[”"]/);
+  return clean(
+    quoted?.[1] ||
+      text.split(
+        /[ \t]+(?:held on|conducted by|organized by|delivered via|on \d{1,2}\s+[A-Z][a-z]+\b)/i,
+      )[0],
+  );
+}
+
 const rules = [
   [
     "title",
     /(?:^|\n)\s*(?:(?:seminar|activity|course|training|program(?:me)?)\s+title|title)\s*[:–]\s*([^\n]{3,250})/i,
   ],
   ["title", /(?:entitled|titled)\s*[:–]?\s*[“"]([^”"\n]{3,250})[”"]/i],
-  ["title", /(?:entitled|titled)[ \t]*[:–]?[ \t]*\r?\n[ \t]*([^\n]{3,250})/i],
+  [
+    "title",
+    /(?:entitled|titled|themed)[ \t]*[:–]?[ \t]*(?:\r?\n[ \t]*)?([^\n]{3,250})/i,
+  ],
+  [
+    "title",
+    /\b(?:completed|attended|participated in)\s+(?:the\s+)?(?:online\s+)?(?:webinar|workshop|seminar|training|course|conference)[ \t]+(?:on|entitled|titled)[ \t]+([^\n]{3,250})/i,
+  ],
   [
     "certificate_kind",
-    /\bCertificate of (Participation|Completion|Attendance|Recognition|Appreciation|Achievement|Training)\b/i,
+    /\bCertificate\s+of\s+(Participation|Completion|Attendance|Recognition|Appreciation|Achievement|Training|Merit)\b/i,
     (_, kind) =>
       "Certificate of " + kind[0].toUpperCase() + kind.slice(1).toLowerCase(),
   ],
@@ -81,6 +98,10 @@ const rules = [
   [
     "organization",
     /(?:^|\n)\s*(?:provider|issued by|organized by|organised by|conducted by)\s*[:–]?\s+([^\n]{3,200})/i,
+  ],
+  [
+    "organization",
+    /\b(?:organized|organised|hosted|conducted|facilitated|issued|provided|offered)\s+by[ \t]+([^\n]{3,180}?)(?=[ \t]+(?:on[ \t]+\d|at[ \t]+\d)|[\r\n]|$)/i,
   ],
   [
     "organization",
@@ -112,7 +133,7 @@ const rules = [
   ],
   [
     "issue_date",
-    /\b(?:date issued|date of issue|issue date|issued on|given on|given this|awarded on|signed on)\s*[:–]?\s*([^\n]{6,95})/i,
+    /\b(?:date issued|date of issue|issue date|issued on|given on|given this|awarded on|signed on|dated)\s*[:–]?\s*([^\n]{6,95})/i,
     (_, date) => isoDate(date),
   ],
 ];
@@ -121,8 +142,11 @@ export function certificateSuggestions(pages) {
   const fields = {};
   const conflicts = new Set();
   function offer(key, value, quote, page) {
+    if (key === "title" && typeof value === "string") value = cleanTitle(value);
     if (
       value === "" ||
+      (key === "title" &&
+        /^(?:certificate\b|(?:awarded|presented|given) to\b)/i.test(value)) ||
       (typeof value === "number" && (value < 0 || value > 10000))
     )
       return;
@@ -146,6 +170,10 @@ export function certificateSuggestions(pages) {
         );
       }
     }
+    const quoted = text.match(
+      /\b(?:completed|attended|participated in|for completing|for attending)\b[^“"\n]{0,80}[“"]([^”"\n]{3,250})[”"]/i,
+    );
+    if (quoted) offer("title", clean(quoted[1]), quoted[0], page);
     const activityLine = text.match(
       /\b(?:attended|completed|participated in)\s+(?:the\s+)?(webinar|workshop|seminar|conference|masterclass|training)[ \t]*\r?\n((?:[^\n]{3,110}\r?\n){1,3}?)[ \t]*(?=(?:delivered|held|conducted|organized|organised|hosted)\b)/i,
     );
@@ -160,6 +188,45 @@ export function certificateSuggestions(pages) {
         page,
       );
       offer("title", clean(title), activityLine[0], page);
+    }
+    // Some certificates print the activity between the recipient and the
+    // date without a title label. Require both surrounding cues.
+    if (!fields.title && !conflicts.has("title")) {
+      const lines = text
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+      const recipient = lines.findIndex((line) =>
+        /^(?:presented|awarded|given) to\b/i.test(line),
+      );
+      if (recipient >= 0) {
+        const start =
+          recipient + (/\bto\s*:?$/i.test(lines[recipient]) ? 2 : 1);
+        const candidate = lines[start];
+        const following = lines[start + 1];
+        if (
+          candidate &&
+          following &&
+          candidate.length <= 140 &&
+          /\b(?:classroom|education|research|science|teaching|instruction|technology|AI|workshop|webinar|seminar|training)\b/i.test(
+            candidate,
+          ) &&
+          !/^(?:for\b|in recognition\b|certificate\b|republic\b|signed\b|presented\b|(?:organized|issued) by\b)/i.test(
+            candidate,
+          ) &&
+          (dateToken.test(following) ||
+            /^(?:date issued|held on|issued on|given this|delivered via)\b/i.test(
+              following,
+            ))
+        ) {
+          offer(
+            "title",
+            candidate,
+            lines.slice(recipient, start + 2).join("\n"),
+            page,
+          );
+        }
+      }
     }
     const activity = new RegExp(
       "^(?:Activity type\\s*[:–]\\s*)?(" + ACTIVITY_TYPES.join("|") + ")$",

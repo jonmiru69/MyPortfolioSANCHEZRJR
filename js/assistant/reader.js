@@ -58,7 +58,7 @@ export function createDocumentReader() {
     workerPromise = undefined;
   }
 
-  async function recognize(canvas, signal, onProgress, columns) {
+  async function recognize(canvas, signal, onProgress, layout) {
     reportOCR = onProgress;
     workerPromise ??= import(
       "../../assets/vendor/ocr/tesseract.esm.min.js"
@@ -74,16 +74,30 @@ export function createDocumentReader() {
     );
     const worker = await abortable(workerPromise, signal);
     await abortable(
-      worker.setParameters({ tessedit_pageseg_mode: columns ? "3" : "6" }),
+      worker.setParameters({ tessedit_pageseg_mode: layout }),
       signal,
     );
     const result = await abortable(worker.recognize(canvas), signal);
-    return result.data.text.trim();
+    if (result.data.text.trim() || layout !== "6")
+      return result.data.text.trim();
+    await abortable(
+      worker.setParameters({ tessedit_pageseg_mode: "11" }),
+      signal,
+    );
+    return (await abortable(worker.recognize(canvas), signal)).data.text.trim();
   }
 
   async function read(
     file,
-    { name, mime, signal, onPage = () => {}, onOCR, columns = false } = {},
+    {
+      name,
+      mime,
+      signal,
+      onPage = () => {},
+      onOCR,
+      columns = false,
+      sparse = false,
+    } = {},
   ) {
     const stop = AbortSignal.any([signal, AbortSignal.timeout(120000)]);
     if (!file.size || file.size > MAX_UPLOAD_BYTES)
@@ -93,8 +107,9 @@ export function createDocumentReader() {
       await file.arrayBuffer(),
     );
     stop.throwIfAborted();
+    const layout = sparse ? "11" : columns ? "3" : "6";
     const cacheKey =
-      columns + ":" + Array.from(new Uint8Array(digest)).join(",");
+      layout + ":" + Array.from(new Uint8Array(digest)).join(",");
     if (textCache.has(cacheKey)) return textCache.get(cacheKey);
     const client = await createDocumentClient();
     const canvas = document.createElement("canvas");
@@ -124,6 +139,7 @@ export function createDocumentReader() {
         let text = nativeText;
         if (
           columns ||
+          sparse ||
           format !== "pdf" ||
           nativeText.length < 60 ||
           !nativeText.includes("\n")
@@ -134,7 +150,7 @@ export function createDocumentReader() {
             devicePixelRatio: 1,
             signal: stop,
           });
-          const scanned = await recognize(canvas, stop, onOCR, columns);
+          const scanned = await recognize(canvas, stop, onOCR, layout);
           text = scanned || nativeText;
         }
         pages.push({ page: index + 1, text });
